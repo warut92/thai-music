@@ -22,10 +22,12 @@
 <header class="w3-container w3-card-4 w3-theme">
   <h1>ขลุ่ยครูวรุฒ</h1>
 </header>
+
 <br>
 <div>
 <img id="myImage" src="img/flute.png" class="responsive">
 </div>
+
 <br>
 
 <!--ปุ่มเปลี่ยนภาพวางนิ้วและเล่นเสียง-->
@@ -55,6 +57,32 @@
 
 <button class="w3-button w3-circle w3-teal" onclick="document.getElementById('sound13').load();document.getElementById('sound13').play();document.getElementById('myImage').src='img/13.png';" type="button">ลํ</button>
 
+<br>
+<br>
+<div>
+ <button class="w3-button w3-round-xlarge w3-teal" onclick="showText()">คำอธิบาย</button> 
+</div>
+
+<div id="myDIV" style="display:none">
+⚪ = เปิดนิ้ว<br>
+⚫ = ปิดนิ้ว<br>
+🔴 = ปิดนิ้ว เป่าลมแรง<br>
+</div>
+<br>
+<br>
+
+<script>
+function showText() {
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
+
+
 <!--แหล่งเสียง-->
 <audio id="sound1" src="audio/1.mp3" preload="auto"></audio>
 <audio id="sound2" src="audio/2.mp3" preload="auto"></audio>
@@ -74,7 +102,7 @@
 
 
 <footer class="w3-container w3-theme-l2" style="position:relative">
-   <p> <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.</p>
+  <p> <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.</p>
 </footer>
 
 <div class="w3-bar w3-theme-dark w3-xlarge">
