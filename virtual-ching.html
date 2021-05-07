@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<title>ขลุ่ยมือถือ 2021 - ฉิ่งมือถือ</title>
+<link rel="icon" href="img/icon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@200&display=swap" rel="stylesheet"> 
+<style>
+  body, h1, h2, h3, h4, h5, h6  {
+    font-family: Sarabun, sans-serif;
+  }
+  .responsive {
+  width: 100%;
+  height: auto;
+  }
+  div {
+    text-align: center;
+  }
+</style>
+
+<header class="w3-container w3-card-4 w3-theme">
+  <h1>ขลุ่ยมือถือ</h1>
+</header>
+<body>
+<br>
+<br> 
+<h1 style="text-align: center;">ฉิ่งมือถือ</h1> 
+  <div>
+    <!--สวัสดีครับทุกท่านที่สนใจศึกษา code ที่ผมเขียน-->
+    <img src="img/chap.png" class="responsive" id="changeImage" ontouchstart="changeImage();playSound();">
+    <audio id="sound" src="audio/chap.mp3" autoplay="false"></audio>
+    </div>
+<br>
+<br> 
+    <script>
+        function changeImage() {
+            var img = document.getElementById('changeImage');
+            if (img.src.match("img/ching.png")) {
+                img.src = "img/chap.png";
+            }
+            else {
+                img.src = "img/ching.png";
+            }
+        }
+        function playSound() {
+          var audio = document.getElementById('sound')
+          if  (audio.src.match("audio/ching.mp3")) {
+              audio.src = "audio/chap.mp3";
+          }
+          else {
+            audio.src = "audio/ching.mp3";
+          }
+
+        }        
+    </script>
+
+<footer class="w3-container w3-theme-l2" style="position:relative">
+  <p> <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.</p>
+</footer>
+
+<div class="w3-bar w3-theme-dark w3-xlarge">
+<a class="w3-bar-item w3-button">«</a>
+<a class="w3-bar-item w3-button w3-right">»</a>
+</div>
+
+</body>
+</html> 
