@@ -1,0 +1,104 @@
+<!DOCTYPE html> 
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap" rel="stylesheet">  
+
+  <style type="text/css">  
+    body, div, button {
+       font-family: 'Sarabun', sans-serif;
+    }
+
+    .speedcontrolcontainer {
+      max-width: 30em;
+      display: block;
+      padding: 10px;
+      font-family: Sans-serif;
+    }
+    .speedcontrolcontainer audio {
+      width: 100%;
+      display: block;
+    }
+    .speedcontrolcontainer div {
+      display: flex;
+      padding: .5em 0;
+      gap: 5px;
+    }
+    .speedcontrolcontainer label {
+      flex: 1
+    }
+    .speedcontrolcontainer input[type="range"] {
+      flex: 5
+    }
+    .speedcontrolcontainer span {
+      flex: 1;
+      text-align: center;
+    }
+  </style>  
+</head> 
+
+<body> 
+<h1 align="center">จังหวะมือถือ</h1><br>
+
+<button onclick="myFunction1();enableLoop();">หน้าทับลาว</button>
+<button onclick="myFunction2();enableLoop();">ลูกหมด</button>
+
+
+<div class="speedcontrolcontainer" >
+  <audio id="myAudio" src="audio/Lao_2_Chan_Normal.mp3" controls></audio>
+
+
+  <div>
+    <label for="pbrate">ความเร็ว </label>
+    <input type="range" id="pbrate" min=.5 max=4 value=1 step=.1>
+    <span></span>   
+  </div>
+</div>
+
+
+<script>
+const audio = document.querySelector('.speedcontrolcontainer  audio');
+const playbackrate = document.querySelector('.speedcontrolcontainer input');
+const display = document.querySelector('.speedcontrolcontainer span');
+const displayvalue = val => {
+  return parseInt(val * 100, 10) + '%'
+}
+if (window.localStorage.pbspeed) {
+  audio.playbackRate = window.localStorage.pbspeed;
+  playbackrate.value = window.localStorage.pbspeed;
+}
+display.innerText = displayvalue(audio.playbackRate);
+playbackrate.addEventListener('change', e => {
+  audio.playbackRate = playbackrate.value;
+  display.innerText = displayvalue(playbackrate.value);
+  window.localStorage.pbspeed = playbackrate.value;
+});
+</script>
+
+
+<script>
+//เปลี่ยน src เสียง
+function myFunction1() {
+  document.getElementById("myAudio").src = "audio/Lao_2_Chan_Normal.mp3";
+}
+
+function myFunction2() {
+  document.getElementById("myAudio").src = "audio/look_mod_audacity.mp3";
+}
+</script>
+
+
+<script>
+//เล่นเสียงวนไปเรื่อย ๆ
+var x = document.getElementById("myAudio");
+
+function enableLoop() { 
+  x.loop = true;
+  x.load();
+} 
+</script> 
+
+</body> 
+</html>
