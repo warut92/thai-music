@@ -3,11 +3,11 @@
   "short_name": "Hello",
   "icons": [{
   "src": "imag/icon-khim.png",
-    "sizes": "146x137",
+    "sizes": "128x128",
     "type": "image/png"
   }],
   "lang": "th",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "white",
   "theme_color": "white"
