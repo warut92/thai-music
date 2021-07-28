@@ -2,7 +2,21 @@ var cacheName = 'khim';
 var filesToCache = [
   './',
   './index.html',
-  './audio/',
+  './audio/A2.wav',
+  './audio/A3.wav',
+  './audio/A4.wav',
+  './audio/B2.wav',
+  './audio/B3.wav',
+  './audio/C3.wav',
+  './audio/C4.wav',
+  './audio/D3.wav',
+  './audio/D4.wav',
+  './audio/E3.wav',
+  './audio/E4.wav',
+  './audio/F3.wav',
+  './audio/F4.wav',
+  './audio/G3.wav',
+  './audio/G4.wav',
   './img/khim.png',
   './js/main.js'
 ];
