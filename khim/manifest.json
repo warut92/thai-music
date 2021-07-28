@@ -1,6 +1,6 @@
 {
-  "name": "Khim",
-  "short_name": "Hello",
+  "name": "ขิมมือถือ",
+  "short_name": "แอปขิมมือถือ ถือไปไหนก็ได้",
   "icons": [{
   "src": "imag/icon-khim.png",
     "sizes": "128x128",
