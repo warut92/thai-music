@@ -7,11 +7,12 @@
 
 # สารบัญ
 
-- [ฆ้องวงใหญ่](./gong/index-mobile)
-- [ขิม](./khim/index-mobile)
-- [ขลุ่ย](./thai-flute/index)
-- [จังหวะ loop](./thai-rythm)
-- [ขิม](./khim/index-mobile)
+- [ฆ้องวงใหญ่มือถือ](./gong/index-mobile)
+- [ขิมมือถือ](./khim/index)
+- [ขลุ่ยมือถือ](./thai-flute/index)
+- [ฉิ่ง]()
+- [จังหวะมือถือ](./thai-rythm)
+
 
 # ภาษาที่ใช้
 
