@@ -1,5 +1,7 @@
 # ฆ้องวงใหญ่มือถือ Web App
 
-เว็บเบราว์เซอร์ไปที่ [gong/index](https://warut92.github.io/thai-flute/gong/index) 
+คอมพิวเตอร์ [gong/index](https://warut92.github.io/thai-flute/gong/index) 
 
-มือถือไปที่ [gong/index-mobile](https://warut92.github.io/thai-flute/gong/index-mobile)
+มือถือแอนดรอยด์ [gong/index-mobile](https://warut92.github.io/thai-flute/gong/index-mobile)
+
+มือถือ iOS [gong/index-ios](https://warut92.github.io/thai-flute/gong/index-ios)
