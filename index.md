@@ -16,4 +16,6 @@
 - สำหรับ Android ใช้ผ่านเบราว์เซอร์ Google Chrome, FireFox
 - สำหรับ iPhone, iPad สามารถใช้ผ่านเบราว์เซอร์ [FireFox](https://apps.apple.com/th/app/firefox-private-safe-browser/id989804926?l=th) ได้เท่านั้น
 
+**ยังไม่รองรับการใช้งานบนคอมพิวเตอร์**
+
 
