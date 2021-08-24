@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<title>ขลุ่ยมือถือ 2021 - ฉิ่งมือถือ</title>
+<link rel="icon" href="img/icon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<style>
+
+  .responsive {
+  width: 100%;
+  height: auto;
+  }
+  div {
+    text-align: center;
+  }
+</style>
+
+<body>
+<br>
+<br>
+<h1 style="text-align: center;">ฉิ่งมือถือ</h1>
+  <div>
+    <!--สวัสดีครับทุกท่านที่สนใจศึกษา code ที่ผมเขียน-->
+    <img src="img/chap.png" class="responsive" id="changeImage" ontouchstart="changeImage();playSound();">
+    <audio id="sound" src="audio/chap.mp3" autoplay="false"></audio>
+    </div>
+<br>
+<br>
+    <script>
+        function changeImage() {
+            var img = document.getElementById('changeImage');
+            if (img.src.match("img/ching.png")) {
+                img.src = "img/chap.png";
+            }
+            else {
+                img.src = "img/ching.png";
+            }
+        }
+        function playSound() {
+          var audio = document.getElementById('sound')
+          if  (audio.src.match("audio/ching.mp3")) {
+              audio.src = "audio/chap.mp3";
+          }
+          else {
+            audio.src = "audio/ching.mp3";
+          }
+
+        }
+    </script>
+
+
+
+
+</body>
+</html>
