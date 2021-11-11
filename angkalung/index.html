@@ -42,11 +42,12 @@ window.onload = function() {
 
     //shake event callback
     function shakeEventDidOccur () {
-        //put your own code here etc.
+        //put your own code here etc.  
+        const audioCtx = new AudioContext();
         const audio = new Audio("audio/c2.wav");
-        audio.load();
+        const source = audioCtx.createMediaElementSource(audio);
+        source.connect(audioCtx.destination);
         audio.play();
-
         // alert('Shake!');
     }
 };
