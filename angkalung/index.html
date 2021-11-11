@@ -25,9 +25,6 @@ body {
 <img src="./angkalung.png" class="responsive">
 
 
-<audio id="sound1" src="audio/c1.wav" preload="auto"></audio>
-
-
 
 <script type="text/javascript">
 window.onload = function() {
@@ -47,7 +44,7 @@ window.onload = function() {
     function shakeEventDidOccur () {
         //put your own code here etc.
         const audio = new Audio("audio/c2.wav");
-        audio.playbackRate = 1;
+        audio.onload();
         audio.play();
 
         alert('Shake!');
