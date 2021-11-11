@@ -46,9 +46,11 @@ window.onload = function() {
     //shake event callback
     function shakeEventDidOccur () {
         //put your own code here etc.
-        const audio = new Audio("audio/c1.wav");
+        const audio = new Audio("audio/c2.wav");
         audio.playbackRate = 1;
         audio.play();
+
+        alert('Shake!');
     }
 };
 </script>
