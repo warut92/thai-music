@@ -46,9 +46,9 @@ window.onload = function() {
     //shake event callback
     function shakeEventDidOccur () {
         //put your own code here etc.
-        document.getElementById('sound13').load();
-        document.getElementById('sound13').play;
-
+        const audio = new Audio("audio/c1.wav");
+        audio.playbackRate = 1;
+        audio.play();
     }
 };
 </script>
