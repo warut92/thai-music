@@ -11,6 +11,7 @@
 - [ขลุ่ยเพียงออมือถือ](./thai-flute)
 - [ฉิ่งมือถือ](./ching)
 - [จังหวะมือถือ](./thai-rythm)
+- [อังกะลุงมือถือ](./angkalung/)
 
 ## 📘 วิธีการใช้งาน
 - สำหรับ Android ใช้ผ่านเบราว์เซอร์ [Google Chrome](https://play.google.com/store/apps/details?id=com.android.chrome), [FireFox](https://play.google.com/store/apps/details?id=org.mozilla.firefox)
