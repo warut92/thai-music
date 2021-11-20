@@ -20796,8 +20796,10 @@ cr.plugins_.Touch = function(runtime)
 }());
 cr.getObjectRefTable = function () { return [
 	cr.plugins_.Audio,
-	cr.plugins_.Touch,
 	cr.plugins_.Sprite,
+	cr.plugins_.Touch,
+	cr.system_object.prototype.cnds.OnLayoutStart,
+	cr.plugins_.Sprite.prototype.acts.StopAnim,
 	cr.plugins_.Touch.prototype.cnds.OnTouchObject,
 	cr.plugins_.Sprite.prototype.acts.StartAnim,
 	cr.plugins_.Audio.prototype.acts.Play
