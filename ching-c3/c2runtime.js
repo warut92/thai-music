@@ -21002,14 +21002,7 @@ cr.getObjectRefTable = function () { return [
 	cr.plugins_.Sprite.prototype.cnds.CompareFrame,
 	cr.plugins_.Sprite.prototype.acts.SetAnimFrame,
 	cr.plugins_.Audio.prototype.acts.Play,
-	cr.plugins_.Sprite.prototype.acts.RotateClockwise,
 	cr.system_object.prototype.cnds.Else,
-	cr.plugins_.Audio.prototype.acts.Stop,
-	cr.plugins_.Sprite.prototype.acts.RotateCounterclockwise,
-	cr.system_object.prototype.cnds.EveryTick,
-	cr.plugins_.Sprite.prototype.acts.SetY,
-	cr.system_object.prototype.exps.viewportleft,
-	cr.plugins_.Sprite.prototype.acts.SetX,
-	cr.system_object.prototype.exps.viewportbottom
+	cr.plugins_.Audio.prototype.acts.Stop
 ];};
 
