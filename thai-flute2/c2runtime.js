@@ -20800,7 +20800,7 @@ cr.getObjectRefTable = function () { return [
 	cr.plugins_.Sprite,
 	cr.system_object.prototype.cnds.OnLayoutStart,
 	cr.plugins_.Sprite.prototype.acts.StopAnim,
-	cr.plugins_.Touch.prototype.cnds.OnHoldGestureObject,
+	cr.plugins_.Touch.prototype.cnds.IsTouchingObject,
 	cr.plugins_.Sprite.prototype.cnds.CompareInstanceVar,
 	cr.plugins_.Sprite.prototype.acts.SetAnimFrame,
 	cr.plugins_.Audio.prototype.acts.Play,
