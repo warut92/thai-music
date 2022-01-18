@@ -21853,8 +21853,8 @@ cr.plugins_.Touch = function(runtime)
 cr.getObjectRefTable = function () { return [
 	cr.plugins_.Audio,
 	cr.plugins_.Button,
-	cr.plugins_.Sprite,
 	cr.plugins_.Spritefont2,
+	cr.plugins_.Sprite,
 	cr.plugins_.Touch,
 	cr.system_object.prototype.cnds.OnLayoutStart,
 	cr.plugins_.Sprite.prototype.acts.StopAnim,
@@ -21864,6 +21864,7 @@ cr.getObjectRefTable = function () { return [
 	cr.plugins_.Audio.prototype.acts.Play,
 	cr.plugins_.Audio.prototype.acts.Stop,
 	cr.plugins_.Touch.prototype.cnds.OnTouchEnd,
-	cr.plugins_.Audio.prototype.acts.StopAll
+	cr.plugins_.Audio.prototype.acts.StopAll,
+	cr.plugins_.Touch.prototype.cnds.OnNthTouchEnd
 ];};
 
