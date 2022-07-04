@@ -1,12 +1,12 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap" rel="stylesheet">  
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap" rel="stylesheet">
 
-  <style type="text/css">  
+  <style type="text/css">
     body, div, button {
        font-family: 'Sarabun', sans-serif;
     }
@@ -36,14 +36,14 @@
       flex: 1;
       text-align: center;
     }
-  </style>  
-</head> 
+  </style>
+</head>
 
-<body> 
+<body>
 <h1 align="center">จังหวะมือถือ</h1><br>
 
 <button onclick="myFunction1();enableLoop();">หน้าทับลาว</button>
-<button onclick="myFunction2();enableLoop();">ลูกหมด</button>
+<button onclick="myFunction2();enableLoop();">หน้าทับปรบไก่ ชั้นเดียว</button>
 
 
 <div class="speedcontrolcontainer" >
@@ -53,7 +53,7 @@
   <div>
     <label for="pbrate">ความเร็ว </label>
     <input type="range" id="pbrate" min=.5 max=4 value=1 step=.1>
-    <span></span>   
+    <span></span>
   </div>
 </div>
 
@@ -94,11 +94,11 @@ function myFunction2() {
 //เล่นเสียงวนไปเรื่อย ๆ
 var x = document.getElementById("myAudio");
 
-function enableLoop() { 
+function enableLoop() {
   x.loop = true;
   x.load();
-} 
-</script> 
+}
+</script>
 
-</body> 
+</body>
 </html>

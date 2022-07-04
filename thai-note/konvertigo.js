@@ -39,5 +39,4 @@ function sxaven(kiu)
 
 
 	document.getElementById(kiu).value=teksto;
-	kiom();
 }
