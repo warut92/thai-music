@@ -21,10 +21,17 @@ body {
 
 <h1>อังกะลุงมือถือ</h1>
 <h2>เขย่าจะมีเสียง</h2>
+<select>
+  <option value="c2">ด</option>
+  <option value="d1">ร</option>
+  <option value="e1">ม</option>
+  <option value="f1">ฟ</option>
+  <option value="g1">ซ</option>
+  <option value="a1">ล</option>
+  <option value="b1">ท</option>
+</select>
 <br>
 <img src="./angkalung.png" class="responsive">
-
-
 
 <script type="text/javascript">
 window.onload = function() {
@@ -42,9 +49,11 @@ window.onload = function() {
 
     //shake event callback
     function shakeEventDidOccur () {
-        //put your own code here etc.  
+      let s = document.getElementById('sound').value
+        //put your own code here etc.
         const audioCtx = new AudioContext();
-        const audio = new Audio("audio/c2.wav");
+        const audio = new Audio("audio/"+ s + ".wav");
+        console.log(audio);
         const source = audioCtx.createMediaElementSource(audio);
         source.connect(audioCtx.destination);
         audio.play();
