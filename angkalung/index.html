@@ -48,17 +48,17 @@ window.onload = function() {
     window.addEventListener('shake', shakeEventDidOccur, false);
 
     //shake event callback
-    function shakeEventDidOccur () {
-      let s = document.getElementById('sound').value
+    function shakeEventDidOccur() {
         //put your own code here etc.
         const audioCtx = new AudioContext();
-        const audio = new Audio("audio/"+ s + ".wav");
+        const audio = new Audio("audio/c1.wav");
         console.log(audio);
         const source = audioCtx.createMediaElementSource(audio);
         source.connect(audioCtx.destination);
         audio.play();
         // alert('Shake!');
     }
+
 };
 </script>
 
