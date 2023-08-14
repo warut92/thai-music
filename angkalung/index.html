@@ -14,14 +14,16 @@ body {
       width: 100%;
       height: auto;
 }
+select, option {
+  font-size: 20px;
+}
 </style>
 <script type="text/javascript" src="shake.js"></script>
 </head>
 <body>
 
 <h1>อังกะลุงมือถือ</h1>
-<h2>เขย่าจะมีเสียง</h2>
-<select>
+<select id="selectedAngkalung" onchange="getNote()">
   <option value="c2">ด</option>
   <option value="d1">ร</option>
   <option value="e1">ม</option>
@@ -31,35 +33,36 @@ body {
   <option value="b1">ท</option>
 </select>
 <br>
-<img src="./angkalung.png" class="responsive">
+<img id="angkalung" src="./angkalung.png" class="responsive">
 
 <script type="text/javascript">
-window.onload = function() {
+//note from selected angkalung
+let note = "c2"
+let soud_note = new Audio("audio/" + note + ".wav")
+function getNote() {
+  note = document.getElementById('selectedAngkalung').value;
+  soud_note = new Audio("audio/" + note + ".wav")
+  console.log("audio/" + note + ".wav");
+  soud_note.play()
+}
 
-    //create a new instance of shake.js.
-    var myShakeEvent = new Shake({
-        threshold: 15
-    });
+//touch img play sound
+let img_angkalung = document.getElementById('angkalung');
+img_angkalung.addEventListener('touchstart', function(e) {
+  console.log(note);
+  // soud_note.pause()
+  soud_note.currentTime = 0
+  soud_note.play()
+  document.body.style.backgroundColor = "black"
+  document.body.style.color = "white"
+});
 
-    // start listening to device motion
-    myShakeEvent.start();
+img_angkalung.addEventListener('touchend', function(e) {
+  document.body.style.backgroundColor = "white"
+  document.body.style.color = "black"
+});
 
-    // register a shake event
-    window.addEventListener('shake', shakeEventDidOccur, false);
 
-    //shake event callback
-    function shakeEventDidOccur() {
-        //put your own code here etc.
-        const audioCtx = new AudioContext();
-        const audio = new Audio("audio/c1.wav");
-        console.log(audio);
-        const source = audioCtx.createMediaElementSource(audio);
-        source.connect(audioCtx.destination);
-        audio.play();
-        // alert('Shake!');
-    }
-
-};
 </script>
 
 </body>
