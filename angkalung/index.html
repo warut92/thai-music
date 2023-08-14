@@ -17,8 +17,8 @@ body {
 select, option {
   font-size: 20px;
 }
+
 </style>
-<script type="text/javascript" src="shake.js"></script>
 </head>
 <body>
 
@@ -39,8 +39,23 @@ select, option {
 </select>
 <br>
 <img id="angkalung" src="./angkalung.png" class="responsive">
-
+<audio preload="auto">
+  <!-- <source src="audio/c1.wav" type="audio/mpeg"> -->
+  <source src="audio/d1.wav" type="audio/mpeg">
+  <source src="audio/e1.wav" type="audio/mpeg">
+  <source src="audio/f1.wav" type="audio/mpeg">
+  <source src="audio/g1.wav" type="audio/mpeg">
+  <source src="audio/a1.wav" type="audio/mpeg">
+  <source src="audio/b1.wav" type="audio/mpeg">
+  <source src="audio/c2.wav" type="audio/mpeg">
+  <source src="audio/d2.wav" type="audio/mpeg">
+  <source src="audio/e2.wav" type="audio/mpeg">
+  <source src="audio/f2.wav" type="audio/mpeg">
+  <source src="audio/g2.wav" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 <script type="text/javascript">
+
 //note from selected angkalung
 let note = "c2"
 let soud_note = new Audio("audio/" + note + ".wav")
@@ -53,7 +68,7 @@ function getNote() {
 
 //touch img play sound
 let img_angkalung = document.getElementById('angkalung');
-img_angkalung.addEventListener('touchstart', function(e) {
+img_angkalung.addEventListener('touchend', function(e) {
   console.log(note);
   // soud_note.pause()
   soud_note.currentTime = 0
@@ -62,10 +77,11 @@ img_angkalung.addEventListener('touchstart', function(e) {
   document.body.style.color = "white"
 });
 
-img_angkalung.addEventListener('touchend', function(e) {
+img_angkalung.addEventListener('touchstart', function(e) {
   document.body.style.backgroundColor = "white"
   document.body.style.color = "black"
 });
+
 </script>
 
 </body>
