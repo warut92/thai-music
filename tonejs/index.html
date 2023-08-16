@@ -5,19 +5,35 @@
 		<title>Simple HTML</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!-- LOAD Tone.js from unpkg -->
-		<script src="http://unpkg.com/tone"></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.53/Tone.js'></script>
 		<script>
-			function playNote() {
-				// create a synth
-				const synth = new Tone.Synth().toDestination();
-				// play a note from that synth
-				synth.triggerAttackRelease("C4", "8n");
-			}
+		var player = new Tone.Player(
+		  "https://s3-us-west-2.amazonaws.com/s.cdpn.io/1506195/keyboard-key.mp3"
+		).toDestination();
+		Tone.Transport.bpm.value = 120;
+
+		Tone.Transport.scheduleRepeat((time) => {
+		  player.start(time).stop(time + 0.1);
+		}, "4n");
+
+		function start() {
+		  Tone.start();
+		  Tone.Transport.start();
+		}
+
+		function stop() {
+		  Tone.Transport.stop();
+		}
+
 		</script>
 
 	</head>
 	<body>
-		<h1>Simple HTML5 Tone.js Demo</h1>
-		<button onclick="playNote()">Click me to play note!</button>
+		<p>
+		  Click anywhere in this window before you hit start.</p>
+		<button onclick="start()">start</button>
+		<button id="stopButton" onclick="stop()">stop</button>
+		<br /><br />
+		<div id="log"></div>
 	</body>
 </html>
