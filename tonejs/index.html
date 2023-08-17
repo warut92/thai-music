@@ -4,16 +4,15 @@
 		<meta charset="utf-8" />
 		<title>Simple HTML</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!-- LOAD Tone.js from unpkg -->
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.53/Tone.js'></script>
 		<script>
 		var player = new Tone.Player(
-		  "./audio/c2.mp3"
+		  "https://warut92.github.io/thai-music/tonejs/audio/a1.wav"
 		).toDestination();
 		Tone.Transport.bpm.value = 120;
 
 		Tone.Transport.scheduleRepeat((time) => {
-		  player.start(time).stop(time + 0.1);
+		  player.start(time);
 		}, "4n");
 
 		function start() {
