@@ -12,7 +12,7 @@ Virtual Thai Musical Instruments for my students.
 > ไม่ใช่แอปที่ต้องดาวน์โหลดจาก Software distribution platforms ใช้ได้ทุกระบบปฏิบัติการ [แต่ยกเว้นบางเบราว์เซอร์](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/map#browser_compatibility) 😢
 
 # สารบัญ
-- [ดูที่](./index.html)
+- [ดูที่นี่](warut92.github.io/thai-music/index.html)
 # สร้างจาก
 - HTML, CSS, JavaScript
 - Construct 2

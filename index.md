@@ -42,4 +42,4 @@
 
 ## [โน้ตไทยมือถือ](./thai-note) (กำลังสร้าง)
 
-- [คำอธิบายเพิ่มเติม](./README.md)
+- [คำอธิบายเพิ่มเติม](https://warut92.github.io/thai-music/README.md)
