@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ฝึกอ่านโน้ตดนตรีไทย</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+</head>
+  <body>
+    <center>
+      <h3>ฝึกอ่านโน้ตดนตรีไทย</h3>
+      <table style="width:400px;">
+        <thead style="text-align:center">
+          <tr>
+            <td>---<span id="bar1">-</span></td>
+            <td>---<span id="bar2">-</span></td>
+            <td>---<span id="bar3">-</span></td>
+            <td>---<span id="bar4">-</span></td>
+            <td>---<span id="bar5">-</span></td>
+            <td>---<span id="bar6">-</span></td>
+            <td>---<span id="bar7">-</span></td>
+            <td>---<span id="bar8">-</span></td>
+            </td>
+          </tr>
+        </thead>
+      </table>
+      <br>
+      <button onclick="getRandomEmoji();">เปลี่ยน!</button>
+      <br>
+      <br>
+      <a href="./index.html">หน้าหลัก</a>
+      <br>
+      <a href="./4bars.html">4 ช่อง แบบที่ 1</a>
+      <br>
+      <a href="./4bars1.html">4 ช่อง แบบที่ 2</a>
+      <br>
+      <a href="./8bars.html">8 ช่อง แบบที่ 1</a>
+      <br>
+      <a href="./8bars1.html">8 ช่อง แบบที่ 2</a>
+      <br>
+      <a href="./8bars1.html">8 ช่อง แบบที่ 2</a>
+      <br>
+      <a href="./4bars-custom.html">4 ช่อง ปรับแต่งโน้ตเอง</a>
+
+  </body>
+
+  <script>
+
+    function getRandomEmoji() {
+      const emoji = ['🍊', '🍌','🐻','🐶','🐱','-']
+      const index1 = Math.floor(Math.random() * 6);
+      document.getElementById("bar1").innerHTML = emoji[index1];
+      const index2 = Math.floor(Math.random() * 6);
+      document.getElementById("bar2").innerHTML = emoji[index2];
+      const index3 = Math.floor(Math.random() * 6);
+      document.getElementById("bar3").innerHTML = emoji[index3];
+      const index4 = Math.floor(Math.random() * 5);
+      document.getElementById("bar4").innerHTML = emoji[index4];
+      const index5 = Math.floor(Math.random() * 6);
+      document.getElementById("bar5").innerHTML = emoji[index5];
+      const index6 = Math.floor(Math.random() * 6);
+      document.getElementById("bar6").innerHTML = emoji[index6];
+      const index7 = Math.floor(Math.random() * 6);
+      document.getElementById("bar7").innerHTML = emoji[index7];
+      const index8 = Math.floor(Math.random() * 5);
+      document.getElementById("bar8").innerHTML = emoji[index8];
+    }
+
+    // I learnt from https://output.jsbin.com/efuhud/1
+    if (window.orientation != 90) {
+      alert("กรุณาปรับหน้าจอเป็นแนวนอน")
+    }
+
+  </script>
+
+</body>
+
+</html>

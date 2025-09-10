@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ฝึกอ่านโน้ตดนตรีไทย</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://rawgit.com/theraot/emoji/master/emoji.js" charset="utf-8"></script>
+</head>
+<body>
+  <body>
+    <center>
+      <h3>ฝึกอ่านโน้ตดนตรีไทย</h3>
+      <h5>สร้างสรรค์รูปแบบโน้ตดนตรีไทยด้วยตนเอง</h5>
+      <table style="width:400px;table-layout:fixed">
+        <thead style="text-align:center">
+          <tr>
+            <td id="cell1" onclick="getCellPositon(1)" ondblclick="deleteAllEmoji()"><span id="bar1">----</span></td>
+            <td id="cell2" onclick="getCellPositon(2)" ondblclick="deleteAllEmoji()"><span id="bar2">----</span></td>
+            <td id="cell3" onclick="getCellPositon(3)" ondblclick="deleteAllEmoji()"><span id="bar3">----</span></td>
+            <td id="cell4" onclick="getCellPositon(4)" ondblclick="deleteAllEmoji()"><span id="bar4">----</span></td>
+          </tr>
+          <tr>
+            <td id="cell5" onclick="getCellPositon(5)" ondblclick="deleteAllEmoji()"><span id="bar5">----</span></td>
+            <td id="cell6" onclick="getCellPositon(6)" ondblclick="deleteAllEmoji()"><span id="bar6">----</span></td>
+            <td id="cell7" onclick="getCellPositon(7)" ondblclick="deleteAllEmoji()"><span id="bar7">----</span></td>
+            <td id="cell8" onclick="getCellPositon(8)" ondblclick="deleteAllEmoji()"><span id="bar8">----</span></td>
+          </tr>
+        </thead>
+      </table>
+      <hr>
+      <span id="cellNameText">กดเลือกห้องเพื่อทำการแก้ไข</span>
+      <br>
+      <button onclick="selectEmoji(this)">-</button>
+      <button onclick="selectEmoji(this)">🍊</button>
+      <button onclick="selectEmoji(this)">🍌</button>
+      <button onclick="selectEmoji(this)">🐻</button>
+      <button onclick="selectEmoji(this)">😺</button>
+      <button onclick="selectEmoji(this)">🙈</button>
+      <button onclick="selectEmoji(this)">🐶</button>
+      <button onclick="selectEmoji(this)">🐹</button>
+      <button onclick="selectEmoji(this)">🐸</button>
+      <button onclick="selectEmoji(this)">🐷</button>
+      <button onclick="selectEmoji(this)">🦆</button>
+      <button onclick="selectEmoji(this)">🐍</button>
+      <button onclick="selectEmoji(this)">🐴</button>
+      <button onclick="selectEmoji(this)">🐘</button>
+      <button onclick="selectEmoji(this)">🐓</button>
+      <button onclick="selectEmoji(this)">🐼</button>
+        <br>
+        <hr>
+        <button onclick="deleteEmoji()">ลบ</button>
+        <button onclick="deleteAllEmoji()">ลบทั้งห้อง</button>
+        <button onclick="window.location.reload()">รีเซต</button>
+        <br>
+        <p id="cellsList" style="display:none"></p>
+        <br>
+        <script src="nav.js"></script>
+  </body>
+  <script>
+
+  function getCellPositon(cellNum) {
+      document.getElementById('cellNameText').innerHTML = "<h>ห้องที่ " + cellNum + "<br>ให้นักเรียนเลือกตัวโน้ตตามความคิดสร้างสรรค์ของนักเรียน</h>";
+
+      //หาตำแหน่งของห้อง และนำมาเก็บไว้
+      let cellPositon = document.getElementById('cellNameText').innerHTML
+      cellPositon = cellPositon.split('');
+      let cellPositonNum = cellPositon[11]
+      document.getElementById('cellsList').innerHTML += cellPositonNum;
+
+      //ดึงข้อมูลจาก tag p และนำมาแปลงเป็น array
+      let cellsList = document.getElementById('cellsList').innerHTML;
+      let cellsListArr = cellsList.split('')
+
+      //หาค่า length ของ array
+      let cellsListArrLen = cellsListArr.length
+      //และดูค่าของ length ตัวรองสุดท้าย
+      let whiteCell = cellsListArr[cellsListArrLen - 2]
+
+
+      let cellBgColor = document.getElementById(`cell${cellNum}`)
+      cellBgColor.style.backgroundColor = "Yellow"
+
+      if (cellsListArrLen > 1) {
+        let whiteCellBgColor = document.getElementById(`cell${Number(whiteCell)}`)
+        whiteCellBgColor.style.backgroundColor = "white"
+      }
+    }
+
+    function selectEmoji(emoji) {
+      try {
+        let cellPositon = document.getElementById('cellNameText').innerHTML
+        cellPositon = cellPositon.split('');
+        let cellPositonNum = cellPositon[11]
+        document.getElementById(`bar${cellPositonNum}`).innerHTML += emoji.innerHTML;
+      } catch (e) {
+        alert("นักเรียนยังไม่ได้กดเลือกห้อง กรุณากดเลือกห้องเพื่อทำการแก้ไข ก่อนนะครับ")
+      }
+    }
+
+    function deleteEmoji() {
+      let cellPositon = document.getElementById('cellNameText').innerHTML
+      cellPositon = cellPositon.split('');
+      let cellPositonNum = cellPositon[11]
+      let noteInCurrentBar = document.getElementById(`bar${cellPositonNum}`).innerText
+      let deletedNoteInCurrentBar = noteInCurrentBar.slice(0, noteInCurrentBar.length - 1)
+      document.getElementById(`bar${cellPositonNum}`).innerText = deletedNoteInCurrentBar
+    }
+
+    function deleteAllEmoji() {
+      let cellPositon = document.getElementById('cellNameText').innerHTML
+      cellPositon = cellPositon.split('');
+      let cellPositonNum = cellPositon[11]
+      document.getElementById(`bar${cellPositonNum}`).innerText = ""
+    }
+  </script>
+</body>
+</html>

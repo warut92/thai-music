@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ฝึกอ่านโน้ตดนตรีไทย</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+  <body>
+    <center>
+      <h3>ฝึกอ่านโน้ตดนตรีไทย แบบที่ 4</h3>
+      <h>ให้นักเรียนอ่าน 2 แบบฝึก</h>
+      <h2>-xxx</h2>
+      <table style="width:350px;table-layout:fixed">
+        <thead style="text-align:center">
+          <tr>
+            <td>-<span id="bar1">---</span></td>
+            <td>-<span id="bar2">---</span></td>
+            <td>-<span id="bar3">---</span></td>
+            <td>-<span id="bar4">---</span></td>
+            </td>
+          </tr>
+        </thead>
+      </table>
+      <!-- <table style="width:300px;table-layout:fixed">
+        <thead style="text-align:center">
+          <tr>
+            <td>-<span id="bar10">-</span>-<span id="bar14">-</span></td>
+            <td>-<span id="bar11">-</span>-<span id="bar15">-</span></td>
+            <td>-<span id="bar12">-</span>-<span id="bar16">-</span></td>
+            <td>-<span id="bar13">-</span>-<span id="bar17">-</span></td>
+            </td>
+          </tr>
+        </thead> -->
+      </table>
+      <br>
+      <button id="btn" onclick="changeText();">เริ่มสุ่ม</button>
+      <br>
+  </body>
+  <script>
+    function changeText() {
+        if (document.getElementById("btn").textContent == "หยุด") {
+          document.getElementById("btn").textContent = "เริ่มสุ่ม";
+          stop();
+        } else {
+          document.getElementById("btn").textContent = "หยุด";
+          start();
+        }
+    }
+
+
+    var interval = 0;
+
+    function start() {
+      interval = setInterval(getRandomEmoji, 10);
+      setTimeout(() => {
+        stop()
+        changeText()
+      }, 1000)
+      }
+
+    function stop() {
+      clearInterval(interval);
+      }
+
+    function getRandomEmoji() {
+      const emoji = ['🦑','🍄','🐻','🍊','🍌','🌶️']
+      // const emoji = ['🐶','🐱','🐻','🐷','🍌','🦑','-','-','-','-']
+      const index1 = Math.floor(Math.random() * 6);
+      document.getElementById("bar1").innerHTML = emoji[index1].repeat(3);
+      const index2 = Math.floor(Math.random() * 6);
+      document.getElementById("bar2").innerHTML = emoji[index2].repeat(3);
+      const index3 = Math.floor(Math.random() * 6);
+      document.getElementById("bar3").innerHTML = emoji[index3].repeat(3);
+      const index4 = Math.floor(Math.random() * 6);
+      document.getElementById("bar4").innerHTML = emoji[index4].repeat(3);
+    }
+  </script>
+  <script src="nav.js"></script>
+
+</body>
+
+</html>
