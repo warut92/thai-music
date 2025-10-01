@@ -1,223 +1,315 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-<link rel="stylesheet" href="style.css">
-  <title>โปรแกรมโน้ตดนตรีไทย Online</title>
-  <style>
-    .button-group {
-      display: flex;
-      gap: 10px;
-    }
-  </style>
+  <title>ดรมฟ Online</title>
+  <meta name="description" content="โปรแกรมเล่นโน้ตดนตรีไทย ออนไลน์ ฟรี" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="icon.png">
+  <link rel="stylesheet" href="https://unpkg.com/7.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="main.js" type="text/javascript"></script>
 </head>
 <body>
+  <div class="container">
+    <div class="page-header">
+      <div class="center"><img src="icon.png" alt="" height="15px"> ดรมฟ Online - เล่นโน้ตดนตรีไทยออนไลน์</span>
+        </div>
+      <!-- <ul role="menubar" class="can-hover">
+        <li role="menuitem" tabindex="0" aria-haspopup="true">
+          แฟ้ม
+          <ul role="menu">
+            <li role="menuitem">
+              <a href="#menubar">
+                เปิด <span>Ctrl+O</span>
+              </a>
+            </li>
+            <li role="menuitem">
+              <a href="#menubar">
+                บันทึก <span>Ctrl+S</span>
+              </a>
+            </li>
+            <li role="menuitem" class="has-divider">
+              <a href="#menubar">
+                บันทึกเป็น... <span>Ctrl+Shift+S</span>
+              </a>
+            </li>
+            <li role="menuitem"><a href="#menubar">ออก</a></li>
+          </ul>
+        </li>
+        <li role="menuitem" tabindex="0" aria-haspopup="true">
+          แก้ไข
+          <ul role="menu">
+            <li role="menuitem"><a href="#menubar">เลิกทำ</a></li>
+            <li role="menuitem"><a href="#menubar">คัดลอก</a></li>
+            <li role="menuitem"><a href="#menubar">ตัด</a></li>
+            <li role="menuitem" class="has-divider"><a href="#menubar">แปะ</a></li>
+            <li role="menuitem"><a href="#menubar">ลบ</a></li>
+            <li role="menuitem"><a href="#menubar">ค้นหา...</a></li>
+            <li role="menuitem"><a href="#menubar">แทนที่...</a></li>
+            <li role="menuitem"><a href="#menubar">ไปที่...</a></li>
+          </ul>
+        </li>
+        <li role="menuitem" tabindex="0" aria-haspopup="true">
+          ดู
+          <ul role="menu">
+            <li role="menuitem" tabindex="0" aria-haspopup="true">
+              ขยาย
+              <ul role="menu">
+                <li role="menuitem"><button>ขยายเข้า</button></li>
+                <li role="menuitem"><button>ขยายออก</button></li>
+              </ul>
+            </li>
+            <li role="menuitem"><a href="#menubar">แทบสถานะ</a></li>
+          </ul>
+        </li>
+        <li role="menuitem" tabindex="0" aria-haspopup="true">
+          แบ่งปัน
+      </li>
+        <li role="menuitem" tabindex="0" aria-haspopup="true">
+          ช่วยเหลือ
+          <ul role="menu">
+            
+                <optgroup label="link"><a href="http://https://github.com/warut92/mymusicnotation" target="_blank" rel="noopener noreferrer"></a></optgroup>
+            </select>
+            <li role="menuitem"><a href="about.html">คำอธิบาย</a></li>
+            <li role="menuitem"><a href="https://github.com/warut92/thai-music/tree/main/thai-note">เกี่ยวกับ...</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div> -->
+    <select id="melody" onchange="changeMelody()">
+      <option value="เลือกเพลงตัวอย่าง:">เลือกเพลงตัวอย่าง:
+        <optgroup label="เพลงไทยเดิม">
+  <option value="ลาวครวญ 2 ชั้น:
+/----/----/->ซ-ม/รดรม/----/-ด-ร/-ด-ม/-รรร/
+/---ซ/-ซซซ/ลซมซ/-ล-ดํ/---ดํ/-ดํดํดํ/-ซ-ม/รด-ร/">ลาวครวญ 2 ชั้น
+  <option value="ลาวต่อนก 2 ชั้น:
+/----/----/>รมซล/ซม-ซ/----/-ดํ-ล/-ซ-ม/รด-ร/
+/---ม/---ร/---ดํ/มํรํดํล/-ซ-ด/-ร-ม/ซลซม/-ร-ด/">ลาวต่อนก 2 ชั้น
+  <option value="ลาวจ้อย ชั้นเดียว(150):
+/-ดรม/ซด-ร/-ดรม/ซล-ซ/-มซม/รดรม/รมซม/ซล-ซ/
+/----/รมซล/--ดํล/ซม-ซ/-มรด/-ร-ม/รด-ร/-มรด/">ลาวจ้อย ชั้นเดียว
+  <option value="แขกบรเทศ ชั้นเดียว(150):
+/ดํลลล/ดํลลล/ดํซซซ/ดํลซม/ซมรด/ซดรม/ซลซม/ซมรด/
+/มมซร/มรดล/ซมซล/ซลดํรํ/ซมรด/ซดรม/ซลซม/ซมรด/">แขกบรเทศ ชั้นเดียว
+  <option value="ลาวเสี่ยงเทียน 2 ชั้น:
+(ท่อน 1)
+/----/----/->ลลล/ซลดํซ/---ฟ/-ม--/-ร-ซ/-ลซซ/
+/----/----/-ลลล/ซลดํซ/---ฟ/-ม--/-ร-ซ/-ลซซ/
+/-ลซม/ซรมซ/--ดํรํ/มํรํดํล/--ดํล/ซมซล/-ดํรํมํ/-รํ-ดํ/
+/-มํ-รํ/-ดํ-มํ/--ดํรํ/มํรํดํล/--ดํล/ซมซล/-ดํรํมํ/-รํ-ดํ/
+(ท่อน 2)
+/----/----/ซลซม/ซรมซ/----/----/ซลซม/รด-ร/
+/----/----/ซลซม/ซรมซ/----/----/ซลซม/รด-ร/
+/-มํ-รํ/-ดํ-มํ/--ดํรํ/มํรํดํล/--ดํล/ซมซล/-ดํรํมํ/-รํ-ดํ/
+/-มํ-รํ/-ดํ-มํ/--ดํรํ/มํรํดํล/--ดํล/ซมซล/-ดํรํมํ/-รํ-ดํ/">ลาวเสี่ยงเทียน 2 ชั้น
+</optgroup>
+<optgroup label="เพลงป๊อป">
+  <option value="ลูกอม(120):
+/--->ซ/ลดํดํ-/---มํ/รํดํรํ-/---ซ/ลดํลดํ/---มํ/รํดํรํ-/
+/--มํ-/ซํมํรํดํ/---ล/ล-ซ-/ดํ-ดํ-/--ซฟ/-มฟ-/ล-มํ-/รํ---/">ลูกอม
+  <option value="สายตาหลอกกันไม่ได(120)้:
+/--->ท/-ดํ-รํ/---ท/ลซ-ซ/-ม-ซ/-รํ-รํ/--ท-/
+/----/---รํ/ดํทดํท/-ซซ-/มร--/-ม-ซ/-ล-ท/--xดํ/--xท/
+/--xท/-ดํ-รํ/---ท/ลซ-ซ/-ม-ซ/-รํ-รํ/--ท-/
+/----/--ทท/ดํทดํรํ/ท-ซ-/--มร/-มซ-/-ล-ซ/---x/">สายตาหลอกกันไม่ได้
+  <option value="ตายทั้งเป็น(120):
+/----/--->ท/-ล-ล/-ซล-/---ซ/-ล-ท/-ล-ล/-ซล-/
+/---ท/-รํ-มํ/-รํ-รํ/-ทรํ-/----/-รํ-มํ/-รํ-รํ/-ทรํ-/
+/---รํ/-มํ-ท/-ล-ล/-ซล-/---ซ/-ล-ท/-ล-ล/-ซล-/
+/---ท/-รํ-มํ/-รํ-รํ/-ทรํ-/----/-รํ-มํ/-รํ-รํ/-ทรํ-/
+/---มํ/---ซํ/----/-มํ--/----/---ซํ/-ซํ-ซํ/-ซํ-ฟํ#/
+/-มํ-มํ/-มํ-มํ/----/-รํ--/----/-ฟํ--/-ฟํ-ฟํ/-มํมํ-/
+/-ท-ดํ/-รํ-ท/---ซ/-ล--/----/-ล-ท/---ล/---ซ/
+/---ล/---ซ/----/----/----/----/----/----/
+/-ซ-ซ/-ซ-ซํ/----/-มํ--/----/---ซํ/-ซํ-ซํ/-ซํ-ฟํ#/
+/-มํ-มํ/-มํ-มํ/----/-รํ---/---/-ฟํ--/-ฟํ-ฟํ/-มํมํ-/
+-ท-ดํ/-รํ-ท/---ล/-ล--/----/-ล-ท/---ล/---ซ/
+---ล/---ซ/----/----/----/----/----/----/">ตายทั้งเป็น
+  <option value="แก้มน้องนางนั้นแดงกว่าใคร(120):
+/----/--->ล/ซลซล/ทลซม/
+/-ร--/-มซล/ซลซล/-มํรํ-/
+/----/-ทรํมํ/รํมํซํมํ/รํทท-/
+/----/-ทรํล/ทลซม/-ซล-/">แก้มน้องนางนั้นแดงกว่าใคร
+  <option value="ทักครับ - Lipta(160):
+/----/->ซ-ท/--รํท/-ล-ซ/---ม/-ซ-ท/--รํท/-ล-ซ/
+/----/-ซ-ฟ#/--ซฟ#/-ม-ร/---ทฺ/-ร-ฟ#/--ซฟ#/-ม-ร/
+/----/-ซ-ท/--รํท/-ล-ซ/---ม/-ซ-ท/--รํท/-ล-ซ/
+/----/-มซฟ#/--ซฟ#/-ม-ร/---ม/-ล--/-ซ--/-">ทักครับ - Lipta
+</optgroup>
+<optgroup label="เพลงลูกทุ่ง">
+  <option value="สาวสวนแตง:
+/----/--->ดํ/--ลซ/ฟซลดํ/--ซล/ดํลซฟ/-ฟรฟ/ซลฟซ/
+/----/ดํลซฟ/--ซล/ดํลซฟ/---ร/ฟซฟด/-รฟซ/ดํลซฟ/">สาวสวนแตง
+  <option value="นิราศเวียงพิงค์:
+/----/--->ด/--รม/ซลซล/--ดํม/ซลซล/--ซม/ซมรม/
+/----/xมซด/--รม/รมลฺด/--รม/รมซด/--ซฺด/รมซม/
+/----/-มซล/--ซม/รมดร/--มร/ดลฺซฺด/-ลฺซฺลฺ/ดลฺซฺลฺ/
+/----/---ด/--รม/ซลซล/--ดํม/ซลซล/--ซม/ซมรม/
+/----/xมซด/--รม/รมลฺด/--รม/รมซด/--ซฺด/รมซม/
+/----/-มซล/--ซม/รมดร/--มร/ดลฺซฺด/-ลฺซฺลฺ/ดลฺซฺลฺ/---">นิราศเวียงพิงค์
+        </optgroup>
+</select>
+    <div class="rows">
 
-  <h2>โปรแกรมโน้ตดนตรีไทย Online</h2>
-  <textarea id="noteInput" placeholder="ตัวอย่าง: ---1 2352 ---- -3-2" oninput="autoResize(this); updateHash()"></textarea>
+      <div>
+        <!-- <textarea id="thm1">testarea</textarea> -->
+        <button class="" onmousedown="convert();rtttlPlay.play(document.querySelector('.rtttl').value)">▶เล่น</button>
+        <button type="button" class="" aria-label="Play" onClick="rtttlPlay.stop()">⏹หยุด</button>
+        <p><textarea type="text" id="thm" value="" class="" rows="3" cols="32" oninput="addRowTextarea();" onfocus="addRowTextarea();" placeholder="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร">
+</textarea></p>
+        <script>
+        </script>
+        <script>
+        </script>
+        <br>
+        <div id="keyboard" style="display:none">
+          <br>
+          <button name="button" id="btn1" value="ด" onclick="keyboardInput(this)">ด</button>
+          <button name="button" id="btn1" value="ร" onclick="keyboardInput(this)">ร</button>
+          <button name="button" id="btn2" value="ม" onclick="keyboardInput(this)">ม</button>
+          <button name="button" id="btn3" value="ฟ" onclick="keyboardInput(this)">ฟ</button>
+          <button name="button" id="btn4" value="ซ" onclick="keyboardInput(this)">ซ</button>
+          <button name="button" id="btn5" value="ล" onclick="keyboardInput(this)">ล</button>
+          <button name="button" id="btn6" value="ท" onclick="keyboardInput(this)">ท</button>
+          <button name="button" id="btn7" value="ํ" onclick="keyboardInput(this)">สูง</button>
+          <button name="button" id="btn8" value="ฺ" onclick="keyboardInput(this)">ต่ำ</button>
+          <br>
+          <button name="button" id="btn9" value="-" onclick="keyboardInput(this)">-</button>
+          <button name="button" id="btn10" value="/" onclick="keyboardInput(this)">/</button>
+          <button name="button" id="btn10" value="#" onclick="keyboardInput(this)">#</button>
+          <button name="button" id="btn11" value="\n" onclick="keyboardInput(this)">Enter</button>
 
-  <div class="button-group">
-    <button id="playBtn" onclick="playFromInput()">▶️ เล่น</button>
-    <button id="pauseBtn" onclick="pausePlayback()" disabled>⏸️ หยุด</button>
-    <!-- <button onclick="copyLink()">📋 คัดลอกลิงก์</button> -->
+        </div>
+        <script>
+          //ฟังก์ชันคีย์บอร์ดสำหรับมือถือ
+          //ใส่ค่าโน้ต/สัญญลักษณ์ที่ต้องการ
+          function keyboardInput(note) {
+            let thmNote = document.getElementById('thm')
+            if (thmNote.value || !thmNote.value) {
+              let noteVal = note.value
+              thmNote.value += noteVal
+            }
+          }
+          //แสดง/ซ่อนคีย์บอร๋ด
+          function showKeyboard() {
+            let k = document.getElementById('keyboard')
+            if (k.style.display === "none") {
+              k.style.display = "block"
+            } else {
+              k.style.display = "none"
+            }
+          }
+        </script>
+        <details>
+          <summary>แผงควบคุมเพิ่มเติม</summary>
+          <button type="button" class="" aria-label="Play" onClick="getSongHash()">สร้างลิงก์</button>
+          <!-- <textarea id="hashlink"></textarea> -->
+          <!-- <button type="button" class="" aria-label="Play" onClick="showKeyboard()">คีย์บอร์ด</button> -->
+          แปลงด้วยตนเอง: <button class="" onClick="changeText()" id="btn1">1234</button>
+          <button id="toggle" class="">ปุ่มสลับการแปลงโน้ตแบบอัตโนมัติ</button>
+          <br>
+          <input type="file" onchange="readFile(this)" class=""></input>
+          <button class="" type="button" value="save" onclick="saveTextAsFile()">
+            <span>บันทึกไฟล์</span>
+          </button>
+          <br>
+          ชนิดของคลื่นเสียง:<select id="type">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="triangle">Triangle</option>
+          </select>
+          คีย์:<select id="key">
+            <option value="0">A♯/B♭</option>
+            <option value="1">C</option>
+            <option value="2">C♯/D♭</option>
+            <option value="3">D</option>
+            <option value="4">D♯/E♭</option>
+            <option value="5">E</option>
+            <option value="6">F</option>
+            <option value="7">F♯/G♭</option>
+            <option value="8">G</option>
+            <option value="9">G♯/A♭</option>
+            <option value="10">A</option>
+          </select>
+          ช่วงทบเสียง:<select id="octave">
+            <option value="3">+2</option>
+            <option value="2">+1</option>
+            <option value="1" selected="selected">0</option>
+            <option value="-2">-1</option>
+            <option value="-3">-2</option>
+          </select><br>
+          <a href="https://github.com/warut92/mymusicnotation" target="_blank" rel="noopener noreferrer">คลังโน้ตดนตรีไทย (ยังไม่สมบูรณ์)</a>
+          <br>
+          <a href="https://note.warut.net" target="_blank" rel="noopener noreferrer">คลังโน้ตดนตรีไทย note.warut.net</a>
+        </details>
+        <br>
+        <!-- <details>
+  <summary>ข้อมูลเฉพาะ</summary>
+  ความยาว: <p id="length">0</p>
+  Frequency: <p id="result">0 Hz</p>
+</details> -->
+      </div>
+      <div style="display: none;">
+        <h4>RTTTL</h4>
+        <p><textarea id="rtttl" name="rtttl" class="rtttl" rows="3" cols="100"></textarea></p>
+      </div>
+    </div>
+
+    </p>
   </div>
-
+  </div>
+  <hr />
   <script>
-    let audioCtx = null;
-    let playingOscillators = [];
-    let isPlaying = false;
+    function addRowTextarea() {
+      var lines = document.querySelector("textarea").value.split(/\r\n|\r|\n/).length;
+      document.getElementById("thm").rows = lines;
+    }
+    //
+    // // localstorage in textarea https://jsfiddle.net/9KBWF/
+    // var editor = document.querySelector("#thm");
+    // if (window.localStorage["localNote"]) {
+    //     editor.value = window.localStorage["localNote"];
+    // }
+    //
+    // editor.addEventListener("keyup", function() {
+    //     window.localStorage["localNote"] = editor.value;
+    // });
 
-    // Auto resize textarea height to fit content
-    function autoResize(textarea) {
-      textarea.style.height = 'auto'; // Reset height
-      textarea.style.height = textarea.scrollHeight + 'px'; // Set height to scrollHeight
+    //สร้างลิงก์สำหรับการแชร์
+    function getSongHash() {
+      //สร้างตัวแปรสำหรับการสร้างลิงก์ใหม่ โดยการกดปุ่มเพื่อรันฟังก์ชัน
+      let song = document.getElementById('thm').value;
+      song = song.replace(/\n/g, "%0A")
+      location.hash = song
+      // document.getElementById('hashlink').innerHTML = location.hash
+      // console.log('LOCATION.HASH string', location.hash)
     }
 
-    // Update URL hash with encoded textarea content
-    function updateHash() {
-      const ta = document.getElementById('noteInput');
-      const encoded = encodeURIComponent(ta.value);
-      history.replaceState(null, null, '#' + encoded);
-    }
-
-    // Load textarea content from URL hash on page load
-    function loadFromHash() {
-      if (location.hash.length > 1) {
-        try {
-          const decoded = decodeURIComponent(location.hash.slice(1));
-          const ta = document.getElementById('noteInput');
-          ta.value = decoded;
-          autoResize(ta);
-        } catch(e) {
-          console.warn('Error decoding URL hash:', e);
-        }
+    function loadShareSong() {
+      //โหลดเพลง หากลิงก์มีข้อมูลสำหรับโน้ต ให้ดำเนินการรับค่ามาใส่ใน textarea
+      if (location.hash) {
+        // console.log("do it!");
+        let shareSong = location.hash
+        // console.log('SHARESONG', shareSong)
+        let decodeSongSlice = shareSong.slice(1)
+        document.getElementById('thm').innerHTML = decodeURI(decodeSongSlice)
       }
     }
-
-    // Play notes from sequence
-    function playNotes(sequence) {
-      if (audioCtx) {
-        audioCtx.close();
-        audioCtx = null;
-      }
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      playingOscillators = [];
-      isPlaying = true;
-      toggleButtons();
-
-      let t = audioCtx.currentTime;
-
-      sequence.forEach(({ freq, duration }) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.frequency.value = freq;
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start(t);
-        osc.stop(t + duration);
-
-        playingOscillators.push(osc);
-
-        t += duration + 0.05;
-      });
-
-      // When all notes finished playing, reset state and buttons
-      const totalDuration = sequence.reduce((sum, n) => sum + n.duration + 0.05, 0);
-      setTimeout(() => {
-        isPlaying = false;
-        toggleButtons();
-        playingOscillators = [];
-      }, totalDuration * 1000);
-    }
-
-    // Parse input string to sequence
-    function insertSpaces(rawInput) {
-  rawInput = rawInput.replace(/\s+/g, '');
-
-  // Replace bracketed groups like [12]
-  rawInput = rawInput.replace(/(\[[1-7]+\])/g, ' $1 ');
-console.log(rawInput);
-  // Replace regular notes like 2-- or 3*.
-  return rawInput.replace(/([1-7][*.\-]*)/g, ' $1 ').trim();
-}
-
-
-function parseInputToSequence(input) {
-  const sequence = [];
-
-// Step 1: Replace 8 -> 1* and 9 -> 2*
-input = input.replace(/8/g, '1*').replace(/9/g, '2*');
-
-  // Normalize: remove whitespace and insert space between note patterns or brackets
-  input = input.replace(/\s+/g, '');
-
-  // Match individual notes or groups like [12*3]
-  const tokens = input.match(/\[[1-7*.\-]+\]|[1-7][*.\-]*/g);
-  if (!tokens) return [];
-
-  tokens.forEach(token => {
-    if (token.startsWith('[') && token.endsWith(']')) {
-      // Group of notes inside square brackets: [12]
-      const group = token.slice(1, -1);
-      const notes = group.match(/[1-7][*.\-]*/g);
-      if (!notes) return;
-
-      const groupDuration = 0.3; // Base total duration for group
-      const eachDuration = groupDuration / notes.length;
-
-      notes.forEach(n => {
-        const match = n.match(/^([1-7])([*\.]*)(-*)$/);
-        if (!match) return;
-
-        const [_, num, octaves, _dashes] = match;
-        const noteIndex = parseInt(num) - 1;
-        let octaveShift = 0;
-
-        for (let ch of octaves) {
-          if (ch === '*') octaveShift++;
-          if (ch === '.') octaveShift--;
-        }
-
-        const baseFreq = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88][noteIndex];
-        const freq = baseFreq * Math.pow(2, octaveShift);
-        sequence.push({ freq, duration: eachDuration });
-      });
-
-    } else {
-      // Single note like 3-- or 4*.
-      const match = token.match(/^([1-7])([*\.]*)(-*)$/);
-      if (!match) return;
-
-      const [_, num, octaves, dashes] = match;
-      const noteIndex = parseInt(num) - 1;
-      let octaveShift = 0;
-
-      for (let ch of octaves) {
-        if (ch === '*') octaveShift++;
-        if (ch === '.') octaveShift--;
-      }
-
-      const baseFreq = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88][noteIndex];
-      const freq = baseFreq * Math.pow(2, octaveShift);
-      const duration = 0.3 + dashes.length * 0.3;
-
-      sequence.push({ freq, duration });
-    }
-  });
-
-  return sequence;
-}
-
-
-    // Play from textarea input
-    function playFromInput() {
-      if (isPlaying) return; // prevent overlapping playbacks
-      const input = document.getElementById("noteInput").value;
-      const sequence = parseInputToSequence(input);
-      if (sequence.length > 0) playNotes(sequence);
-    }
-
-    // Pause playback (stop all oscillators)
-    function pausePlayback() {
-      if (!audioCtx || !isPlaying) return;
-      playingOscillators.forEach(osc => {
-        try {
-          osc.stop();
-        } catch(e) {}
-      });
-      audioCtx.close();
-      audioCtx = null;
-      playingOscillators = [];
-      isPlaying = false;
-      toggleButtons();
-    }
-
-    // Enable/disable play and pause buttons depending on state
-    function toggleButtons() {
-      document.getElementById('playBtn').disabled = isPlaying;
-      document.getElementById('pauseBtn').disabled = !isPlaying;
-    }
-
-    // Copy current URL (with hash) to clipboard
-    function copyLink() {
-      const url = window.location.href;
-      navigator.clipboard.writeText(url).then(() => {
-        alert('Link copied to clipboard!');
-      }).catch(err => {
-        alert('Failed to copy: ' + err);
-      });
-    }
-
-    window.onload = () => {
-      loadFromHash();
-      const ta = document.getElementById("noteInput");
-      autoResize(ta);
-      toggleButtons();
-    };
+    loadShareSong()
   </script>
 
+  <script src="app.js"></script>
+  <script src="converter.js"></script>
+<div class="center">
+  <a href="./about.html">คำอธิบาย</a>
+  <br>
+  <a href="https://github.com/warut92/thai-music/tree/main/thai-note">GitHub</a>
+</div>
 </body>
+<script>
+</script>
+
 </html>

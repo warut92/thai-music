@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <title>แปลงโน้ตไทยเป็น RTTTL</title>
+  <meta name="description" content="Convert thai notation to RTTL" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="icon.png">
+  
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>คำอธิบาย - ดรมฟ Online</h1>
+    </div>
+    <h4>ที่มา</h4>
+    <p>ประมาณปี 2022 ได้เรียนรู้การเล่นดนตรีจากการเขียนโค้ด แล้วไปพบกับ <a href="https://github.com/DDRBoxman/RepRapRingtone">RepRapRingtone</a> และ <a href="https://adamonsoon.github.io/rtttl-play/">rtttl-play</a> ซึ่งเป็นโน้ตในรูปแบบที่เรียนกว่า RTTTL (สามารถอ่านเพิ่มได้ที่ <a href="https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language" target="_blank" rel="noopener noreferrer">Ring Tone Text Transfer Language</a> จึงได้นำมาเรียนรู้และประยุกต์สร้างเป็นเว็บสำหรับเล่นเสียงจากโน้ตดนตรีไทย โดยเวอร์ชันแรกจะเป็นตัวแปลงโน้ตดนตรีไทยไปเป็นโน้ตระบบ RTTTL โดยเป็นโปรเจคแรกที่ทำให้ได้เรียนรู้เรื่องของ javascript แบบที่มีความสับซ้อนขึ้นมา สามารถเยี่ยมชมได้ที่ <a href="http://warut92.github.io/rtttl-th" target="_blank" rel="noopener noreferrer">warut92.github.io/rtttl-th</a></p>
+    <h4>การทำงาน</h4>
+เป็นการพิมพ์ตัวโน้ตดนตรีไทยในระบบ ดรมฟ หรือ ระบบ 1-9 จากนั้นโปรแกรมจะแปลงโน้ตให้เป็นระบบ RTTTL และจะสังเคราะห์เสียงพื้นฐานจาก Web Audio API ออกมา (สำหรับการเล่นในโทรศัพท์มือถือ ต้องปิดโหมดการรบกวน)
+    <h4>ตัวโน้ตและสัญลักษณ์</h4>
+    ตัวโน้ตแต่ละตัวมีค่า 1 จังหวะย่อย
+    <table cellpadding="5" cellspacing="1" border="1">
+    <tr><td>โน้ตไทย</td><td>โน้ตตัวเลข</td><td>ความหมาย</td></tr>
+    <tr><td>ด</td><td>1</td><td>เสียงโด </td></tr>
+    <tr><td>ร</td><td>2</td><td>เสียงเร</td></tr>
+    <tr><td>ม</td><td>3</td><td>เสียงมี</td></tr>
+    <tr><td>ฟ</td><td>4</td><td>เสียงฟา</td></tr>
+    <tr><td>ซ</td><td>5</td><td>เสียงซอล</td></tr>
+    <tr><td>ล</td><td>6</td><td>เสียงลา</td></tr>
+    <tr><td>ท</td><td>7</td><td>เสียงที</td></tr>
+    <tr><td>-ํ</td><td>*</td><td>เสียงสูง</td></tr>
+    <tr><td>-ฺ</td><td>.</td><td>เสียงต่ำ</td></tr>
+    </table>
+    <br>
+    <table cellpadding="5" cellspacing="1" border="1">
+    <tr><td>สัญลักษณ์</td><td>ความหมาย</td></tr>
+    <tr><td>-</td><td>แสดงความยาว 1 จังหวะย่อย</td></tr>
+    <tr><td>x</td><td>แสดงความเงียบ 1 จังหวะย่อย</td></tr>
+
+    <tr><td>/</td><td>ห้องเพลง</td></tr>
+    <tr><td>></td><td>เริ่มเล่นที่</td></tr>
+    <tr><td>'</td><td>สัญญลักษณ์กำกับโน้ตครึ่งหนึ่งของ -</td></tr>
+    </table>
+    <br>
+    <b>ไวยากรณ์</b> <pre>ชื่อเพลง (ระบุ BPM) : โน้ตดนตรี</pre>
+    <p>หากต้องการระบุข้อความเพิ่มเติม ให้ระบุในเครื่องหมายวงเล็บ ที่ใดก็ได้หลังเครืื่องหมาย <code>:</code> เช่น <code>(ท่อน 1)</code>
+    <!-- <p>หมายเหตุ : ยังไม่รองรับโน้ตสบัด</p> -->
+<h4>Log</h4>
+    <pre>
+22-12-11: เพิ่มฟังก์ชันเล่นเฉพาะตำแหน่ง ด้วยเครื่องหมาย <code>></code>/การระบุ BPM ด้วยวงเล็บหลังชื่อเพลง
+23-02-27: สร้างแฮชลิงก์ สำหรับการแชร์เพลงด้วย URL
+23-03-05: เพิ่มแป้นพิมพ์ตัวโน้ตสำหรับมือถือ (ปิดการทำงานไว้)
+23-03-05: เพิ่มตัวแปลงโน้ตสบัต ด้วยสัญลักษณ์ '
+25-06-20: เพิ่มตัวแปลงโน้ตตัวเลขเป็นตัวอักษรขณะพิมพ์
+25-10-1: ใช้ธีม https://github.com/khang-nd/7.css
+    </pre>
+<h4>To Do</h4>
+- ทำให้สวยน่าใช้งาน เหมาะสำหรับมือถือ
+    <hr>
+    <center>
+      <a href="index.html">กลับหน้าหลัก</a>
+      <br>
+      <a href="https://github.com/warut92/rtttl-th/">GitHub</a>
+    </center>
+  </div>
+
+</body>
+
+</html>
