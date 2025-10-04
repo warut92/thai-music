@@ -10,6 +10,7 @@ var rtttlPlay = (function () {
   //  RTTTL PARSER
   // =========================
   function parse(rtttl) {
+    console.log(rtttl);
     var REQUIRED_SECTIONS_NUM = 3;
     var SECTIONS = rtttl.split(':');
 

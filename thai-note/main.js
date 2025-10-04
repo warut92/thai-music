@@ -1,38 +1,64 @@
 //ฟังก์ชันแปลงตัวโน้ตไทยเป็น rtttl
 let splitedNote = ""
+let pureNote = []
+let note = ""
+let songName = ""
 function convert() {
+  
   thmtextarea = document.getElementById('thm');
 
-  data = thmtextarea.value;
-  // console.log(data);
-  i = data.split(":");
-  nameWithBeat = i[0];
-  beat = nameWithBeat.split("(");
-  // console.log('BEAT', beat)
-  name = beat[0]
-  splitedBeat = beat[1]
-  //หากไม่ได้กำหนดไว้ จะตั้งค่าปริยายไว้ 100
-  if (splitedBeat === undefined) {
-    splitedBeat = "100 "
-  }
-  splitedBeat = splitedBeat.slice(0, -1)
-  // console.log('SPLITEDBEAT', splitedBeat)
+  let allText = thmtextarea.value;
 
-  pureNote = i[1];
+  const ALLTEXT_ARR = allText.split(":");
 
-  //split เพื่อการเลือกเล่นเสียงเฉพาะที่
-  splitedNote = pureNote.split(">");
-  
-  note = splitedNote[1];
-  if (splitedNote[1] === undefined) {
-    note = pureNote
-  }
-  //การแปลงโน้ต
+  //หากเป็นโน้ตฆ้องวงใหญ่ จะต้องทำการเรียงโน้ตให้ใหม่
+  if (thmtextarea.value.trim().startsWith('[ฆ้องวงใหญ่]')) {
+    let twoLineNote = ALLTEXT_ARR[1].toString()
+    TWOLINENOTE = twoLineNote.split("\n");
+    //ลบเอร์เรย์ที่ว่าง ๆ
+    const cleanedTWOLINENOTE = TWOLINENOTE.filter(subArray => subArray.length > 0);
+    //นำมาเลือกบรรทัดบน-ล่างและทำการจัดเรียง
+    const upLine = cleanedTWOLINENOTE.filter((s, i) => (i + 1) % 2 !== 0).concat("$")
+    const downLine = cleanedTWOLINENOTE.filter((s, i) => (i + 1) % 2 === 0)
+    pureNote = upLine.concat(downLine)
+    note = pureNote.toString()
+    const nameWithBeat = ALLTEXT_ARR[0].split("(");
+    // console.log('BEAT', beat)
+    songName = nameWithBeat[0]
+    beat = nameWithBeat[1]
+    //หากไม่ได้กำหนดไว้ จะตั้งค่าปริยายไว้ 100
+    if (beat === undefined) {
+      beat = "100 "
+    }
+    beat = beat.slice(0, -1)
+  } else { 
+          const nameWithBeat = ALLTEXT_ARR[0].split("(");
+          // console.log('BEAT', beat)
+          songName = nameWithBeat[0]
+          beat = nameWithBeat[1]
+          //หากไม่ได้กำหนดไว้ จะตั้งค่าปริยายไว้ 100
+          if (beat === undefined) {
+            beat = "100 "
+          }
+          beat = beat.slice(0, -1)
+
+          pureNote = ALLTEXT_ARR[1];
+          console.log(pureNote);
+        
+          //split เพื่อการเลือกเล่นเสียงเฉพาะที่
+          splitedNote = pureNote.split(">");
+          
+          note = splitedNote[1];
+          if (splitedNote[1] === undefined) {
+            note = pureNote
+          }
+    }
+  //การทำความสะอาดโน้ต
+  console.log(note);
   note = note.replace(/\s/g, '');
-
   note = note.replace(/\n/g, '');
-
   note = note.replace(/\//g, '');
+  note = note.replace(/\,/g, '');
 
   //ลบ string ที่อยู่ในวงเล็บ คือเราจะไม่แปลงอะไรในวงเล็บ ก็เลยต้องลบทิ้งเสีย
   note = note.replace(/ *\([^)]*\) */g, "");
@@ -427,43 +453,24 @@ function convert() {
   note = note.replace(/'8/g, "16")
 
   // ลบ string สุดท้าย
-  var n = note.slice(0, -1);
+  var noteSlice = note.slice(0, -1);
 
-  //ดึงค่า splitedBeat นำมาใส่
-  var output = name + ":d=8,o=5,b=" + splitedBeat + ":" + n;
-  document.getElementById('rtttl').value = output;
- // to do ...
-//   function positionOnNote() {
-//     splitedNote //โน้ตที่จะนำมาเล่น มาเป็นอาร์เรย์ 0, 1
-//     // console.log('SPLITEDNOTE', splitedNote)
-//     //ตรวจสอบความยาวของข้อมูลอาร์เรย์โน้ต
-//     let indexOfNote = ""
-//     //ถ้าความยาวของอาร์เรย์เท่า่กับ 1 ให้ใช้ indexOfNote ลำดับที่ 0 ถ้าไม่ก็ใช้ 1 (สร้างตรงนี้เพื่อจะไปเลือกอาร์เรย์ของ splitedNote)
-//     if (splitedNote.length === 1) {
-//       indexOfNote = 0
-//     } else {
-//       indexOfNote = 1
-//     }
-//     let noteForPlay = splitedNote[indexOfNote] // เอาเฉพาะ 1
-//     noteForPlay = noteForPlay.split("") // นำมาทำให้โน้ตแต่ละตัวเป็นอาร์เรย์ทุกตัว
-//     // console.log('NOTEFORPLAY', noteForPlay)
-//     //สัญญลักษณ์ที่ต้องการค้นหา
-//     let slash = "/"
-//     //หาเฉพาะข้อมูลอาร์เรย์ของสัญลักษณ์
-//     let filterSigns = noteForPlay.filter(sign => sign == slash)
-//     // console.log('FILTERSIGNS', filterSigns)
-//     //หา index ของ filterSigns
-//     let indexsOfSign = [];
-//     noteForPlay.filter(function(elem, index, array) {
-//       if(elem === slash) {
-//         //นำ index ของสัญลักษณ์นำมาร่วมกันหมดเป็นอาร์เรย์
-//         indexsOfSign.push(index);
-//         // console.log('INDEXSOFSIGN.PUSH(INDEX)', indexsOfSign)
-//         }
-//       })
-//       return indexsOfSign;
-//   }
-// positionOnNote()
+  if (thmtextarea.value.trim().startsWith('[ฆ้องวงใหญ่]')) {
+    const ALLNOTE_ARR = noteSlice.split('$')
+    let upLineSlice = ALLNOTE_ARR[0].slice(0, -2);
+    // upLineSlice = upLineSlice.replace(/,,/g,",")
+    let downLineSlice = ALLNOTE_ARR[1].slice(1, -1);
+    // downLineSlice = downLineSlice.replace(/,,/g,",")
+    console.log(upLineSlice);
+    console.log(downLineSlice);
+    document.getElementById('rtttl').value = songName + ":d=8,o=5,b=" + beat + ":" + upLineSlice;
+    document.getElementById('rtttl1').value = songName + ":d=8,o=5,b=" + beat + ":" + downLineSlice;
+
+  } else {
+    //ดึงค่า splitedBeat นำมาใส่
+    var output = songName + ":d=8,o=5,b=" + beat + ":" + noteSlice;
+    document.getElementById('rtttl').value = output;
+  } 
 }
 //ฟังก์ชันสลับการแสดงผลตัวหนังสือของฟังก์ชันแปลงตัวเลขเป็นตัวโน้ตไทยและกลับกัน
 function changeText() {
