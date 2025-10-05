@@ -17,9 +17,18 @@
       <h1>คำอธิบาย - ดรมฟ Online</h1>
     </div>
     <h4>ที่มา</h4>
-    <p>ประมาณปี 2022 ได้เรียนรู้การเล่นดนตรีจากการเขียนโค้ด แล้วไปพบกับ <a href="https://github.com/DDRBoxman/RepRapRingtone">RepRapRingtone</a> และ <a href="https://adamonsoon.github.io/rtttl-play/">rtttl-play</a> ซึ่งเป็นโน้ตในรูปแบบที่เรียนกว่า RTTTL (สามารถอ่านเพิ่มได้ที่ <a href="https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language" target="_blank" rel="noopener noreferrer">Ring Tone Text Transfer Language</a> จึงได้นำมาเรียนรู้และประยุกต์สร้างเป็นเว็บสำหรับเล่นเสียงจากโน้ตดนตรีไทย โดยเวอร์ชันแรกจะเป็นตัวแปลงโน้ตดนตรีไทยไปเป็นโน้ตระบบ RTTTL โดยเป็นโปรเจคแรกที่ทำให้ได้เรียนรู้เรื่องของ javascript แบบที่มีความสับซ้อนขึ้นมา สามารถเยี่ยมชมได้ที่ <a href="http://warut92.github.io/rtttl-th" target="_blank" rel="noopener noreferrer">warut92.github.io/rtttl-th</a></p>
+    <p>ช่วงประมาณปี 2565 กระผมได้ศึกษาการสร้างเสียงดนตรีจากการเขียนโค้ด แล้วไปพบกับ <a href="https://github.com/DDRBoxman/RepRapRingtone">RepRapRingtone</a> และ <a href="https://adamonsoon.github.io/rtttl-play/">rtttl-play</a> ซึ่งเป็นโน้ตในรูปแบบที่เรียนกว่า RTTTL (สามารถอ่านเพิ่มได้ที่ <a href="https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language" target="_blank" rel="noopener noreferrer">Ring Tone Text Transfer Language</a>) จึงได้นำมาเรียนรู้และประยุกต์สร้างเป็นเว็บสำหรับเล่นเสียงจากโน้ตดนตรีไทย โดยเวอร์ชันแรกจะเป็นตัวแปลงโน้ตดนตรีไทยไปเป็นโน้ตระบบ RTTTL โดยเป็นโปรเจคแรกที่ทำให้ได้เรียนรู้เรื่องของ JavaScript แบบที่มีความสับซ้อนขึ้นมา สามารถเยี่ยมชมได้ที่ <a href="http://warut92.github.io/rtttl-th" target="_blank" rel="noopener noreferrer">warut92.github.io/rtttl-th</a></p>
     <h4>การทำงาน</h4>
 เป็นการพิมพ์ตัวโน้ตดนตรีไทยในระบบ ดรมฟ หรือ ระบบ 1-9 จากนั้นโปรแกรมจะแปลงโน้ตให้เป็นระบบ RTTTL และจะสังเคราะห์เสียงพื้นฐานจาก Web Audio API ออกมา (สำหรับการเล่นในโทรศัพท์มือถือ ต้องปิดโหมดการรบกวน)
+<br>
+<br>
+หากท่านไม่คุ้นเคยกับระบบโน้ตดนตรีไทย ดรมฟ ท่านสามารถเลือกโน้ตตัวอย่างได้ที่ปุ่ม เลือกเพลงตัวอย่าง
+<h4>ไวยากรณ์</h4> <pre>ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีไทย ระบบ ดรมฟ</pre>
+ตัวอย่าง:
+<pre>ลาวครวญ 2 ชั้น(120):
+/----/----/->ซ-ม/รดรม/----/-ด-ร/-ด-ม/-รรร/
+/---ซ/-ซซซ/ลซมซ/-ล-ดํ/---ดํ/-ดํดํดํ/-ซ-ม/รด-ร/</pre>
+<p>หากต้องการระบุข้อความเพิ่มเติม ให้ระบุในเครื่องหมายวงเล็บ ที่ใดก็ได้หลังเครื่องหมาย <code>:</code> เช่น <code>(ท่อน 1)</code> <code>(กลับต้น)</code>
     <h4>ตัวโน้ตและสัญลักษณ์</h4>
     ตัวโน้ตแต่ละตัวมีค่า 1 จังหวะย่อย
     <table cellpadding="5" cellspacing="1" border="1">
@@ -45,8 +54,7 @@
     <tr><td>'</td><td>สัญญลักษณ์กำกับโน้ตครึ่งหนึ่งของ -</td></tr>
     </table>
     <br>
-    <b>ไวยากรณ์</b> <pre>ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีไทย ระบบ ดรมฟ</pre>
-    <p>หากต้องการระบุข้อความเพิ่มเติม ให้ระบุในเครื่องหมายวงเล็บ ที่ใดก็ได้หลังเครืื่องหมาย <code>:</code> เช่น <code>(ท่อน 1)</code>
+
     <!-- <p>หมายเหตุ : ยังไม่รองรับโน้ตสบัด</p> -->
 <h4>Log</h4>
     <pre>

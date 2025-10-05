@@ -6,10 +6,16 @@ let songName = ""
 function convert() {
   
   thmtextarea = document.getElementById('thm');
-
+  if (thmtextarea.value.trim() == "") {
+    alert("กรุณากรอกโน้ตดนตรีไทยก่อนกดปุ่มเล่น")
+  }
   let allText = thmtextarea.value;
 
   const ALLTEXT_ARR = allText.split(":");
+
+  if (ALLTEXT_ARR.length < 1) {
+    alert("รูปแบบของโน้ตไม่ถูกต้อง")
+  }
 
   //หากเป็นโน้ตฆ้องวงใหญ่ จะต้องทำการเรียงโน้ตให้ใหม่
   if (thmtextarea.value.trim().startsWith('[ฆ้องวงใหญ่]')) {
@@ -22,6 +28,9 @@ function convert() {
     const downLine = cleanedTWOLINENOTE.filter((s, i) => (i + 1) % 2 === 0)
     pureNote = upLine.concat(downLine)
     note = pureNote.toString()
+    note = note.replace(/ /g,"").replace(/---/g,"-x-")
+    // note = note.replace(/ /g,"").replace(/-/g,"x")
+    console.log(note);
     const nameWithBeat = ALLTEXT_ARR[0].split("(");
     // console.log('BEAT', beat)
     songName = nameWithBeat[0]
@@ -436,18 +445,19 @@ function convert() {
   //กลุ่มเสียงเงียบ
   note = note.replace(/--------/g, '1p5,');
   note = note.replace(/------/g, '2p.5,');
+  note = note.replace(/-----/g, '2p5,8p5,');
   note = note.replace(/----/g, '2p5,');
   note = note.replace(/---/g, '4p.5,');
   note = note.replace(/--/g, '4p5,');
   note = note.replace(/-/g, '8p5,');
 
   //กลุ่มเสียงเงียบ
-  note = note.replace(/--------/g, '1p5,');
-  note = note.replace(/------/g, '2p.5,');
-  note = note.replace(/----/g, '2p5,');
-  note = note.replace(/---/g, '4p.5,');
-  note = note.replace(/--/g, '4p5,');
-  note = note.replace(/-/g, '8p5,');
+  // note = note.replace(/--------/g, '1p5,');
+  // note = note.replace(/------/g, '2p.5,');
+  // note = note.replace(/----/g, '2p5,');
+  // note = note.replace(/---/g, '4p.5,');
+  // note = note.replace(/--/g, '4p5,');
+  // note = note.replace(/-/g, '8p5,');
   //โน้ตสบัด แปลงจากรูปแบบของ RTTTL
   note = note.replace(/''8/g, "32")
   note = note.replace(/'8/g, "16")
@@ -457,12 +467,13 @@ function convert() {
 
   if (thmtextarea.value.trim().startsWith('[ฆ้องวงใหญ่]')) {
     const ALLNOTE_ARR = noteSlice.split('$')
-    let upLineSlice = ALLNOTE_ARR[0].slice(0, -2);
+    console.log(ALLNOTE_ARR );
+    let upLineSlice = ALLNOTE_ARR[0].slice(0, -1);
     // upLineSlice = upLineSlice.replace(/,,/g,",")
-    let downLineSlice = ALLNOTE_ARR[1].slice(1, -1);
+    let downLineSlice = ALLNOTE_ARR[1];
     // downLineSlice = downLineSlice.replace(/,,/g,",")
-    console.log(upLineSlice);
-    console.log(downLineSlice);
+    console.log("บน",upLineSlice);
+    console.log("ล่าง",downLineSlice);
     document.getElementById('rtttl').value = songName + ":d=8,o=5,b=" + beat + ":" + upLineSlice;
     document.getElementById('rtttl1').value = songName + ":d=8,o=5,b=" + beat + ":" + downLineSlice;
 

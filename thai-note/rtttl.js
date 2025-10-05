@@ -11,6 +11,7 @@ var rtttlPlay = (function () {
   // =========================
   function parse(rtttl) {
     console.log(rtttl);
+    document.getElementById('status').innerHTML = ": กำลังเล่น"
     var REQUIRED_SECTIONS_NUM = 3;
     var SECTIONS = rtttl.split(':');
 
@@ -164,6 +165,7 @@ var rtttlPlay = (function () {
 
   function stop() {
     shouldStop = true;
+    document.getElementById('status').innerHTML = ": สั่งหยุด"
   }
 
   function _playMelody(melody, audioCtx) {
@@ -171,8 +173,12 @@ var rtttlPlay = (function () {
       shouldStop = false;
       return;
     }
-
+    console.log(melody.length);
+    if (melody.length === 0) {
+    document.getElementById('status').innerHTML = ": จบเพลง"
+    }
     if (melody.length === 0) return;
+
 
     var osc = audioCtx.createOscillator();
     //รับค่าชนิดของคลื่นเสียง

@@ -9,6 +9,7 @@ function checkMultipleLine() {
         'onclick',
         "convert();rtttlPlay.play(document.querySelector('.rtttl').value);rtttlPlay.play(document.querySelector('.rtttl1').value)"
       );
+      document.getElementById('status').innerHTML = ": โน้ต 2 บรรทัด"
       console.log("เป็นโน้ต 2 บรรทัด");
     } else {
       // Optional: revert to default if not matched
@@ -17,5 +18,6 @@ function checkMultipleLine() {
         "convert();rtttlPlay.play(document.querySelector('.rtttl').value)"
       );
       console.log("เป็นโน้ต 1 บรรทัด");
+      document.getElementById('status').innerHTML = ": โน้ต 1 บรรทัด"
     }
   }
