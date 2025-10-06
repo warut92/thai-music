@@ -481,6 +481,8 @@ function convert() {
     //ดึงค่า splitedBeat นำมาใส่
     var output = songName + ":d=8,o=5,b=" + beat + ":" + noteSlice;
     document.getElementById('rtttl').value = output;
+    document.getElementById('rtttl1').value = songName + ":d=8,o=5,b=" + beat + ":p";
+
   } 
 }
 //ฟังก์ชันสลับการแสดงผลตัวหนังสือของฟังก์ชันแปลงตัวเลขเป็นตัวโน้ตไทยและกลับกัน
