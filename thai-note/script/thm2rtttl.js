@@ -544,6 +544,7 @@ function numberal() {
 function changeMelody() {
   var x = document.getElementById("melody").value;
   document.getElementById("thm").value = x;
+  addRowTextarea()
 }
 
 //ฟังก์ชันอ่านไฟล์โน้ต
