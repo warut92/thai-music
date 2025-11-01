@@ -144,3 +144,37 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial button label
     updateButton();
 });
+
+    const text = document.getElementById("thm");
+    const increaseBtn = document.getElementById("increaseBtn");
+    const decreaseBtn = document.getElementById("decreaseBtn");
+    const fontInput = document.getElementById("fontInput");
+
+    // Load from localStorage or set default
+    let fontSize = parseInt(localStorage.getItem("fontSize")) || 20;
+    fontInput.value = fontSize;
+    text.style.fontSize = fontSize + "px";
+
+    function updateFontSize() {
+      text.style.fontSize = fontSize + "px";
+      fontInput.value = fontSize;
+      localStorage.setItem("fontSize", fontSize);
+      addRowTextarea()
+    }
+
+    increaseBtn.addEventListener("click", () => {
+      fontSize += 2;
+      updateFontSize();
+    });
+
+    decreaseBtn.addEventListener("click", () => {
+      if (fontSize > 8) {
+        fontSize -= 2;
+        updateFontSize();
+      }
+    });
+
+    fontInput.addEventListener("input", () => {
+      fontSize = parseInt(fontInput.value) || 8;
+      updateFontSize();
+    });

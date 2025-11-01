@@ -164,13 +164,13 @@
                 <span class="close">&times;</span>
                 <option>☼ การตั้งค่า</option>
                 <option disabled>☺ ธีม</option>
-                <option disabled>↓ แบบอักษร</option>
+                <option disabled>🅰︎ แบบอักษร</option>
               </select>
             </div>
             <!-- CONVERTOR -->
             <div class="small" id="editor" style="display: block;">
-              แปลงตัวโน้ต: <button id="toggle" class="">ปุ่มแปลงโน้ต</button>
-              แปลงตัวโน้ต: <button class="" onClick="changeText()" id="btn1">1234<>ดรมฟ</button>
+              แปลงตัวโน้ต: <button id="toggle" class="">ปุ่มแปลงโน้ต</button><br>
+              แปลงด้วยตัวเอง: <button class="" onClick="changeText()" id="btn1">1234<>ดรมฟ</button>
               <br>
               <!-- SOUND -->
               คีย์:<select id="key">
@@ -202,9 +202,14 @@
                 <option value="triangle">Triangle</option>
               </select>
               <br>
+              <div>
+                ขนาดโน้ต:
+                <button id="decreaseBtn">−</button>
+                <input type="number" id="fontInput" min="8" max="100">
+                <button id="increaseBtn">+</button>
+              </div>
             </div>
-            <div class="empty"></div>
-            <div class="empty"></div>
+            <!-- <div class="empty"></div> -->
           </div>
         </div>
         <div style="display: none;">

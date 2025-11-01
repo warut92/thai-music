@@ -6,17 +6,16 @@ body {
   font-size: 20px;
   color: rgb(255, 255, 255);
   background-color: #4b5a71;
-  padding-top: 10px;
-  padding-left: 15px;
 }
 
 .center {
   text-align: center;
 }
 
-button, optgroup, option, option, #melody, code, .plain {
+button, optgroup, option, option, #melody, code, input, select {
   font-family: 'Tlwg Typist', monospace;
   font-size: 15px;
+  border: 2px solid blue;
   }
 
 .setting {
