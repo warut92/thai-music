@@ -3,34 +3,35 @@
 
 <head>
   <title>ดรมฟ Online</title>
-  <meta name="description" content="โปรแกรมเล่นโน้ตดนตรีไทย ออนไลน์ ฟรี" />
+  <meta name="description" content="โปรแกรมเล่นโน้ตดนตรีไทย ออนไลน์" />
+  <meta name="keywords" content="โปรแกรมโน้ตดนตรีไทย, โปรแกรมเล่นโน้ตดนตรีไทย">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="icon.png">
-  <link rel="stylesheet" href="https://unpkg.com/7.css">
   <link rel="stylesheet" href="style.css">
-  <script src="thm2rtttl.js" type="text/javascript"></script>
+  <script src="./script/thm2rtttl.js" type="text/javascript"></script>
 </head>
+
 <body>
   <div class="container">
     <div class="page-header">
       <div class="center"><img src="icon.png" alt="" height="20px"> ดรมฟ Online - เล่นโน้ตดนตรีไทยออนไลน์</span>
-        </div>
-    <select id="melody" onchange="changeMelody()">
-      <option value="เลือกเพลงตัวอย่าง:">เลือกเพลงตัวอย่าง:
-        <optgroup label="เพลงไทยเดิม">
-  <option value="ลาวครวญ 2 ชั้น:
+      </div>
+      <select id="melody" onchange="changeMelody()">
+        <option value="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร (เลือกเพลงตัวอย่าง)">☞เลือกเพลงตัวอย่าง:
+          <optgroup label="เพลงไทยเดิม">
+            <option value="ลาวครวญ 2 ชั้น:
 /----/----/->ซ-ม/รดรม/----/-ด-ร/-ด-ม/-รรร/
 /---ซ/-ซซซ/ลซมซ/-ล-ดํ/---ดํ/-ดํดํดํ/-ซ-ม/รด-ร/">ลาวครวญ 2 ชั้น
-  <option value="ลาวต่อนก 2 ชั้น:
+            <option value="พุงขาว 2 ชั้น:
 /----/----/>รมซล/ซม-ซ/----/-ดํ-ล/-ซ-ม/รด-ร/
-/---ม/---ร/---ดํ/มํรํดํล/-ซ-ด/-ร-ม/ซลซม/-ร-ด/">ลาวต่อนก 2 ชั้น
-  <option value="ลาวจ้อย ชั้นเดียว(150):
+/---ม/---ร/---ดํ/มํรํดํล/-ซ-ด/-ร-ม/ซลซม/-ร-ด/">ลาวพุงขาว 2 ชั้น
+            <option value="ลาวจ้อย ชั้นเดียว(150):
 /-ดรม/ซด-ร/-ดรม/ซล-ซ/-มซม/รดรม/รมซม/ซล-ซ/
 /----/รมซล/--ดํล/ซม-ซ/-มรด/-ร-ม/รด-ร/-มรด/">ลาวจ้อย ชั้นเดียว
-  <option value="แขกบรเทศ ชั้นเดียว(150):
+            <option value="แขกบรเทศ ชั้นเดียว(150):
 /ดํลลล/ดํลลล/ดํซซซ/ดํลซม/ซมรด/ซดรม/ซลซม/ซมรด/
 /มมซร/มรดล/ซมซล/ซลดํรํ/ซมรด/ซดรม/ซลซม/ซมรด/">แขกบรเทศ ชั้นเดียว
-  <option value="ลาวเสี่ยงเทียน 2 ชั้น:
+            <option value="ลาวเสี่ยงเทียน 2 ชั้น:
 (ท่อน 1)
 /----/----/->ลลล/ซลดํซ/---ฟ/-ม--/-ร-ซ/-ลซซ/
 /----/----/-ลลล/ซลดํซ/---ฟ/-ม--/-ร-ซ/-ลซซ/
@@ -41,9 +42,9 @@
 /----/----/ซลซม/ซรมซ/----/----/ซลซม/รด-ร/
 /-มํ-รํ/-ดํ-มํ/--ดํรํ/มํรํดํล/--ดํล/ซมซล/-ดํรํมํ/-รํ-ดํ/
 /-มํ-รํ/-ดํ-มํ/--ดํรํ/มํรํดํล/--ดํล/ซมซล/-ดํรํมํ/-รํ-ดํ/">ลาวเสี่ยงเทียน 2 ชั้น
-</optgroup>
-<optgroup label="ตัวอย่างโน้ตฆ้องวง">
-  <option value="[ฆ้องวงใหญ่]
+          </optgroup>
+          <optgroup label="ตัวอย่างโน้ตฆ้องวง">
+            <option value="[ฆ้องวงใหญ่]
 แขกบรเทศ(220):
 --ลล --ลล --ซซ --มม -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
 -ลฺ-- -ลฺ-- -ซฺ-- -ทฺ-- -ร-ด -ร-ม -ซ-ม -ร-ด
@@ -56,17 +57,17 @@
 
 -มํ-รํ -ดํ-ล --ซล -ดํ-รํ -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
 -ม-ร -ด-ม -ฟx- -ด-ร -ร-ด -ร-ม -ซ-ม -ร-ด">แขกบรเทศ ชั้นเดียว ฆ้องวงใหญ่</option>
-</optgroup>
-<optgroup label="เพลงป๊อป">
-  <option value="ลูกอม(120):
+          </optgroup>
+          <optgroup label="เพลงป๊อป">
+            <option value="ลูกอม(120):
 /--->ซ/ลดํดํ-/---มํ/รํดํรํ-/---ซ/ลดํลดํ/---มํ/รํดํรํ-/
 /--มํ-/ซํมํรํดํ/---ล/ล-ซ-/ดํ-ดํ-/--ซฟ/-มฟ-/ล-มํ-/รํ---/">ลูกอม
-  <option value="สายตาหลอกกันไม่ได้(120):
+            <option value="สายตาหลอกกันไม่ได้(120):
 /--->ท/-ดํ-รํ/---ท/ลซ-ซ/-ม-ซ/-รํ-รํ/--ท-/
 /----/---รํ/ดํทดํท/-ซซ-/มร--/-ม-ซ/-ล-ท/--xดํ/--xท/
 /--xท/-ดํ-รํ/---ท/ลซ-ซ/-ม-ซ/-รํ-รํ/--ท-/
 /----/--ทท/ดํทดํรํ/ท-ซ-/--มร/-มซ-/-ล-ซ/---x/">สายตาหลอกกันไม่ได้
-  <option value="ตายทั้งเป็น(120):
+            <option value="ตายทั้งเป็น(120):
 /----/--->ท/-ล-ล/-ซล-/---ซ/-ล-ท/-ล-ล/-ซล-/
 /---ท/-รํ-มํ/-รํ-รํ/-ทรํ-/----/-รํ-มํ/-รํ-รํ/-ทรํ-/
 /---รํ/-มํ-ท/-ล-ล/-ซล-/---ซ/-ล-ท/-ล-ล/-ซล-/
@@ -79,166 +80,152 @@
 /-มํ-มํ/-มํ-มํ/----/-รํ---/---/-ฟํ--/-ฟํ-ฟํ/-มํมํ-/
 -ท-ดํ/-รํ-ท/---ล/-ล--/----/-ล-ท/---ล/---ซ/
 ---ล/---ซ/----/----/----/----/----/----/">ตายทั้งเป็น
-  <option value="แก้มน้องนางนั้นแดงกว่าใคร(120):
+            <option value="แก้มน้องนางนั้นแดงกว่าใคร(120):
 /----/--->ล/ซลซล/ทลซม/
 /-ร--/-มซล/ซลซล/-มํรํ-/
 /----/-ทรํมํ/รํมํซํมํ/รํทท-/
 /----/-ทรํล/ทลซม/-ซล-/">แก้มน้องนางนั้นแดงกว่าใคร
-  <option value="ทักครับ - Lipta(160):
+            <option value="ทักครับ - Lipta(160):
 /----/->ซ-ท/--รํท/-ล-ซ/---ม/-ซ-ท/--รํท/-ล-ซ/
 /----/-ซ-ฟ#/--ซฟ#/-ม-ร/---ทฺ/-ร-ฟ#/--ซฟ#/-ม-ร/
 /----/-ซ-ท/--รํท/-ล-ซ/---ม/-ซ-ท/--รํท/-ล-ซ/
 /----/-มซฟ#/--ซฟ#/-ม-ร/---ม/-ล--/-ซ--/-">ทักครับ - Lipta
-</optgroup>
-<optgroup label="เพลงลูกทุ่ง">
-  <option value="สาวสวนแตง:
+          </optgroup>
+          <optgroup label="เพลงลูกทุ่ง">
+            <option value="สาวสวนแตง:
 /----/--->ดํ/--ลซ/ฟซลดํ/--ซล/ดํลซฟ/-ฟรฟ/ซลฟซ/
 /----/ดํลซฟ/--ซล/ดํลซฟ/---ร/ฟซฟด/-รฟซ/ดํลซฟ/">สาวสวนแตง
-  <option value="นิราศเวียงพิงค์:
+            <option value="นิราศเวียงพิงค์:
 /----/--->ด/--รม/ซลซล/--ดํม/ซลซล/--ซม/ซมรม/
 /----/xมซด/--รม/รมลฺด/--รม/รมซด/--ซฺด/รมซม/
 /----/-มซล/--ซม/รมดร/--มร/ดลฺซฺด/-ลฺซฺลฺ/ดลฺซฺลฺ/
 /----/---ด/--รม/ซลซล/--ดํม/ซลซล/--ซม/ซมรม/
 /----/xมซด/--รม/รมลฺด/--รม/รมซด/--ซฺด/รมซม/
 /----/-มซล/--ซม/รมดร/--มร/ดลฺซฺด/-ลฺซฺลฺ/ดลฺซฺลฺ/---">นิราศเวียงพิงค์
-        </optgroup>
-</select>
-<a class="small" href="./about.html">🛈 เกี่ยวกับเว็บไซต์นี้</a>
-    <div class="rows">
-      <div>
-        <!-- <button onclick="convert()">test</button> -->
-        <button class="playBtn" onclick="convert();rtttlPlay.play(document.querySelector('.rtttl').value)">▶เล่น</button>
-        <button type="button" onClick="rtttlPlay.stop();rtttlPlay.stop()">⏹หยุด</button><span id="status">: สถานะ</span>
-        <p><textarea type="text" id="thm" class="thm" rows="3" cols="32" oninput="addRowTextarea();checkMultipleLine()" onfocus="addRowTextarea();;checkMultipleLine()" placeholder="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร">
-</textarea></p>
-        <script>
-        </script>
-        <script>
-        </script>
-        <br>
-        <div id="keyboard" style="display:none">
-          <br>
-          <button name="button" id="btn1" value="ด" onclick="keyboardInput(this)">ด</button>
-          <button name="button" id="btn1" value="ร" onclick="keyboardInput(this)">ร</button>
-          <button name="button" id="btn2" value="ม" onclick="keyboardInput(this)">ม</button>
-          <button name="button" id="btn3" value="ฟ" onclick="keyboardInput(this)">ฟ</button>
-          <button name="button" id="btn4" value="ซ" onclick="keyboardInput(this)">ซ</button>
-          <button name="button" id="btn5" value="ล" onclick="keyboardInput(this)">ล</button>
-          <button name="button" id="btn6" value="ท" onclick="keyboardInput(this)">ท</button>
-          <button name="button" id="btn7" value="ํ" onclick="keyboardInput(this)">สูง</button>
-          <button name="button" id="btn8" value="ฺ" onclick="keyboardInput(this)">ต่ำ</button>
-          <br>
-          <button name="button" id="btn9" value="-" onclick="keyboardInput(this)">-</button>
-          <button name="button" id="btn10" value="/" onclick="keyboardInput(this)">/</button>
-          <button name="button" id="btn10" value="#" onclick="keyboardInput(this)">#</button>
-          <button name="button" id="btn11" value="\n" onclick="keyboardInput(this)">Enter</button>
+          </optgroup>
+      </select>
+      <a class="small" href="./about.html">🛈 เกี่ยวกับเว็บไซต์นี้ v. 0.02 [2568-11-01]</a>
+      <div class="rows">
+        <div>
+          <!-- NOTE AREA -->
+          <p><textarea type="text" id="thm" class="thm" rows="3" cols="5" oninput="addRowTextarea();checkMultipleLine()"
+              onfocus="addRowTextarea();;checkMultipleLine()"
+              placeholder="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร"></textarea></p>
+          <!-- สำหรับการทดสอบ PLAY STOP -->
+          <!-- <button onclick="convert()">test</button> -->
+          <button class="playBtn"
+            onclick="convert();rtttlPlay.play(document.querySelector('.rtttl').value)">▶เล่น</button>
+          <button type="button" onClick="rtttlPlay.stop();rtttlPlay.stop()">⏹หยุด</button>
+          <span id="status">: สถานะ</span>
+          <!-- EDITOR AREA -->
+          <!-- KEYBOARD -->
+          <div id="keyboard" style="display:none">
+            <button name="button" id="btn1" value="ด" onclick="keyboardInput(this)">ด</button>
+            <button name="button" id="btn1" value="ร" onclick="keyboardInput(this)">ร</button>
+            <button name="button" id="btn2" value="ม" onclick="keyboardInput(this)">ม</button>
+            <button name="button" id="btn3" value="ฟ" onclick="keyboardInput(this)">ฟ</button>
+            <button name="button" id="btn4" value="ซ" onclick="keyboardInput(this)">ซ</button>
+            <button name="button" id="btn5" value="ล" onclick="keyboardInput(this)">ล</button>
+            <button name="button" id="btn6" value="ท" onclick="keyboardInput(this)">ท</button>
+            <button name="button" id="btn7" value="ํ" onclick="keyboardInput(this)">สูง</button>
+            <button name="button" id="btn8" value="ฺ" onclick="keyboardInput(this)">ต่ำ</button>
+            <button name="button" id="btn12" onclick="keyboardDelete()">⌫</button>
+            <br>
+            <button name="button" id="btn9" value="-" onclick="keyboardInput(this)">-</button>
+            <button name="button" id="btn9" value=" " onclick="keyboardInput(this)">⎵</button>
+            <button name="button" id="btn10" value="/" onclick="keyboardInput(this)">/</button>
+            <button name="button" id="btn10" value="#" onclick="keyboardInput(this)">#</button>
+            <button name="button" id="btn11" value="
+" onclick="keyboardInput(this)">Enter</button>
+          </div>
+          <div class="flex-container">
+<!-- SETTING -->
+            <div class="setting">
+              <!-- FILE -->
+              <select>
+                <span class="close">&times;</span>
+                <option disabled>☐ ไฟล์</option>
+                <!-- <option id=""><a href="./index.html" target="_blank">↗︎ เปิดไฟล์ใหม่</a></option> -->
+                <option id="openFile">↑ เปิดไฟล์โน้ต (Ctrl+O)</option>
+                <option onclick="saveTextAsFile()">↓ บันทึกไฟล์โน้ต (Ctrl+S)</option>
+                <option onClick="getSongHash()">⎘ คัดลอกลิงก์ URL</option>
+              </select>
+              <br>
+              <!-- EDIT -->
+              <select>
+                <span class="close">&times;</span>
+                <option disabled>⚒︎ แก้ไข</option>
+                <option onclick="editor()">✑ เครื่องมือแก้ไข</option>
+                <option onClick="showKeyboard()">⌨ คีย์บอร์ด</option>
+              </select>
+              <br>
+              <!-- APP -->
+              <select>
+                <span class="close">&times;</span>
+                <option>☼ การตั้งค่า</option>
+                <option disabled>☺ ธีม</option>
+                <option disabled>↓ แบบอักษร</option>
+              </select>
+            </div>
+            <!-- CONVERTOR -->
+            <div class="small" id="editor" style="display: block;">
+              แปลงตัวโน้ต: <button id="toggle" class="">ปุ่มแปลงโน้ต</button>
+              แปลงตัวโน้ต: <button class="" onClick="changeText()" id="btn1">1234<>ดรมฟ</button>
+              <br>
+              <!-- SOUND -->
+              คีย์:<select id="key">
+                <option value="0">A♯/B♭</option>
+                <option value="1">C</option>
+                <option value="2">C♯/D♭</option>
+                <option value="3">D</option>
+                <option value="4">D♯/E♭</option>
+                <option value="5">E</option>
+                <option value="6">F</option>
+                <option value="7">F♯/G♭</option>
+                <option value="8">G</option>
+                <option value="9">G♯/A♭</option>
+                <option value="10">A</option>
+                <option value="Th">ดนตรีไทย</option>
+              </select>
+              ช่วงทบเสียง:<select id="octave">
+                <option value="3">+2</option>
+                <option value="2">+1</option>
+                <option value="1" selected="selected">0</option>
+                <option value="-2">-1</option>
+                <option value="-3">-2</option>
+              </select>
+              <br>
+              คลื่นเสียง:<select id="type">
+                <option value="sine">∿ Sine</option>
+                <option value="square">⎍ Square</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="triangle">Triangle</option>
+              </select>
+              <br>
+            </div>
+            <div class="empty"></div>
+            <div class="empty"></div>
+          </div>
         </div>
-        <script>
-          //ฟังก์ชันคีย์บอร์ดสำหรับมือถือ
-          //ใส่ค่าโน้ต/สัญญลักษณ์ที่ต้องการ
-          function keyboardInput(note) {
-            let thmNote = document.getElementById('thm')
-            if (thmNote.value || !thmNote.value) {
-              let noteVal = note.value
-              thmNote.value += noteVal
-            }
-          }
-          //แสดง/ซ่อนคีย์บอร๋ด
-          function showKeyboard() {
-            let k = document.getElementById('keyboard')
-            if (k.style.display === "none") {
-              k.style.display = "block"
-            } else {
-              k.style.display = "none"
-            }
-          }
-        </script>
-        <!-- <details> -->
-          <!-- <summary>แผงควบคุมเพิ่มเติม</summary> -->
-          <button type="button" class="" aria-label="Play" onClick="getSongHash()">สร้างลิงก์</button>
-          <!-- <button type="button" class="" aria-label="Play" onClick="showKeyboard()">คีย์บอร์ด</button> -->
-          แปลงด้วยตนเอง: <button class="" onClick="changeText()" id="btn1">1234<>ดรมฟ</button>
-          <button id="toggle" class="">ปุ่มสลับการแปลงโน้ตแบบอัตโนมัติ</button>
-          <br>
-          <input type="file" onchange="readFile(this)" class=""></input>
-          <button class="" type="button" value="save" onclick="saveTextAsFile()">
-            <span>บันทึกไฟล์</span>
-          </button>
-          <br>
-          ชนิดของคลื่นเสียง:<select id="type">
-            <option value="sine">Sine</option>
-            <option value="square">Square</option>
-            <option value="sawtooth">Sawtooth</option>
-            <option value="triangle">Triangle</option>
-          </select>
-          คีย์:<select id="key">
-            <option value="0">A♯/B♭</option>
-            <option value="1">C</option>
-            <option value="2">C♯/D♭</option>
-            <option value="3">D</option>
-            <option value="4">D♯/E♭</option>
-            <option value="5">E</option>
-            <option value="6">F</option>
-            <option value="7">F♯/G♭</option>
-            <option value="8">G</option>
-            <option value="9">G♯/A♭</option>
-            <option value="10">A</option>
-          </select>
-          ช่วงทบเสียง:<select id="octave">
-            <option value="3">+2</option>
-            <option value="2">+1</option>
-            <option value="1" selected="selected">0</option>
-            <option value="-2">-1</option>
-            <option value="-3">-2</option>
-          </select><br>
-          <a href="https://github.com/warut92/mymusicnotation" target="_blank" rel="noopener noreferrer">🔗 คลังโน้ตดนตรีไทย (ยังไม่สมบูรณ์)</a>
-          <br>
-          <a href="https://note.warut.net" target="_blank" rel="noopener noreferrer">🔗 คลังโน้ตดนตรีไทย note.warut.net</a>
-        <!-- </details> -->
-        <br>
+        <div style="display: none;">
+          <h4>RTTTL</h4>
+          <p><textarea id="rtttl" class="rtttl" rows="3" cols="100"></textarea></p>
+          <p><textarea id="rtttl1" class="rtttl1" rows="3" cols="100"></textarea></p>
+        </div>
       </div>
-      <div style="display: none;">
-        <h4>RTTTL</h4>
-        <p><textarea id="rtttl" class="rtttl" rows="3" cols="100"></textarea></p>
-        <p><textarea id="rtttl1" class="rtttl1" rows="3" cols="100"></textarea></p>
-        
-      </div>
+      </p>
     </div>
-
-    </p>
   </div>
+  <a class="small" href="http://music.warut.net" target="_blank">↪︎ ไปที่ music.warut.net</a>
+  <div id="saveFilePopup" class="load-file">
+    <div class="load-file-content">
+      <span class="close">🆇</span>
+      อัปโหลดไฟล์โน้ตในรูปแบบ ดรมฟ Online นามสกุล .txt <br>
+      <input type="file" onchange="readFile(this)"></input>
+    </div>
   </div>
-<script>
-    function addRowTextarea() {
-      var lines = document.querySelector("textarea").value.split(/\r\n|\r|\n/).length;
-      document.getElementById("thm").rows = lines;
-    }
-
-    //สร้างลิงก์สำหรับการแชร์
-    function getSongHash() {
-      //สร้างตัวแปรสำหรับการสร้างลิงก์ใหม่ โดยการกดปุ่มเพื่อรันฟังก์ชัน
-      let song = document.getElementById('thm').value;
-      song = song.replace(/\n/g, "%0A")
-      location.hash = song
-    }
-
-    function loadShareSong() {
-      //โหลดเพลง หากลิงก์มีข้อมูลสำหรับโน้ต ให้ดำเนินการรับค่ามาใส่ใน textarea
-      if (location.hash) {
-        let shareSong = location.hash
-        let decodeSongSlice = shareSong.slice(1)
-        document.getElementById('thm').innerHTML = decodeURI(decodeSongSlice)
-      }
-    }
-    loadShareSong()
-</script>
-
-  <script src="multiple_sound.js"></script>
-  <script src="rtttl.js"></script>
-  <script src="converter.js"></script>
-
 </body>
-<script>
-</script>
-
+<script src="./script/index.js"></script>
+<script src="./script/multiple_sound.js"></script>
+<script src="./script/rtttl.js"></script>
 </html>

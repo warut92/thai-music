@@ -7,17 +7,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="icon.png">
   
-  <link rel="stylesheet" href="style.css">
+  <!-- <link rel="stylesheet" href="style.css"> -->
+   <style>
+    body {
+      font-size: 16px;
+      color: rgb(255, 255, 255);
+      background-color: #4b5a71;
+      padding-top: 10px;
+      padding-left: 15px;
+    }
+    a {
+      color: antiquewhite;
+    }
+   </style>
 
 </head>
 
 <body>
-  <div class="container">
-    <div class="page-header">
-      <h1>คำอธิบาย - ดรมฟ Online</h1>
+      <h1>คำอธิบาย - ดรมฟ Online - เล่นโน้ตดนตรีไทยออนไลน์</h1>
     </div>
     <h4>ที่มา</h4>
-    <p>ช่วงประมาณปี 2565 กระผมได้ศึกษาการสร้างเสียงดนตรีจากการเขียนโค้ด แล้วไปพบกับ <a href="https://github.com/DDRBoxman/RepRapRingtone">RepRapRingtone</a> และ <a href="https://adamonsoon.github.io/rtttl-play/">rtttl-play</a> ซึ่งเป็นโน้ตในรูปแบบที่เรียนกว่า RTTTL (สามารถอ่านเพิ่มได้ที่ <a href="https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language" target="_blank" rel="noopener noreferrer">Ring Tone Text Transfer Language</a>) จึงได้นำมาเรียนรู้และประยุกต์สร้างเป็นเว็บสำหรับเล่นเสียงจากโน้ตดนตรีไทย โดยเวอร์ชันแรกจะเป็นตัวแปลงโน้ตดนตรีไทยไปเป็นโน้ตระบบ RTTTL โดยเป็นโปรเจคแรกที่ทำให้ได้เรียนรู้เรื่องของ JavaScript แบบที่มีความสับซ้อนขึ้นมา สามารถเยี่ยมชมได้ที่ <a href="http://warut92.github.io/rtttl-th" target="_blank" rel="noopener noreferrer">warut92.github.io/rtttl-th</a></p>
+    <p>ช่วงประมาณปี 2565 ได้ศึกษาการสร้างเสียงดนตรีจากการเขียนโค้ด แล้วไปพบกับ <a href="https://github.com/DDRBoxman/RepRapRingtone">RepRapRingtone</a> และ <a href="https://adamonsoon.github.io/rtttl-play/">rtttl-play</a> ซึ่งเป็นโน้ตในรูปแบบที่เรียนกว่า RTTTL (สามารถอ่านเพิ่มได้ที่ <a href="https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language" target="_blank" rel="noopener noreferrer">Ring Tone Text Transfer Language</a>) จึงได้นำมาเรียนรู้และประยุกต์สร้างเป็นเว็บสำหรับเล่นเสียงจากโน้ตดนตรีไทย โดยเวอร์ชันแรกจะเป็นตัวแปลงโน้ตดนตรีไทยไปเป็นโน้ตระบบ RTTTL โดยเป็นโปรเจคแรกที่ทำให้ได้เรียนรู้เรื่องของ JavaScript แบบที่มีความสับซ้อนขึ้นมา สามารถเยี่ยมชมได้ที่ <a href="http://warut92.github.io/rtttl-th" target="_blank" rel="noopener noreferrer">warut92.github.io/rtttl-th</a></p>
     <h4>การทำงาน</h4>
 เป็นการพิมพ์ตัวโน้ตดนตรีไทยในระบบ ดรมฟ หรือ ระบบ 1-9 จากนั้นโปรแกรมจะแปลงโน้ตให้เป็นระบบ RTTTL และจะสังเคราะห์เสียงพื้นฐานจาก Web Audio API ออกมา (สำหรับการเล่นในโทรศัพท์มือถือ ต้องปิดโหมดการรบกวน)
 <br>
@@ -65,6 +75,7 @@
 25-06-20: เพิ่มตัวแปลงโน้ตตัวเลขเป็นตัวอักษรขณะพิมพ์
 25-10-1: ใช้ธีม https://github.com/khang-nd/7.css
 25-10-04: เพิ่มระบบการเล่นโน้ต 2 บันทัด โดยพิมพ์ขึ้นต้นในโน้ต "[ฆ้องวงใหญ่]"
+25-11-01: ยกเลิกการใช้ธีม https://github.com/khang-nd/7.css / ปรับเปลี่ยนรูปลักษณ์
     </pre>
 <h4>To Do</h4>
 - ทำให้สวยน่าใช้งาน เหมาะสำหรับมือถือ
@@ -73,9 +84,9 @@
       <a href="index.html">กลับหน้าหลัก</a>
       <br>
       <a href="https://github.com/warut92/thai-music/tree/main/thai-note" target="_blank" rel="noopener noreferrer" class="github" title="github"><svg width="16" viewBox="0 0 16 16" version="1.1" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg></a>
-    </div>
+
     <a href="../index.md">กลับ music.warut.net</a>
-  </div>
+
 
 </body>
 

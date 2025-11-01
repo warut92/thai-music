@@ -1,11 +1,11 @@
 @import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/TlwgTypist/TlwgTypist.css';
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import url(https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@500&display=swap);
 
 body {
-  font-family: "Sarabun", sans-serif;
-  font-size: 30px;
-  color: black;
-  background-color: gray;
+	font-family: 'IBM Plex Sans Thai Looped', sans-serif;
+  font-size: 20px;
+  color: rgb(255, 255, 255);
+  background-color: #4b5a71;
   padding-top: 10px;
   padding-left: 15px;
 }
@@ -14,21 +14,63 @@ body {
   text-align: center;
 }
 
-button, optgroup, option, option, #melody, code {
+button, optgroup, option, option, #melody, code, .plain {
+  font-family: 'Tlwg Typist', monospace;
+  font-size: 15px;
+  }
+
+.setting {
+  font-size: 16px;
+}
+
+.load-file {
+  display: none;
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  border: 2px solid yellow;
+  font-size: 18px;
+}
+
+.load-file-content {
   font-family: 'Tlwg Typist', monospace;
   font-size: 20px;
-  }
+  background-color: #4b5a71;
+  margin: 30px;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 18px;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
 
 a {
   font-size: 30px;
-
+  color: aqua;
 }
 pre, textarea {
   font-family: 'Tlwg Typist', monospace;
   font-size: 18px;
   width: 100%;
   max-width: 900px;
-  /* background-color: lightgray; */
 }
 
 @media all and (max-width: 1080px) {
@@ -52,4 +94,18 @@ table, th, td {
 
 .small {
   font-size: 14px;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-container > div {
+  margin: 2px;
+  width: 80%;
+}
+
+.setting > select {
+  width: 100%;
 }

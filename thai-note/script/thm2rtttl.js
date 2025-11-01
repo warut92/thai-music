@@ -5,7 +5,7 @@ let note = ""
 let songName = ""
 function convert() {
   
-  thmtextarea = document.getElementById('thm');
+  let thmtextarea = document.getElementById('thm');
   if (thmtextarea.value.trim() == "") {
     alert("กรุณากรอกโน้ตดนตรีไทยก่อนกดปุ่มเล่น")
   }
