@@ -54,15 +54,7 @@ deleteBtn.addEventListener('click', () => {
   textarea.selectionStart = textarea.selectionEnd = pos; // keep caret in same spot
 });
 
-//แสดง/ซ่อนคีย์บอร๋ด
-function showKeyboard() {
-    let k = document.getElementById('keyboard');
-    if (k.style.display === "none") {
-        k.style.display = "block"
-    } else {
-        k.style.display = "none"
-    }
-}
+
 
 //หน้าต่างผุดสำหรับการโหลดไฟล์
 var modal = document.getElementById("saveFilePopup");
@@ -151,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const fontInput = document.getElementById("fontInput");
 
     // Load from localStorage or set default
-    let fontSize = parseInt(localStorage.getItem("fontSize")) || 20;
+    let fontSize = parseInt(localStorage.getItem("fontSize")) || 18;
     fontInput.value = fontSize;
     text.style.fontSize = fontSize + "px";
 

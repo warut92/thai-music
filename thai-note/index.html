@@ -22,7 +22,7 @@
             <option value="ลาวครวญ 2 ชั้น:
 /----/----/->ซ-ม/รดรม/----/-ด-ร/-ด-ม/-รรร/
 /---ซ/-ซซซ/ลซมซ/-ล-ดํ/---ดํ/-ดํดํดํ/-ซ-ม/รด-ร/">ลาวครวญ 2 ชั้น
-            <option value="พุงขาว 2 ชั้น:
+            <option value="ลาวพุงขาว 2 ชั้น:
 /----/----/>รมซล/ซม-ซ/----/-ดํ-ล/-ซ-ม/รด-ร/
 /---ม/---ร/---ดํ/มํรํดํล/-ซ-ด/-ร-ม/ซลซม/-ร-ด/">ลาวพุงขาว 2 ชั้น
             <option value="ลาวจ้อย ชั้นเดียว(150):
@@ -104,7 +104,6 @@
 /----/-มซล/--ซม/รมดร/--มร/ดลฺซฺด/-ลฺซฺลฺ/ดลฺซฺลฺ/---">นิราศเวียงพิงค์
           </optgroup>
       </select>
-      <a class="small" href="./about.html">🛈 เกี่ยวกับเว็บไซต์นี้ v. 0.02 [2568-11-01]</a>
       <div class="rows">
         <div>
           <!-- NOTE AREA -->
@@ -115,7 +114,7 @@
           <!-- <button onclick="convert()">test</button> -->
           <button class="playBtn"
             onclick="convert();rtttlPlay.play(document.querySelector('.rtttl').value)">▶เล่น</button>
-          <button type="button" onClick="rtttlPlay.stop();rtttlPlay.stop()">⏹หยุด</button>
+          <button type="button" onclick="rtttlPlay.stop();rtttlPlay.stop()">⏹︎หยุด</button>
           <span id="status">: สถานะ</span>
           <!-- EDITOR AREA -->
           <!-- KEYBOARD -->
@@ -148,7 +147,7 @@
                 <!-- <option id=""><a href="./index.html" target="_blank">↗︎ เปิดไฟล์ใหม่</a></option> -->
                 <option id="openFile">↑ เปิดไฟล์โน้ต (Ctrl+O)</option>
                 <option onclick="saveTextAsFile()">↓ บันทึกไฟล์โน้ต (Ctrl+S)</option>
-                <option onClick="getSongHash()">⎘ คัดลอกลิงก์ URL</option>
+                <option onclick="getSongHash()">⎘ คัดลอกลิงก์ URL</option>
               </select>
               <br>
               <!-- EDIT -->
@@ -156,7 +155,7 @@
                 <span class="close">&times;</span>
                 <option disabled>⚒︎ แก้ไข</option>
                 <option onclick="editor()">✑ เครื่องมือแก้ไข</option>
-                <option onClick="showKeyboard()">⌨ คีย์บอร์ด</option>
+                <option onclick="showKeyboard()" >⌨ คีย์บอร์ด</option>
               </select>
               <br>
               <!-- APP -->
@@ -170,7 +169,7 @@
             <!-- CONVERTOR -->
             <div class="small" id="editor" style="display: block;">
               แปลงตัวโน้ต: <button id="toggle" class="">ปุ่มแปลงโน้ต</button><br>
-              แปลงด้วยตัวเอง: <button class="" onClick="changeText()" id="btn1">1234<>ดรมฟ</button>
+              แปลงด้วยตัวเอง: <button class="" onclick="changeText()" id="btn1">1234<>ดรมฟ</button>
               <br>
               <!-- SOUND -->
               คีย์:<select id="key">
@@ -185,7 +184,7 @@
                 <option value="8">G</option>
                 <option value="9">G♯/A♭</option>
                 <option value="10">A</option>
-                <option value="Th">ดนตรีไทย</option>
+                <option value="Th" disabled>ดนตรีไทย</option>
               </select>
               ช่วงทบเสียง:<select id="octave">
                 <option value="3">+2</option>
@@ -221,6 +220,7 @@
       </p>
     </div>
   </div>
+  <a class="small" href="./about.html">↪︎ เกี่ยวกับเว็บไซต์นี้ v. 0.021 [2568-11-02]</a><br>
   <a class="small" href="http://music.warut.net" target="_blank">↪︎ ไปที่ music.warut.net</a>
   <div id="saveFilePopup" class="load-file">
     <div class="load-file-content">

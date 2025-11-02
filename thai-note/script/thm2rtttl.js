@@ -590,3 +590,14 @@ function saveTextAsFile() {
 }
 // var button = document.getElementById("save");
 // button.addEventListener("onclick", saveTextAsFile);
+
+  //แสดง/ซ่อนคีย์บอร๋ด
+  function showKeyboard() {
+    console.log("k");
+    let k = document.getElementById('keyboard');
+    if (k.style.display === "none") {
+        k.style.display = "block"
+    } else {
+        k.style.display = "none"
+    }
+}
