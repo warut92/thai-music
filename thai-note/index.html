@@ -146,16 +146,16 @@
                 <option disabled>☐ ไฟล์</option>
                 <!-- <option id=""><a href="./index.html" target="_blank">↗︎ เปิดไฟล์ใหม่</a></option> -->
                 <option id="openFile">↑ เปิดไฟล์โน้ต (Ctrl+O)</option>
-                <option onclick="saveTextAsFile()">↓ บันทึกไฟล์โน้ต (Ctrl+S)</option>
-                <option onclick="getSongHash()">⎘ คัดลอกลิงก์ URL</option>
+                <option ontouchend="saveTextAsFile()" onclick="saveTextAsFile()">↓ บันทึกไฟล์โน้ต (Ctrl+S)</option>
+                <option ontouchend="getSongHash()"  onclick="getSongHash()">⎘ คัดลอกลิงก์ URL</option>
               </select>
               <br>
               <!-- EDIT -->
               <select>
                 <span class="close">&times;</span>
                 <option disabled>⚒︎ แก้ไข</option>
-                <option onclick="editor()">✑ เครื่องมือแก้ไข</option>
-                <option onclick="showKeyboard()" >⌨ คีย์บอร์ด</option>
+                <option ontouchend="editor()"  onclick="editor()">✑ เครื่องมือแก้ไข</option>
+                <option ontouchend="showKeyboard()"  onclick="showKeyboard()" >⌨ คีย์บอร์ด</option>
               </select>
               <br>
               <!-- APP -->
