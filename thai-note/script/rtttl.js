@@ -63,23 +63,33 @@ var rtttlPlay = (function () {
 
       switch (KEY) {
         case 'd':
-          if (ALLOWED_DURATION.indexOf(VAL) !== -1) return { duration: VAL };
+          if (ALLOWED_DURATION.indexOf(VAL) !== -1) return {
+            duration: VAL
+          };
           throw new Error('Invalid duration ' + VAL);
         case 'o':
           if (ALLOWED_OCTAVE.indexOf(VAL) === -1) {
             console.warn('Invalid octave ' + VAL);
           }
-          return { octave: VAL };
+          return {
+            octave: VAL
+          };
         case 'b':
           if (ALLOWED_BPM.indexOf(VAL) === -1) {
             console.warn('Invalid BPM ' + VAL);
           }
-          return { bpm: VAL };
+          return {
+            bpm: VAL
+          };
       }
     });
 
     var VALUES_OBJ = _toObject({}, VALUES_ARR);
-    var DEFAULT_VALUES = { duration: '4', octave: '6', bpm: '63' };
+    var DEFAULT_VALUES = {
+      duration: '4',
+      octave: '6',
+      bpm: '63'
+    };
 
     return Object.assign(DEFAULT_VALUES, VALUES_OBJ);
   }
@@ -115,27 +125,69 @@ var rtttlPlay = (function () {
     if (note === 'p') return 0;
 
     //รับค่าในการเปลี่ยนคีย์และช่วงทบเสียง
-    var k = Number(document.getElementById('key').value);
+    let k = Number(document.getElementById('key').value);
     var o = Number(document.getElementById('octave').value);
-
-      if (o >= 1) {
-        var DO4 = (233.082 + (28.544 * k)) * o; //C4 261.626
+    // ====== เสียงในดนตรีไทย ======
+    if (k > 10) {
+      if (k === 11) {
+        var thaiBase = {
+          'c': 230.3,
+          'd': 254.2,
+          'e': 280.7,
+          'f': 309.9,
+          'g': 342.2,
+          'a': 377.8,
+          'b': 417.2
+        };
+      } else {
+        var thaiBase = {
+          'c': 254.2,
+          'd': 280.7,
+          'e': 309.9,
+          'f': 342.2,
+          'g': 377.8,
+          'a': 417.2,
+          'b': 460.6
+        };
       }
-      else {
-        var DO4 = (233.082 + (28.544 * k)) / (o * -1); //C4 261.626
-      }
 
-    // ค่า base C4
+      var noteOrder = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b'];
+      var baseNote = note.replace('#', '');
+      var baseFreq = thaiBase[baseNote];
+
+      if (!baseFreq || !isFinite(baseFreq)) baseFreq = 230.3;
+
+      var semitoneShift = noteOrder.indexOf(note) - noteOrder.indexOf(baseNote);
+      if (!isFinite(semitoneShift)) semitoneShift = 0;
+
+      var freq = baseFreq * Math.pow(2, semitoneShift / 12) * o;
+      var freqAdjusted = freq * Math.pow(2, octave - 4) * (1 + 0 * 0.02);
+
+      return Math.round(freqAdjusted * 10) / 10;
+    }
+
+
+    // ====== เสียงดนตรีตะวันตก ======
+    var DO4;
+    if (o >= 1) {
+      DO4 = (233.082 + (28.544 * k)) * o;
+    } else {
+      DO4 = (233.082 + (28.544 * k)) / (o * -1);
+    }
+
     var TWELFTH_ROOT = Math.pow(2, 1 / 12);
     var N = _calculateSemitonesFromC4(note, octave);
     var FREQUENCY = DO4 * Math.pow(TWELFTH_ROOT, N);
+
+    if (!isFinite(FREQUENCY)) FREQUENCY = 0; // Safety fallback
 
     return Math.round(FREQUENCY * 10) / 10;
   }
 
   function _calculateSemitonesFromC4(note, octave) {
     var NOTE_ORDER = ['c', 'c#', 'd', 'd#', 'e', 'f',
-                      'f#', 'g', 'g#', 'a', 'a#', 'b'];
+      'f#', 'g', 'g#', 'a', 'a#', 'b'
+    ];
     var MIDDLE_OCTAVE = 4;
     var SEMITONES_IN_OCTAVE = 12;
     var OCTAVE_JUMP = (octave - MIDDLE_OCTAVE) * SEMITONES_IN_OCTAVE;
@@ -156,7 +208,7 @@ var rtttlPlay = (function () {
   function play(rtttl) {
     try {
       var parsedRtttl = parse(rtttl);
-      var audioCtx = new (AudioContext || webkitAudioContext)();
+      var audioCtx = new(AudioContext || webkitAudioContext)();
       _playMelody(parsedRtttl.melody, audioCtx);
     } catch (err) {
       alert(err);
@@ -175,7 +227,7 @@ var rtttlPlay = (function () {
     }
     console.log(melody.length);
     if (melody.length === 0) {
-    document.getElementById('status').innerHTML = ": จบเพลง"
+      document.getElementById('status').innerHTML = ": จบเพลง"
     }
     if (melody.length === 0) return;
 

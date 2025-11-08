@@ -2,8 +2,8 @@ function checkMultipleLine() {
     const textarea = document.querySelector('.thm');
     const button = document.querySelector('.playBtn');
   
-    // Check if textarea content starts with [ฆ้องวงใหญ่]
-    if (textarea.value.trim().startsWith('[ฆ้องวงใหญ่]')) {
+    // Check if textarea content starts with [2]
+    if (textarea.value.trim().startsWith('[2]')) {
       // Replace the onmousedown attribute
       button.setAttribute(
         'onclick',

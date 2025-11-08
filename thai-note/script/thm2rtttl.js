@@ -30,7 +30,7 @@ function convert() {
     note = pureNote.toString()
     note = note.replace(/ /g,"").replace(/---/g,"-x-")
     // note = note.replace(/ /g,"").replace(/-/g,"x")
-    console.log(note);
+    // console.log(note);
     const nameWithBeat = ALLTEXT_ARR[0].split("(");
     // console.log('BEAT', beat)
     songName = nameWithBeat[0]
@@ -52,7 +52,7 @@ function convert() {
           beat = beat.slice(0, -1)
 
           pureNote = ALLTEXT_ARR[1];
-          console.log(pureNote);
+          // console.log(pureNote);
         
           //split เพื่อการเลือกเล่นเสียงเฉพาะที่
           splitedNote = pureNote.split(">");
@@ -63,7 +63,7 @@ function convert() {
           }
     }
   //การทำความสะอาดโน้ต
-  console.log(note);
+  // console.log(note);
   note = note.replace(/\s/g, '');
   note = note.replace(/\n/g, '');
   note = note.replace(/\//g, '');
@@ -467,27 +467,27 @@ function convert() {
 
   if (thmtextarea.value.trim().startsWith('[ฆ้องวงใหญ่]')) {
     const ALLNOTE_ARR = noteSlice.split('$')
-    console.log(ALLNOTE_ARR );
+    // console.log(ALLNOTE_ARR );
     let upLineSlice = ALLNOTE_ARR[0].slice(0, -1);
     // upLineSlice = upLineSlice.replace(/,,/g,",")
     let downLineSlice = ALLNOTE_ARR[1];
     // downLineSlice = downLineSlice.replace(/,,/g,",")
-    console.log("บน",upLineSlice);
-    console.log("ล่าง",downLineSlice);
-    document.getElementById('rtttl').value = songName + ":d=8,o=5,b=" + beat + ":" + upLineSlice;
-    document.getElementById('rtttl1').value = songName + ":d=8,o=5,b=" + beat + ":" + downLineSlice;
+    // console.log("บน",upLineSlice);
+    // console.log("ล่าง",downLineSlice);
+    document.getElementById('rtttl').value = songName + ":d=32,o=5,b=" + beat + ":" + upLineSlice;
+    document.getElementById('rtttl1').value = songName + ":d=32,o=5,b=" + beat + ":" + downLineSlice;
 
   } else {
     //ดึงค่า splitedBeat นำมาใส่
-    var output = songName + ":d=8,o=5,b=" + beat + ":" + noteSlice;
+    var output = songName + ":d=32,o=5,b=" + beat + ":" + noteSlice;
     document.getElementById('rtttl').value = output;
-    document.getElementById('rtttl1').value = songName + ":d=8,o=5,b=" + beat + ":p";
+    document.getElementById('rtttl1').value = songName + ":d=32,o=5,b=" + beat + ":p";
 
   } 
 }
 //ฟังก์ชันสลับการแสดงผลตัวหนังสือของฟังก์ชันแปลงตัวเลขเป็นตัวโน้ตไทยและกลับกัน
 function changeText() {
-  console.log(document.getElementById("btn1").innerText);
+  // console.log(document.getElementById("btn1").innerText);
   if (document.getElementById("btn1").innerText === "1234") {
     document.getElementById("btn1").innerText = "ดรมฟ";
     alphabet();
@@ -593,7 +593,7 @@ function saveTextAsFile() {
 
   //แสดง/ซ่อนคีย์บอร๋ด
   function showKeyboard() {
-    console.log("k");
+    // console.log("k");
     let k = document.getElementById('keyboard');
     if (k.style.display === "none") {
         k.style.display = "block"
