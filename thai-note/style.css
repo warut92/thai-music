@@ -108,3 +108,27 @@ table, th, td {
 .setting > select {
   width: 100%;
 }
+
+table {
+  font-size: 96%;
+	font-family: 'Tlwg Typist', monospace;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+#output table td {
+  font-size: var(--music-size);
+  padding: 8px;
+}
+
+#output h2 {
+  font-size: calc(var(--music-size) * 1.6);
+}
+
+#output h {
+  font-size: calc(var(--music-size) * 1.2);
+}
+
+#output h {
+  font-size: calc(var(--music-size) * 1.1);
+}

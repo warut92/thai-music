@@ -16,7 +16,7 @@
     <div class="page-header">
       <div class="center"><img src="icon.png" alt="" height="20px"> ดรมฟ Online - เล่นโน้ตดนตรีไทยออนไลน์</span>
       </div>
-      <select id="melody" onchange="changeMelody()">
+      <select id="melody" onchange="changeMelody();getTempo()">
         <option value="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร (เลือกเพลงตัวอย่าง)">☞เลือกเพลงตัวอย่าง:
           <optgroup label="เพลงไทยเดิม">
             <option value="ลาวครวญ 2 ชั้น:
@@ -33,6 +33,8 @@
             <option value="ลาวจ้อย ชั้นเดียว(150):
 -ดรม ซด-ร -ดรม ซล-ซ -มซม รดรม รมซม ซล-ซ
 ---- รมซล --ดํล ซม-ซ -มรด -ร-ม รด-ร -มรด">ลาวจ้อย ชั้นเดียว
+            <option value="ลาวล่องน่าน ชั้นเดียว(200):
+---- มซลดํ -ดํ-ล ซม-ซ -ดํรํมํ ซํรํ-มํ มํรํดํท ลซ-ดํ">ลาวล่องน่าน ชั้นเดียว
             <option value="แขกบรเทศ ชั้นเดียว(150):
 ดํลลล ดํลลล ดํซซซ ดํลซม ซมรด ซดรม ซลซม ซมรด
 มมซร มรดล ซมซล ซลดํรํ ซมรด ซดรม ซลซม ซมรด">แขกบรเทศ ชั้นเดียว
@@ -109,11 +111,13 @@
 ---- -มซล --ซม รมดร --มร ดลฺซฺด -ลฺซฺลฺ ดลฺซฺลฺ ---">นิราศเวียงพิงค์
           </optgroup>
       </select>
+      <!-- NOTE TABLE -->
+      <div id="output"></div>
       <div class="rows">
-        <div>
+        <div id="mianArea">
           <!-- NOTE AREA -->
           <p><textarea type="text" id="thm" class="thm" rows="3" cols="5" oninput="addRowTextarea();checkMultipleLine()"
-              onfocus="addRowTextarea();;checkMultipleLine()"
+              onfocus="addRowTextarea();checkMultipleLine()" onchange="getTempo()"
               placeholder="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร"></textarea></p>
           <!-- สำหรับการทดสอบ PLAY STOP -->
           <!-- <button onclick="convert()">test</button> -->
@@ -142,40 +146,49 @@
             <button name="button" id="btn11" value="
 " onclick="keyboardInput(this)">Enter</button>
           </div>
-          <div class="flex-container">
+          <div class="flex-container" id="settingArea">
 <!-- SETTING -->
             <div class="setting">
-              <!-- FILE -->
-              <select>
-                <span class="close">&times;</span>
-                <option disabled>☐ ไฟล์</option>
-                <!-- <option id=""><a href="./index.html" target="_blank">↗︎ เปิดไฟล์ใหม่</a></option> -->
-                <option id="openFile">↑ เปิดไฟล์โน้ต (Ctrl+O)</option>
-                <option onchange="saveTextAsFile()" onclick="saveTextAsFile()">↓ บันทึกไฟล์โน้ต (Ctrl+S)</option>
-                <option onchange="getSongHash()"  onclick="getSongHash()">⎘ คัดลอกลิงก์ URL</option>
-              </select>
-              <br>
-              <!-- EDIT -->
-              <select>
-                <span class="close">&times;</span>
-                <option disabled>⚒︎ แก้ไข</option>
-                <option onchange="editor()"  onclick="editor()">✑ เครื่องมือแก้ไข</option>
-                <option onchange="showKeyboard()"  onclick="showKeyboard()" >⌨ คีย์บอร์ด</option>
-              </select>
-              <br>
-              <!-- APP -->
-              <select>
-                <span class="close">&times;</span>
-                <option>☼ การตั้งค่า</option>
-                <option disabled>☺ ธีม</option>
-                <option disabled>🅰︎ แบบอักษร</option>
-              </select>
+              <div class="setting">
+
+                <!-- FILE -->
+                <div class="menu-group">
+                  <div class="menu-title">☐ ไฟล์</div>
+                  <button id="openFile">↑ เปิดไฟล์โน้ต (Ctrl+O)</button>
+                  <button onclick="saveTextAsFile()">↓ บันทึกไฟล์โน้ต (Ctrl+S)</button>
+                  <button onclick="getSongHash()">↪︎ คัดลอกลิงก์ URL</button>
+                  <button onclick="showTable()">♫ แสดงตารางโน้ต</button>
+                </div>
+              
+                <!-- EDIT -->
+                <div class="menu-group">
+                  <div class="menu-title">⚒︎ แก้ไข</div>
+                  <button onclick="editor()">✑ เครื่องมือแก้ไข</button>
+                  <button onclick="showKeyboard()">⌨ คีย์บอร์ด</button>
+                </div>
+              
+                <!-- APP -->
+                <div class="menu-group">
+                  <div class="menu-title">☼ การตั้งค่า</div>
+                  <button disabled>☺ ธีม</button>
+                  <button disabled>🅰︎ แบบอักษร</button>
+                </div>
+              
+              </div>
             </div>
             <!-- CONVERTOR -->
             <div class="small" id="editor" style="display: block;">
+              <div class="menu-title">✑ พาเนลเครื่องมือแก้ไข</div>
               แปลงตัวโน้ต: <button id="toggle" class="">ปุ่มแปลงโน้ต</button><br>
               แปลงด้วยตัวเอง: <button class="" onclick="changeText()" id="btn1">1234<>ดรมฟ</button>
               <br>
+              <!-- TEMPO -->
+              <div>
+                จังหวะ:
+                <button id="deBtn">−</button>
+                <input type="number" id="tempoInput" min="20" max="300">
+                <button id="inBtn">+</button>
+              </div>
               <!-- SOUND -->
               คีย์:<select id="key">
                 <option value="11">เครื่องสาย</option>
@@ -214,6 +227,7 @@
                 <input type="number" id="fontInput" min="8" max="100">
                 <button id="increaseBtn">+</button>
               </div>
+
             </div>
             <!-- <div class="empty"></div> -->
           </div>
@@ -227,7 +241,14 @@
       </p>
     </div>
   </div>
-  <a class="small" href="./about.html">↪︎ เกี่ยวกับเว็บไซต์นี้ v. 0.021 [2568-11-08]</a><br>
+  <div id="sizeTable" style="display:none;"><span>ขนาดโน้ต:</span>
+    <button id="decreaseSize">−</button>
+    <input type="number" id="sizeInput" value="12" min="10" max="60">
+    <button id="increaseSize">+</button>
+    <button onclick="showTable()">แสดงเครื่องมือ</button>
+  </div>
+
+  <a class="small" href="./about.html">↪︎ เกี่ยวกับเว็บไซต์นี้ v. 0.022 [26-02-25]</a><br>
   <a class="small" href="http://music.warut.net" target="_blank">↪︎ ไปที่ music.warut.net</a>
   <div id="saveFilePopup" class="load-file">
     <div class="load-file-content">
