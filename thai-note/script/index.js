@@ -8,9 +8,10 @@ function getSongHash() {
     //สร้างตัวแปรสำหรับการสร้างลิงก์ใหม่ โดยการกดปุ่มเพื่อรันฟังก์ชัน
     let song = document.getElementById('thm').value;
     song = song.replace(/\n/g, "%0A")
+    let songName = song.split("(")[0]
     location.hash = song
-    navigator.clipboard.writeText("https://music.warut.net/thai-note/"+ location.hash)
-    alert("คัดลอกลิงก์ URL แล้ว");
+    navigator.clipboard.writeText(songName + " https://music.warut.net/thai-note/"+ location.hash)
+    alert(`คัดลอกลิงก์ URL: ${songName} https://music.warut.net/thai-note/ + ${location.hash} ` )
 }
 
 function loadShareSong() {
