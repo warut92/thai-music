@@ -123,6 +123,11 @@ table {
 
 #output h2 {
   font-size: calc(var(--music-size) * 1.6);
+  margin-bottom: 0px;
+  margin-top: 0px;
+  border-bottom-style: solid;
+  border-bottom-width: 0px;
+  height: 40px;
 }
 
 #output h {

@@ -10,8 +10,8 @@ function getSongHash() {
     song = song.replace(/\n/g, "%0A")
     let songName = song.split("(")[0]
     location.hash = song
-    navigator.clipboard.writeText(songName + " https://music.warut.net/thai-note/"+ location.hash)
-    alert(`คัดลอกลิงก์ URL: ${songName} https://music.warut.net/thai-note/ + ${location.hash} ` )
+    navigator.clipboard.writeText(" https://music.warut.net/thai-note/"+ location.hash)
+    alert(`คัดลอกลิงก์ URL ${songName} เรียบร้อย` )
 }
 
 function loadShareSong() {
@@ -172,11 +172,15 @@ document.addEventListener("DOMContentLoaded", function () {
       fontSize = parseInt(fontInput.value) || 8;
       updateFontSize();
     });
-    
+ 
     function getTempo() {
       let textarea = document.getElementById("thm");
       let noteData = textarea.value;
     
+      if (noteData === " (100)") {
+        textarea.value = ""
+      }
+
       let match = noteData.match(/\((\d+)\)/);
       let numberTempo;
     
@@ -186,12 +190,11 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         // ถ้าไม่มี → ใส่ค่า default
         numberTempo = 100;
-    
         // เพิ่ม (100) ต่อท้ายชื่อเพลงก่อน :
         if (noteData.includes(":")) {
           textarea.value = noteData.replace(":", `(${numberTempo}):`);
         } else {
-          textarea.value = noteData + ` (${numberTempo})`;
+          textarea.value = noteData + ` (${numberTempo}):`;
         }
       }
     
@@ -229,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let current = parseInt(tempoInput.value) || 100;
       let max = parseInt(tempoInput.max);
       if (current < max) {
-        updateTempoInText(current + 1);
+        updateTempoInText(current + 10);
       }
     });
     
@@ -237,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let current = parseInt(tempoInput.value) || 100;
       let min = parseInt(tempoInput.min);
       if (current > min) {
-        updateTempoInText(current - 1);
+        updateTempoInText(current - 10);
       }
     });
     
@@ -270,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
         outputArea.style.display = "block";
 
       }
-      console.log(settingArea.style.display);
+      // console.log(settingArea.style.display);
       const textarea = document.getElementById("thm");
       const output = document.getElementById("output");
     
@@ -300,11 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const hTitle = document.createElement("h2");
           hTitle.textContent = name;
     
-          const hTempo = document.createElement("h3");
-          // hTempo.textContent = tempo ? "Tempo: " + tempo : "";
-    
           output.appendChild(hTitle);
-          output.appendChild(hTempo);
     
           return;
         }
