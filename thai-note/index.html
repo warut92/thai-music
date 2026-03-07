@@ -190,20 +190,20 @@
                 <button id="inBtn">+</button>
               </div>
               <!-- SOUND -->
-              คีย์:<select id="key">
+              คีย์:<select id="key" onchange="changeKeyText()">
                 <option value="11">เครื่องสาย</option>
                 <option value="12">ปี่พาทย์</option>
-                <option value="0" selected>A♯/B♭</option>
+                <option value="0" selected>A#/Bb</option>
                 <option value="1">C</option>
-                <option value="2">C♯/D♭</option>
+                <option value="2">C#/Db</option>
                 <option value="3">D</option>
-                <option value="4">D♯/E♭</option>
+                <option value="4">D#/Eb</option>
                 <option value="5">E</option>
                 <option value="6">F</option>
-                <option value="7">F♯/G♭</option>
-                <option value="8">G</option>
-                <option value="9">G♯/A♭</option>
-                <option value="10">A</option>
+                <option value="-4">F#/Gb</option>
+                <option value="-3">G</option>
+                <option value="-2">G#/Ab</option>
+                <option value="-1">A</option>
               </select>
               <br>
               ช่วงทบเสียง:<select id="octave">
@@ -217,8 +217,8 @@
               คลื่นเสียง:<select id="type">
                 <option value="sine">∿ Sine</option>
                 <option value="square">⎍ Square</option>
-                <option value="sawtooth">Sawtooth</option>
-                <option value="triangle">Triangle</option>
+                <option value="sawtooth">𝆱 Sawtooth</option>
+                <option value="triangle">Λ Triangle</option>
               </select>
               <br>
               <div>

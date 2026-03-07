@@ -399,3 +399,51 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // โหลดค่าทันทีเมื่อหน้าเปิด
     loadSavedSize();
+
+    function loadSongKey() {
+      let allText = textarea.value
+      let match = allText.match(/\(([A-Za-z][#b]?)\)/);
+
+    if (match) {
+      selectKeyByText(match[1]);
+    }
+    
+    }
+    
+    function selectKeyByText(letter) {
+      let select = document.getElementById("key");
+      let options = select.options;
+    
+      for (let i = 0; i < options.length; i++) {
+        if (options[i].text.trim().startsWith(letter)) {
+          select.selectedIndex = i;
+          break;
+        }
+      }
+    }
+
+    loadSongKey()
+
+    function changeKeyText() {
+
+      let select = document.getElementById("key");
+      let keyText = select.options[select.selectedIndex].text;
+    
+      // take first key before /
+      let key = keyText.split("/")[0];
+    
+      let textarea = document.getElementById("thm");
+      let str = textarea.value;
+    
+      if (str.match(/\(\d+\)\([A-G][#b]?\)/)) {
+        // replace existing key
+        str = str.replace(/\(\d+\)\([A-G][#b]?\)/, function(m){
+          return m.replace(/\([A-G][#b]?\)/, "(" + key + ")");
+        });
+      } else {
+        // add key if not exist
+        str = str.replace(/\(\d+\)/, "$&(" + key + ")");
+      }
+    
+      textarea.value = str;
+    }
