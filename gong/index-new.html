@@ -122,43 +122,53 @@ canvas.height=img.clientHeight;
 img.onload=resizeCanvas;
 window.onresize=resizeCanvas;
 
-
 //----------------------------------
-// highlight animation
+// highlight system (multi)
 //----------------------------------
 
-function drawHit(g){
+let hits = [];
 
-const rect=img.getBoundingClientRect();
+function addHit(g){
+
+hits.push({
+x:g.x,
+y:g.y,
+r:g.r,
+alpha:0.8
+});
+
+}
+
+function renderHits(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
 
 let scaleX=img.clientWidth/img.naturalWidth;
 let scaleY=img.clientHeight/img.naturalHeight;
 
-let x=g.x*scaleX;
-let y=g.y*scaleY;
-let r=g.r*scaleX;
+hits.forEach(h=>{
 
-let alpha=0.8;
-
-function animate(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
+let x=h.x*scaleX;
+let y=h.y*scaleY;
+let r=h.r*scaleX;
 
 ctx.beginPath();
 ctx.arc(x,y,r,0,Math.PI*2);
 
-ctx.fillStyle="rgba(255,100,100,"+alpha+")";
+ctx.fillStyle="rgba(255,120,120,"+h.alpha+")";
 ctx.fill();
 
-alpha-=0.05;
+h.alpha-=0.04;
 
-if(alpha>0) requestAnimationFrame(animate);
+});
+
+hits = hits.filter(h=>h.alpha>0);
+
+requestAnimationFrame(renderHits);
 
 }
 
-animate();
-
-}
+renderHits();
 
 
 //----------------------------------
