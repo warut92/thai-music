@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ฆ้องวงใหญ่มือถือ v.02</title>
+
+<meta name="viewport" content="width=device-width, user-scalable=no">
+
+<script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+
+<style>
+
+body{
+margin:0;
+text-align:center;
+font-family:sans-serif;
+}
+
+#container{
+position:relative;
+display:inline-block;
+}
+
+#instrument{
+width:100%;
+max-width:360px;
+touch-action:none;
+display:block;
+}
+
+#highlight{
+position:absolute;
+left:0;
+top:0;
+pointer-events:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<h3>ฆ้องวงใหญ่มือถือ v.02</h3>
+
+<div id="container">
+
+<img id="instrument" src="./img/gong-mobile3.png">
+
+<canvas id="highlight"></canvas>
+เกี่ยวกับเว็บไซต์นี้
+</div>
+
+<script>
+
+//----------------------------------
+// Tone.js players
+//----------------------------------
+
+const players = new Tone.Players({
+
+sound1:"audio/e1.wav",
+sound2:"audio/f1.wav",
+sound3:"audio/g1.wav",
+sound4:"audio/a1.wav",
+sound5:"audio/b1.wav",
+sound6:"audio/c2.wav",
+sound7:"audio/d2.wav",
+sound8:"audio/e2.wav",
+sound9:"audio/f2.wav",
+sound10:"audio/g2.wav",
+sound11:"audio/a2.wav",
+sound12:"audio/b2.wav",
+sound13:"audio/c3.wav",
+sound14:"audio/d3.wav",
+sound15:"audio/e3.wav",
+sound16:"audio/f3.wav"
+
+}).toDestination();
+
+
+//----------------------------------
+// Gong positions
+//----------------------------------
+
+const gongs=[
+
+{sound:"sound1",x:78,y:261,r:30},
+{sound:"sound2",x:45,y:211,r:28},
+{sound:"sound3",x:37,y:154,r:25},
+{sound:"sound4",x:59,y:107,r:26},
+{sound:"sound5",x:95,y:73,r:21},
+{sound:"sound6",x:135,y:51,r:22},
+{sound:"sound7",x:177,y:45,r:19},
+{sound:"sound8",x:217,y:50,r:18},
+{sound:"sound9",x:255,y:60,r:18},
+{sound:"sound10",x:288,y:83,r:18},
+{sound:"sound11",x:315,y:112,r:20},
+{sound:"sound12",x:329,y:149,r:19},
+{sound:"sound13",x:332,y:192,r:19},
+{sound:"sound14",x:316,y:231,r:18},
+{sound:"sound15",x:291,y:265,r:19},
+{sound:"sound16",x:255,y:287,r:17}
+
+];
+
+
+//----------------------------------
+// Canvas setup
+//----------------------------------
+
+const img=document.getElementById("instrument");
+const canvas=document.getElementById("highlight");
+const ctx=canvas.getContext("2d");
+
+function resizeCanvas(){
+
+canvas.width=img.clientWidth;
+canvas.height=img.clientHeight;
+
+}
+
+img.onload=resizeCanvas;
+window.onresize=resizeCanvas;
+
+
+//----------------------------------
+// highlight animation
+//----------------------------------
+
+function drawHit(g){
+
+const rect=img.getBoundingClientRect();
+
+let scaleX=img.clientWidth/img.naturalWidth;
+let scaleY=img.clientHeight/img.naturalHeight;
+
+let x=g.x*scaleX;
+let y=g.y*scaleY;
+let r=g.r*scaleX;
+
+let alpha=0.8;
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.beginPath();
+ctx.arc(x,y,r,0,Math.PI*2);
+
+ctx.fillStyle="rgba(255,100,100,"+alpha+")";
+ctx.fill();
+
+alpha-=0.05;
+
+if(alpha>0) requestAnimationFrame(animate);
+
+}
+
+animate();
+
+}
+
+
+//----------------------------------
+// play sound
+//----------------------------------
+
+function play(sound){
+
+let p=players.player(sound);
+
+if(p.loaded) p.start();
+
+}
+
+
+//----------------------------------
+// detect gong
+//----------------------------------
+
+let last=null;
+
+function check(px,py){
+
+for(let g of gongs){
+
+let dx=px-g.x;
+let dy=py-g.y;
+
+if(Math.sqrt(dx*dx+dy*dy)<g.r){
+
+if(last!==g.sound){
+
+play(g.sound);
+drawHit(g);
+
+last=g.sound;
+
+}
+
+return;
+
+}
+
+}
+
+}
+
+
+//----------------------------------
+// pointer system
+//----------------------------------
+
+function pointer(e){
+
+const rect=img.getBoundingClientRect();
+
+let scaleX=img.naturalWidth/rect.width;
+let scaleY=img.naturalHeight/rect.height;
+
+let x=(e.clientX-rect.left)*scaleX;
+let y=(e.clientY-rect.top)*scaleY;
+
+check(x,y);
+
+}
+
+
+img.addEventListener("pointerdown",async e=>{
+
+await Tone.start();
+pointer(e);
+
+});
+
+img.addEventListener("pointermove",e=>{
+
+if(e.buttons===0) return;
+
+pointer(e);
+
+});
+
+</script>
+
+</body>
+</html>
