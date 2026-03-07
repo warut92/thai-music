@@ -51,13 +51,11 @@ pointer-events:none;
 </div>
 
 <script>
-
 //----------------------------------
-// Tone.js players
+// SOUND POOL (polyphonic)
 //----------------------------------
 
-const players = new Tone.Players({
-
+const audioFiles = {
 sound1:"audio/e1.wav",
 sound2:"audio/f1.wav",
 sound3:"audio/g1.wav",
@@ -74,9 +72,24 @@ sound13:"audio/c3.wav",
 sound14:"audio/d3.wav",
 sound15:"audio/e3.wav",
 sound16:"audio/f3.wav"
+};
 
-}).toDestination();
+const POOL_SIZE = 6;
 
+const soundPool = {};
+
+for(let s in audioFiles){
+
+soundPool[s] = [];
+    
+for(let i=0;i<POOL_SIZE;i++){
+
+let p = new Tone.Player(audioFiles[s]).toDestination();
+soundPool[s].push(p);
+
+}
+
+}
 
 //----------------------------------
 // Gong positions
@@ -155,7 +168,9 @@ let r=h.r*scaleX;
 ctx.beginPath();
 ctx.arc(x,y,r,0,Math.PI*2);
 
-ctx.fillStyle="rgba(255,120,120,"+h.alpha+")";
+ctx.shadowColor="blue";
+ctx.shadowBlur=20;
+ctx.fillStyle="rgba(255,150,80,"+h.alpha+")";
 ctx.fill();
 
 h.alpha-=0.04;
@@ -175,11 +190,28 @@ renderHits();
 // play sound
 //----------------------------------
 
+//----------------------------------
+// PLAY SOUND
+//----------------------------------
+
 function play(sound){
 
-let p=players.player(sound);
+let pool = soundPool[sound];
 
-if(p.loaded) p.start();
+for(let p of pool){
+
+if(p.state !== "started"){
+
+p.start();
+return;
+
+}
+
+}
+
+// ถ้าเสียงเต็ม pool ให้ตัวแรกเล่นใหม่
+pool[0].stop();
+pool[0].start();
 
 }
 
@@ -187,8 +219,6 @@ if(p.loaded) p.start();
 //----------------------------------
 // detect gong
 //----------------------------------
-
-let last=null;
 
 function check(px,py){
 
@@ -199,14 +229,8 @@ let dy=py-g.y;
 
 if(Math.sqrt(dx*dx+dy*dy)<g.r){
 
-if(last!==g.sound){
-
 play(g.sound);
 addHit(g);
-
-last=g.sound;
-
-}
 
 return;
 
@@ -236,16 +260,26 @@ check(x,y);
 }
 
 
+let isDown=false;
+
 img.addEventListener("pointerdown",async e=>{
 
 await Tone.start();
+
+isDown=true;
 pointer(e);
+
+});
+
+img.addEventListener("pointerup",()=>{
+
+isDown=false;
 
 });
 
 img.addEventListener("pointermove",e=>{
 
-if(e.buttons===0) return;
+if(!isDown) return;
 
 pointer(e);
 
