@@ -6,7 +6,7 @@
 ##  🏃 เรียนรู้ทฤษฎีดนตรีไทย
 - [ดรมฟ online (เขียนโน้ตดนตรีไทย)](https://music.warut.net/thai-note)
 - [โปรแกรมฝึกอ่านโน้ตดนตรีไทย ด้วยอีโมจี](https://warut92.github.io/read-thai-music/)
-
+- [รวมโน้ตชมรมดนตรีไทย](https://note.warut.net)
 ## 🏃‍♀️ เครื่องดนตรีไทยเล่นได้ในมือถือ (Construct 2, PWA)
 
 - [ระนาดท้ม](./ranad_thum)
