@@ -137,3 +137,9 @@ table {
 #output h {
   font-size: calc(var(--music-size) * 1.1);
 }
+
+#footnote {
+  position: fixed;
+  bottom: 0px;
+  left: 10px;
+}

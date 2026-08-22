@@ -1,3 +1,172 @@
+//โค้ดสำหรับหน้า index ที่ไม่เกี่ยวกับการแปลงตัวโน้ต
+//โน้ตเพลงตัวอย่าง
+const melodies = {
+
+  "lao-kruan": {
+      title: "ลาวครวญ 2 ชั้น",
+      bpm: 120,
+      notes: `---- ---- ->ซ-ม รดรม ---- -ด-ร -ด-ม -รรร
+---ซ -ซซซ ลซมซ -ล-ดํ ---ดํ -ดํดํดํ -ซ-ม รด-ร`
+  },
+
+  "lao-phung-khao": {
+      title: "ลาวพุงขาว 2 ชั้น",
+      bpm: 120,
+      notes: `---- ---- >รมซล ซม-ซ ---- -ดํ-ล -ซ-ม รด-ร
+---ม ---ร ---ดํ มํรํดํล -ซ-ด -ร-ม ซลซม -ร-ด`
+  },
+
+  "lao-joy-song": {
+      title: "ลาวจ้อย สองชั้น",
+      bpm: 120,
+      notes: `---ด รมซร ---- -ม-ร ---ด รมซร มรดร -ม-ซ
+---ม ซลดํซ ---ม รดรม --ซล -ดํ-รํ มํรํดํล ดํซซซ
+---ซ -ซซซ -ซ-ล ดํรํมํล ---- -ซ-ล -ลซล ดํซซซ
+---ซ -ซซซ ซมรด -ร-ม ---- ซลดํรํ มํรํดํรํ -มํ-ดํ`
+  },
+
+  "lao-joy-single": {
+      title: "ลาวจ้อย ชั้นเดียว",
+      bpm: 150,
+      notes: `-ดรม ซด-ร -ดรม ซล-ซ -มซม รดรม รมซม ซล-ซ
+---- รมซล --ดํล ซม-ซ -มรด -ร-ม รด-ร -มรด`
+  },
+
+  "lao-long-nan": {
+      title: "ลาวล่องน่าน ชั้นเดียว",
+      bpm: 200,
+      notes: `---- มซลดํ -ดํ-ล ซม-ซ -ดํรํมํ ซํรํ-มํ มํรํดํท ลซ-ดํ`
+  },
+
+  "khaek-borathete": {
+      title: "แขกบรเทศ ชั้นเดียว",
+      bpm: 150,
+      notes: `ดํลลล ดํลลล ดํซซซ ดํลซม ซมรด ซดรม ซลซม ซมรด
+มมซร มรดล ซมซล ซลดํรํ ซมรด ซดรม ซลซม ซมรด`
+  },
+
+  "lao-siang-thian": {
+      title: "ลาวเสี่ยงเทียน 2 ชั้น",
+      bpm: 120,
+      notes: `(ท่อน 1)
+---- ---- ->ลลล ซลดํซ ---ฟ -ม-- -ร-ซ -ลซซ
+---- ---- -ลลล ซลดํซ ---ฟ -ม-- -ร-ซ -ลซซ
+-ลซม ซรมซ --ดํรํ มํรํดํล --ดํล ซมซล -ดํรํมํ -รํ-ดํ
+-มํ-รํ -ดํ-มํ --ดํรํ มํรํดํล --ดํล ซมซล -ดํรํมํ -รํ-ดํ
+
+(ท่อน 2)
+---- ---- ซลซม ซรมซ ---- ---- ซลซม รด-ร
+---- ---- ซลซม ซรมซ ---- ---- ซลซม รด-ร
+-มํ-รํ -ดํ-มํ --ดํรํ มํรํดํล --ดํล ซมซล -ดํรํมํ -รํ-ดํ
+-มํ-รํ -ดํ-มํ --ดํรํ มํรํดํล --ดํล ซมซล -ดํรํมํ -รํ-ดํ`
+  },
+
+  "khaek-borathete-khong": {
+      title: "แขกบรเทศ ชั้นเดียว ฆ้องวงใหญ่",
+      bpm: 220,
+      notes: `
+--ลล --ลล --ซซ --มม -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
+-ลฺ-- -ลฺ-- -ซฺ-- -ทฺ-- -ร-ด -ร-ม -ซ-ม -ร-ด
+
+--ลล --ลล --ซซ --มม -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
+-ลฺ-- -ลฺ-- -ซฺ-- -ทฺ-- -ร-ด -ร-ม -ซ-ม -ร-ด
+
+-มํ-รํ -ดํ-ล --ซล -ดํ-รํ -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
+-ม-ร -ด-ม -ฟx- -ด-ร -ร-ด -ร-ม -ซ-ม -ร-ด
+
+-มํ-รํ -ดํ-ล --ซล -ดํ-รํ -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
+-ม-ร -ด-ม -ฟx- -ด-ร -ร-ด -ร-ม -ซ-ม -ร-ด`
+  },
+
+  "luk-om": {
+      title: "ลูกอม",
+      bpm: 120,
+      notes: `--->ซ ลดํดํ- ---มํ รํดํรํ- ---ซ ลดํลดํ ---มํ รํดํรํ-
+--มํ- ซํมํรํดํ ---ล ล-ซ- ดํ-ดํ- --ซฟ -มฟ- ล-มํ- รํ---`
+  },
+
+  "sai-ta-lok-kan": {
+      title: "สายตาหลอกกันไม่ได้",
+      bpm: 120,
+      notes: `--->ท -ดํ-รํ ---ท ลซ-ซ -ม-ซ -รํ-รํ --ท-
+---- ---รํ ดํทดํท -ซซ- มร-- -ม-ซ -ล-ท --xดํ --xท
+--xท -ดํ-รํ ---ท ลซ-ซ -ม-ซ -รํ-รํ --ท-
+---- --ทท ดํทดํรํ ท-ซ- --มร -มซ- -ล-ซ ---x`
+  },
+
+  "tai-thang-pen": {
+      title: "ตายทั้งเป็น",
+      bpm: 120,
+      notes: `---- --->ท -ล-ล -ซล- ---ซ -ล-ท -ล-ล -ซล-
+---ท -รํ-มํ -รํ-รํ -ทรํ- ---- -รํ-มํ -รํ-รํ -ทรํ-
+---รํ -มํ-ท -ล-ล -ซล- ---ซ -ล-ท -ล-ล -ซล-
+---ท -รํ-มํ -รํ-รํ -ทรํ- ---- -รํ-มํ -รํ-รํ -ทรํ-
+---มํ ---ซํ ---- -มํ-- ---- ---ซํ -ซํ-ซํ -ซํ-ฟํ#
+-มํ-มํ -มํ-มํ ---- -รํ-- ---- -ฟํ-- -ฟํ-ฟํ -มํมํ-
+-ท-ดํ -รํ-ท ---ซ -ล-- ---- -ล-ท ---ล ---ซ
+---ล ---ซ ---- ---- ---- ---- ---- ----
+-ซ-ซ -ซ-ซํ ---- -มํ-- ---- ---ซํ -ซํ-ซํ -ซํ-ฟํ#
+-มํ-มํ -มํ-มํ ---- -รํ--- --- -ฟํ-- -ฟํ-ฟํ -มํมํ-
+-ท-ดํ -รํ-ท ---ล -ล-- ---- -ล-ท ---ล ---ซ
+---ล ---ซ ---- ---- ---- ---- ---- ----`
+  },
+
+  "kaem-nong-nang": {
+      title: "แก้มน้องนางนั้นแดงกว่าใคร",
+      bpm: 120,
+      notes: `---- --->ล ซลซล ทลซม
+-ร-- -มซล ซลซล -มํรํ-
+---- -ทรํมํ รํมํซํมํ รํทท-
+---- -ทรํล ทลซม -ซล-`
+  },
+
+  "thak-khrab": {
+      title: "ทักครับ - Lipta",
+      bpm: 160,
+      notes: `---- ->ซ-ท --รํท -ล-ซ ---ม -ซ-ท --รํท -ล-ซ
+---- -ซ-ฟ# --ซฟ# -ม-ร ---ทฺ -ร-ฟ# --ซฟ# -ม-ร
+---- -ซ-ท --รํท -ล-ซ ---ม -ซ-ท --รํท -ล-ซ
+---- -มซฟ# --ซฟ# -ม-ร ---ม -ล-- -ซ-- -`
+  },
+
+  "sao-suan-taeng": {
+      title: "สาวสวนแตง",
+      bpm: 120,
+      notes: `---- --->ดํ --ลซ ฟซลดํ --ซล ดํลซฟ -ฟรฟ ซลฟซ
+---- ดํลซฟ --ซล ดํลซฟ ---ร ฟซฟด -รฟซ ดํลซฟ`
+  },
+
+  "nirat-wiang-phing": {
+      title: "นิราศเวียงพิงค์",
+      bpm: 120,
+      notes: `---- --->ด --รม ซลซล --ดํม ซลซล --ซม ซมรม
+---- xมซด --รม รมลฺด --รม รมซด --ซฺด รมซม
+---- -มซล --ซม รมดร --มร ดลฺซฺด -ลฺซฺลฺ ดลฺซฺลฺ
+---- ---ด --รม ซลซล --ดํม ซลซล --ซม ซมรม
+---- xมซด --รม รมลฺด --รม รมซด --ซฺด รมซม
+---- -มซล --ซม รมดร --มร ดลฺซฺด -ลฺซฺลฺ ดลฺซฺลฺ ---`
+  }
+};
+
+function changeMelody() {
+
+    const id = document.getElementById("melody").value;
+
+    if (!id) {
+        document.getElementById("thm").value = "";
+        return;
+    }
+
+    const melody = melodies[id];
+
+    document.getElementById("thm").value = melody.title + "(" + melody.bpm + "):\n" + melody.notes;
+
+    // ถ้ามีช่องแสดง BPM
+    // document.getElementById("tempo").value = melody.bpm;
+
+    addRowTextarea();
+}
+
 function addRowTextarea() {
     var lines = document.querySelector("textarea").value.split(/\r\n|\r|\n/).length;
     document.getElementById("thm").rows = lines;
@@ -176,11 +345,12 @@ document.addEventListener("DOMContentLoaded", function () {
     function getTempo() {
       let textarea = document.getElementById("thm");
       let noteData = textarea.value;
-    
-      if (noteData === " (100)") {
+      if (noteData === " (100):") {
+        textarea.value = ""
+      } else if (noteData.value === "") {
         textarea.value = ""
       }
-
+      
       let match = noteData.match(/\((\d+)\)/);
       let numberTempo;
     
@@ -194,6 +364,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (noteData.includes(":")) {
           textarea.value = noteData.replace(":", `(${numberTempo}):`);
         } else {
+          console.log(textarea.value);
+          if (textarea.value === "") {
+            textarea.value = "";
+          } else 
           textarea.value = noteData + ` (${numberTempo}):`;
         }
       }
@@ -447,3 +621,112 @@ document.addEventListener("DOMContentLoaded", function () {
     
       textarea.value = str;
     }
+
+//ฟังก์ชันสลับการแสดงผลตัวหนังสือของฟังก์ชันแปลงตัวเลขเป็นตัวโน้ตไทยและกลับกัน
+/* ไม่ทำงาน??? */
+function changeText() {
+  const button = document.getElementById("btn1");
+  if (button.innerText === "1234=>ดรมฟ") {
+      button.innerText = "1234=>1234";
+  } else {
+      button.innerText = "1234=>ดรมฟ";
+  }
+}
+    //ฟังก์ชันแปลงตัวเลขเป็นตัวโน้ตไทย
+function alphabet() {
+  var thmtext = document.getElementById('thm').value;
+  let i = thmtext.split(':')
+  note = i[1]
+
+  note = note.replace(/1/g, 'ด');
+  note = note.replace(/2/g, 'ร');
+  note = note.replace(/3/g, 'ม');
+  note = note.replace(/4/g, 'ฟ');
+  note = note.replace(/5/g, 'ซ');
+  note = note.replace(/6/g, 'ล');
+  note = note.replace(/7/g, 'ท');
+  note = note.replace(/8/g, 'ดํ');
+  note = note.replace(/9/g, 'รํ');
+  note = note.replace(/\*/g, 'ํ');
+  note = note.replace(/\+/g, 'ํ');
+  note = note.replace(/\./g, 'ฺ');
+
+  document.getElementById('thm').value = i[0] + ":" + note;
+}
+
+
+//ฟังก์ชันแปลงตัวโน้ตไทยเป็นตัวเลข
+function numberal() {
+  var thmtext = document.getElementById('thm').value;
+  let i = thmtext.split(':')
+  note = i[1]
+  //regex ไม่แปลงสตริงใด ๆ ในเครื่องหมาย ()
+  // note = note.replace(/ *\([^)]*\) */g, /(\w*)/);
+
+  note = note.replace(/ด/g, '1');
+  note = note.replace(/ร/g, '2');
+  note = note.replace(/ม/g, '3');
+  note = note.replace(/ฟ/g, '4');
+  note = note.replace(/ซ/g, '5');
+  note = note.replace(/ล/g, '6');
+  note = note.replace(/ท/g, '7');
+  note = note.replace(/ํ/g, '*');
+  note = note.replace(/ฺ/g, '.');
+
+  document.getElementById('thm').value = i[0] + ":" + note;
+}
+
+//ฟังก์ชันอ่านไฟล์โน้ต
+//Read file https://www.w3docs.com/learn-javascript/file-and-filereader.html
+function readFile(input) {
+  let file = input.files[0];
+  let fileReader = new FileReader();
+  fileReader.readAsText(file);
+  fileReader.onload = function() {
+    document.getElementById("thm").value = fileReader.result;
+  };
+  fileReader.onerror = function() {
+    alert(fileReader.error);
+  };
+}
+//Save file https://stackoverflow.com/a/30740104
+function saveTextAsFile() {
+  var textToWrite = document.getElementById("thm").value;
+  var textFileAsBlob = new Blob([textToWrite], {
+    type: "text/plain"
+  });
+  var splitedText = textToWrite.split(":");
+  nameAndBPM = splitedText[0];
+  onlyName = nameAndBPM.split("(")
+  var fileNameToSaveAs = onlyName[0] + ".txt";
+
+  var downloadLink = document.createElement("a");
+  downloadLink.download = fileNameToSaveAs;
+  downloadLink.innerHTML = "Download File";
+  if (window.webkitURL != null) {
+    // Chrome allows the link to be clicked
+    // without actually adding it to the DOM.
+    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+  } else {
+    // Firefox requires the link to be added to the DOM
+    // before it can be clicked.
+    downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+    downloadLink.onclick = destroyClickedElement;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+  }
+  downloadLink.click();
+}
+// var button = document.getElementById("save");
+// button.addEventListener("onclick", saveTextAsFile);
+
+  //แสดง/ซ่อนคีย์บอร๋ด
+  function showKeyboard() {
+    // console.log("k");
+    let k = document.getElementById('keyboard');
+    if (k.style.display === "none") {
+        k.style.display = "block"
+    } else {
+        k.style.display = "none"
+    }
+}
