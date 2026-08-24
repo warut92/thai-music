@@ -655,15 +655,15 @@ function changeText() {
 
   if (button.innerText === "1234=>ดรมฟ") {
       button.innerText = "1234=>1234";
-      numberal()
+      numberalNote()
   } else {
       button.innerText = "1234=>ดรมฟ";
-      alphabet()
+      alphabetNote()
   }
 
 }
     //ฟังก์ชันแปลงตัวเลขเป็นตัวโน้ตไทย
-function alphabet() {
+function alphabetNote() {
   var thmtext = document.getElementById('thm').value;
   let i = thmtext.split(':')
   note = i[1]
@@ -686,7 +686,7 @@ function alphabet() {
 
 
 //ฟังก์ชันแปลงตัวโน้ตไทยเป็นตัวเลข
-function numberal() {
+function numberalNote() {
   var thmtext = document.getElementById('thm').value;
   let i = thmtext.split(':')
   note = i[1]
