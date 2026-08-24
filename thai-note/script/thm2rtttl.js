@@ -3,13 +3,22 @@ let splitedNote = ""
 let pureNote = []
 let note = ""
 let songName = ""
+
 function convert() {
-  
+  //โน้ตทั้งหมด
   let thmtextarea = document.getElementById('thm');
-  if (thmtextarea.value.trim() == "") {
+  let allText = thmtextarea.value;
+
+  if (allText.trim() == "") {
     alert("กรุณากรอกโน้ตดนตรีไทยก่อนกดปุ่มเล่น")
   }
-  let allText = thmtextarea.value;
+
+  // ตรวจว่าเป็นโน้ตกี่บรรทัด
+  const result = /^[^:\n]*\[ฆ้องวงใหญ่\]/.test(allText);
+
+if (result) {
+  allText = "[2]" + allText;
+}
 
   const ALLTEXT_ARR = allText.split(":");
 
@@ -18,14 +27,18 @@ function convert() {
   }
 
   //หากเป็นโน้ตฆ้องวงใหญ่ จะต้องทำการเรียงโน้ตให้ใหม่
-  if (thmtextarea.value.trim().startsWith('[ฆ้องวงใหญ่]')) {
+  if (allText.startsWith('[2]')) {
+
     let twoLineNote = ALLTEXT_ARR[1].toString()
-    TWOLINENOTE = twoLineNote.split("\n");
+    const TWOLINENOTE = twoLineNote.split("\n");
+ 
     //ลบเอร์เรย์ที่ว่าง ๆ
     const cleanedTWOLINENOTE = TWOLINENOTE.filter(subArray => subArray.length > 0);
     //นำมาเลือกบรรทัดบน-ล่างและทำการจัดเรียง
     const upLine = cleanedTWOLINENOTE.filter((s, i) => (i + 1) % 2 !== 0).concat("$")
+    // console.log("up",upLine);
     const downLine = cleanedTWOLINENOTE.filter((s, i) => (i + 1) % 2 === 0)
+    // console.log("down",downLine);
     pureNote = upLine.concat(downLine)
     note = pureNote.toString()
     note = note.replace(/ /g,"").replace(/---/g,"-x-")
@@ -464,8 +477,9 @@ function convert() {
 
   // ลบ string สุดท้าย
   var noteSlice = note.slice(0, -1);
-
-  if (thmtextarea.value.trim().startsWith('[ฆ้องวงใหญ่]')) {
+// console.log("slice",noteSlice);
+  if (allText.trim().startsWith('[2]')) {
+    // console.log("โน้ตสองบรรทัด");
     const ALLNOTE_ARR = noteSlice.split('$')
     // console.log(ALLNOTE_ARR );
     let upLineSlice = ALLNOTE_ARR[0].slice(0, -1);
@@ -474,14 +488,46 @@ function convert() {
     // downLineSlice = downLineSlice.replace(/,,/g,",")
     // console.log("บน",upLineSlice);
     // console.log("ล่าง",downLineSlice);
-    document.getElementById('rtttl').value = songName + ":d=32,o=5,b=" + beat + ":" + upLineSlice;
-    document.getElementById('rtttl1').value = songName + ":d=32,o=5,b=" + beat + ":" + downLineSlice;
+    document.getElementById('rtttl').value = "บรรทัดบน" + songName + ":d=32,o=5,b=" + beat + ":" + upLineSlice;
+    document.getElementById('rtttl1').value = "บรรทัดล่าง" + songName + ":d=32,o=5,b=" + beat + ":" + downLineSlice;
 
   } else {
     //ดึงค่า splitedBeat นำมาใส่
+    // console.log("โน้ตบรรทัดเดียว");
     var output = songName + ":d=32,o=5,b=" + beat + ":" + noteSlice;
     document.getElementById('rtttl').value = output;
     document.getElementById('rtttl1').value = songName + ":d=32,o=5,b=" + beat + ":p";
 
   } 
+}
+
+//ฟังก์ชันเล่นโน้ตสองบรรทัด โดยการตรวจว่าโน้ตนั้นมีคำว่าฆ้องวงใหญ่หรือไม่
+function checkMultipleLine() {
+  const textarea = document.querySelector('.thm');
+  let rawNote = textarea.value
+  const button = document.querySelector('.playBtn');
+  const result = /^[^:\n]*\[ฆ้องวงใหญ่\]/.test(rawNote);
+
+  if (result) {
+    rawNote = "[2]" + rawNote;
+  }
+  // console.log(rawNote);
+  
+  // Check if textarea content starts with [2]
+  if (rawNote.trim().startsWith('[2]')) {
+    console.log("เป็นโน้ต 2 บรรทัด");
+    // Replace the onmousedown attribute
+    button.setAttribute(
+      'onclick',
+      "convert();rtttlPlay.play(document.querySelector('.rtttl').value);rtttlPlay.play(document.querySelector('.rtttl1').value)"
+    );
+    document.getElementById('status').innerHTML = ": โน้ต 2 บรรทัด"
+  } else {
+    console.log("เป็นโน้ต 1 บรรทัด");
+    button.setAttribute(
+      'onclick',
+      "convert();rtttlPlay.play(document.querySelector('.rtttl').value)"
+    );
+    document.getElementById('status').innerHTML = ": โน้ต 1 บรรทัด"
+  }
 }

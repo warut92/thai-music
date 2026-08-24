@@ -1,7 +1,11 @@
 //โค้ดสำหรับหน้า index ที่ไม่เกี่ยวกับการแปลงตัวโน้ต
 //โน้ตเพลงตัวอย่าง
 const melodies = {
-
+  "template": {
+    title: "ชื่อเพลง",
+    bpm: 120,
+    notes: `---- ---- ---- ---- ---- ---- ---- ----`
+},
   "lao-kruan": {
       title: "ลาวครวญ 2 ชั้น",
       bpm: 120,
@@ -62,10 +66,9 @@ const melodies = {
   },
 
   "khaek-borathete-khong": {
-      title: "แขกบรเทศ ชั้นเดียว ฆ้องวงใหญ่",
+      title: "แขกบรเทศ ชั้นเดียว [ฆ้องวงใหญ่] ",
       bpm: 220,
-      notes: `
---ลล --ลล --ซซ --มม -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
+      notes: `--ลล --ลล --ซซ --มม -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
 -ลฺ-- -ลฺ-- -ซฺ-- -ทฺ-- -ร-ด -ร-ม -ซ-ม -ร-ด
 
 --ลล --ลล --ซซ --มม -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
@@ -77,6 +80,22 @@ const melodies = {
 -มํ-รํ -ดํ-ล --ซล -ดํ-รํ -ซ-ดํ -รํ-มํ -มํ-มํ -รํ-ดํ
 -ม-ร -ด-ม -ฟx- -ด-ร -ร-ด -ร-ม -ซ-ม -ร-ด`
   },
+
+  "laa": {
+    title: "ลา [ฆ้องวงใหญ่]",
+    bpm: 180,
+    notes: `---ล -ท-- -ม-ร ---ม -ท-ล -ซ-ม --รม -ซ-ล
+-ลฺ-- ---ทฺ ---ลฺ ---ทฺ -ทฺ-ลฺ -ซฺ-ทฺ -ด-- -ซฺ-ลฺ
+
+-รํ-ท -ล-- ซซ-- ลล-ท --ลท -รํ-มํ -มํ-มํ -รํ-ท
+-ร-ทฺ -ลฺ-ซฺ ---ลฺ ---ทฺ -ซ-- -ร-ม -ซ-ม -ร-ทฺ
+
+--ลล -ท-ล -ซ-ม -ซ-ล -ท-รํ -ท-- ลล-- ซซ-ม
+-ลฺ-- -ทฺ-ลฺ -ซฺ-ทฺ -ซฺ-ลฺ -ทฺ-ร -ทฺ-ลฺ ---ซฺ ---ทฺ
+
+--รร -ม-ซ -ท-ล -ซ-ม -รํ-ท -ล-ซ -ลซซ ---ซ
+-ลฺ-- -ทฺ-ซฺ -ทฺ-ลฺ -ซฺ-ทฺ -ร-ทฺ -ลฺ-ซฺ ---ด -ซฺ--`
+},
 
   "luk-om": {
       title: "ลูกอม",
@@ -450,19 +469,22 @@ document.addEventListener("DOMContentLoaded", function () {
       // console.log(settingArea.style.display);
       const textarea = document.getElementById("thm");
       const output = document.getElementById("output");
-    
+      
       output.innerHTML = "";
     
       const text = textarea.value.trim();
+      console.log(text);
       if (!text) return;
     
       const lines = text.split(/\n/g);
-    
+      console.log(lines);
       let currentTable = null;
     
       lines.forEach((line, index) => {
     
         line = line.trim();
+        console.log(line);
+
         if (!line) return;
     
         // ===== เพลง + tempo =====
@@ -509,20 +531,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     
         const tr = document.createElement("tr");
-    
-        const columns = line.split(/\s+/);
+
+        const columns = line.split(" ");
     
         columns.forEach(col => {
           const td = document.createElement("td");
+      
           td.textContent = col;
           td.style.padding = "6px";
+      
           tr.appendChild(td);
-        });
+      });
     
         currentTable.appendChild(tr);
       });
     }
 
+    //การปรับขนาดของฟอนต์
     const decreaseTableBtn = document.getElementById("decreaseSize");
     const increaseTableBtn = document.getElementById("increaseSize");
     const sizeInput = document.getElementById("sizeInput");
@@ -625,12 +650,17 @@ document.addEventListener("DOMContentLoaded", function () {
 //ฟังก์ชันสลับการแสดงผลตัวหนังสือของฟังก์ชันแปลงตัวเลขเป็นตัวโน้ตไทยและกลับกัน
 /* ไม่ทำงาน??? */
 function changeText() {
-  const button = document.getElementById("btn1");
+
+  const button = document.getElementById("manualNumChange");
+
   if (button.innerText === "1234=>ดรมฟ") {
       button.innerText = "1234=>1234";
+      numberal()
   } else {
       button.innerText = "1234=>ดรมฟ";
+      alphabet()
   }
+
 }
     //ฟังก์ชันแปลงตัวเลขเป็นตัวโน้ตไทย
 function alphabet() {
