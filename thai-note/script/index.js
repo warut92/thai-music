@@ -446,106 +446,182 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function showTable() {
+
       const settingArea = document.getElementById("settingArea");
       const thmArea = document.getElementById("thm");
       const selectionMelodyArea = document.getElementById("melody");
       const settingTableArea = document.getElementById("sizeTable");
       const outputArea = document.getElementById("output");
-      
+  
+      // =========================================
+      // สลับการแสดงผล
+      // =========================================
+  
       if (settingArea.style.display === "none") {
-        settingArea.style.display = "flex";
-        thmArea.style.display = "block";
-        selectionMelodyArea.style.display = "flex";
-        outputArea.style.display = "none";
-        settingTableArea.style.display = "none";
+  
+          settingArea.style.display = "flex";
+          thmArea.style.display = "block";
+          selectionMelodyArea.style.display = "flex";
+          outputArea.style.display = "none";
+          settingTableArea.style.display = "none";
+  
       } else {
-        settingArea.style.display = "none";
-        thmArea.style.display = "none";
-        selectionMelodyArea.style.display = "none";
-        settingTableArea.style.display = "flex";
-        outputArea.style.display = "block";
-
+  
+          settingArea.style.display = "none";
+          thmArea.style.display = "none";
+          selectionMelodyArea.style.display = "none";
+          settingTableArea.style.display = "flex";
+          outputArea.style.display = "block";
       }
-      // console.log(settingArea.style.display);
+  
+  
+      // =========================================
+      // รับค่า textarea
+      // =========================================
+  
       const textarea = document.getElementById("thm");
       const output = document.getElementById("output");
-      
+  
+      // ล้างผลลัพธ์เก่า
       output.innerHTML = "";
-    
-      const text = textarea.value.trim();
-      console.log(text);
-      if (!text) return;
-    
-      const lines = text.split(/\n/g);
-      console.log(lines);
+  
+      let text = textarea.value.trim();
+      //ลบเครื่องหมาย > สำหรับการเริ่มเล่นเฉพาะจุด
+      text = text.replace(/\>/g,"")
+  
+      // ถ้าไม่มีข้อความ
+      if (!text) {
+          return;
+      }
+  
+  
+      // =========================================
+      // แยกข้อความออกเป็นบรรทัด
+      // =========================================
+  
+      const lines = text.split(/\r?\n/);
+      // table ปัจจุบัน
       let currentTable = null;
-    
+
+      // =========================================
+      // วนแต่ละบรรทัด
+      // =========================================
+  
       lines.forEach((line, index) => {
-    
-        line = line.trim();
-        console.log(line);
+          // console.log("บรรทัดที่", index, ":", line);
+  
+          // =====================================
+          // บรรทัดว่าง
+          // =====================================
+          // บรรทัดว่าง = จบ table เดิม
+          // และ table ถัดไปจะถูกสร้างใหม่
+          // =====================================
+  
+          if (line.trim() === "") {
+              currentTable = null;
+              return;
+          }
+  
+          // ตัดช่องว่างหน้า-หลัง
+          line = line.trim();
+  
+          // =========================================
+          // เพลง + tempo
+          // =========================================
+  
+          if (index === 0 && line.includes(":")) {
+              const titlePart = line.split(":")[0];
+              // ชื่อเพลง
+              const name = titlePart
+                  .replace(/\(\d+\)/, "")
+                  .trim();
+              // tempo
+              const tempoMatch = titlePart.match(/\((\d+)\)/);
+  
+              const tempo = tempoMatch
+                  ? tempoMatch[1]
+                  : "";
 
-        if (!line) return;
-    
-        // ===== เพลง + tempo =====
-        if (index === 0 && line.includes(":")) {
-    
-          const titlePart = line.split(":")[0];
-    
-          const name = titlePart.replace(/\(\d+\)/, "").trim();
-          const tempoMatch = titlePart.match(/\((\d+)\)/);
-          const tempo = tempoMatch ? tempoMatch[1] : "";
-    
-          const hTitle = document.createElement("h2");
-          hTitle.textContent = name;
-    
-          output.appendChild(hTitle);
-    
-          return;
-        }
-    
-        // ===== ท่อน =====
-        if (/^\(.*\)$/.test(line)) {
-    
-          const section = document.createElement("h");
-          section.textContent = line.replace(/[()]/g, "");
-          output.appendChild(section);
-    
-          // เริ่ม table ใหม่สำหรับแต่ละท่อน
-          currentTable = document.createElement("table");
-          currentTable.border = "1";
-          // currentTable.style.width = "100%";
-          currentTable.style.borderCollapse = "collapse";
-          output.appendChild(currentTable);
-    
-          return;
-        }
-    
-        // ===== บรรทัดโน้ต =====
-        if (!currentTable) {
-          currentTable = document.createElement("table");
-          currentTable.border = "1";
-          // currentTable.style.width = "100%";
-          currentTable.style.borderCollapse = "collapse";
-          output.appendChild(currentTable);
-        }
-    
-        const tr = document.createElement("tr");
+              // สร้าง h2
+              const hTitle = document.createElement("h2");
+              hTitle.textContent = name;
+              output.appendChild(hTitle);
 
-        const columns = line.split(" ");
-    
-        columns.forEach(col => {
-          const td = document.createElement("td");
-      
-          td.textContent = col;
-          td.style.padding = "6px";
-      
-          tr.appendChild(td);
+              return;
+          }
+  
+  
+          // =========================================
+          // ท่อนเพลง
+          // เช่น
+          // (ท่อน 1)
+          // (เที่ยวกลับ)
+          // =========================================
+  
+          if (/^\(.*\)$/.test(line)) {
+              const section = document.createElement("h");
+              section.textContent = line.replace(/[()]/g, "");
+              output.appendChild(section);
+  
+              // เริ่ม table ใหม่
+              currentTable = document.createElement("table");
+              currentTable.border = "1";
+              currentTable.style.borderCollapse = "collapse";
+              output.appendChild(currentTable);
+  
+              return;
+          }
+  
+  
+          // =========================================
+          // ถ้ายังไม่มี table
+          // ให้สร้าง table ใหม่
+          // =========================================
+  
+          if (!currentTable) {
+              currentTable = document.createElement("table");
+              currentTable.border = "1"; 
+              currentTable.style.borderCollapse = "collapse";
+              output.appendChild(currentTable);
+          }
+  
+  
+          // =========================================
+          // สร้างแถว
+          // =========================================
+  
+          const tr = document.createElement("tr");
+  
+  
+          // =========================================
+          // แยกโน้ตด้วยช่องว่าง
+          // =========================================
+  
+          const columns = line.split(/\s+/);
+  
+  
+          // =========================================
+          // สร้าง td
+          // =========================================
+  
+          columns.forEach(col => {
+  
+              const td = document.createElement("td");
+              td.textContent = col;
+              td.style.padding = "6px";
+              tr.appendChild(td);
+          });
+  
+  
+          // =========================================
+          // เพิ่ม tr ลง table
+          // =========================================
+  
+          currentTable.appendChild(tr);
+
       });
-    
-        currentTable.appendChild(tr);
-      });
-    }
+  
+  }
 
     //การปรับขนาดของฟอนต์
     const decreaseTableBtn = document.getElementById("decreaseSize");
@@ -623,24 +699,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadSongKey()
 
+    //เปลี่ยนข้อความข้อตัวบ่งชี้คีย์เพลง
     function changeKeyText() {
-
+      //ดึงคีย์จาก select
       let select = document.getElementById("key");
       let keyText = select.options[select.selectedIndex].text;
-    
-      // take first key before /
       let key = keyText.split("/")[0];
-    
+      //ลบคีย์เดิมออก
       let textarea = document.getElementById("thm");
-      let str = textarea.value;
+      let str = textarea.value.replace(/\((?!\d+\))[^)]*\)/g, "");
     
       if (str.match(/\(\d+\)\([A-G][#b]?\)/)) {
-        // replace existing key
+        // ดำเนินการเปลี่ยนคีย์
         str = str.replace(/\(\d+\)\([A-G][#b]?\)/, function(m){
           return m.replace(/\([A-G][#b]?\)/, "(" + key + ")");
         });
       } else {
-        // add key if not exist
+        // หากไม่มีการใส่คีย์
         str = str.replace(/\(\d+\)/, "$&(" + key + ")");
       }
     

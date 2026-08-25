@@ -225,12 +225,12 @@ var rtttlPlay = (function () {
       shouldStop = false;
       return;
     }
-    console.log(melody.length);
     if (melody.length === 0) {
       document.getElementById('status').innerHTML = ": จบเพลง"
     }
     if (melody.length === 0) return;
-
+    
+    console.log(melody.length);
 
     var osc = audioCtx.createOscillator();
     //รับค่าชนิดของคลื่นเสียง
