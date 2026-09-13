@@ -225,9 +225,20 @@ function keyboardInput(note) {
 }
 
 function keyboardDelete() {
-    let thmNote = document.getElementById('thm');
-    thmNote.value = thmNote.value.slice(0,-1)
-    thmNote.focus()
+  const thmNote = document.getElementById('thm');
+
+  const pos = thmNote.selectionStart;
+console.log(pos);
+  if (pos > 0) {
+      let before = thmNote.value.slice(0, pos - 1);
+      let after = thmNote.value.slice(10);
+      console.log(before);
+      console.log(after);
+          thmNote = before + after;
+      thmNote.setSelectionRange(pos - 1, pos - 1);
+  }
+
+  thmNote.focus();
 }
 
 const textarea = document.getElementById('thm');
