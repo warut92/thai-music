@@ -123,14 +123,19 @@ var rtttlPlay = (function () {
 
   function _calculateFrequency(note, octave) {
     if (note === 'p') return 0;
-
-    //รับค่าในการเปลี่ยนคีย์และช่วงทบเสียง
+  
+    // รับค่าในการเปลี่ยนคีย์และช่วงทบเสียง
     let k = Number(document.getElementById('key').value);
-    var o = Number(document.getElementById('octave').value);
+    let o = Number(document.getElementById('octave').value);
+  
     // ====== เสียงในดนตรีไทย ======
-    if (k > 10) {
-      if (k === 11) {
-        var thaiBase = {
+    if (k > 11) {
+  
+      let thaiBase;
+  
+      if (k === 12) {
+        // เสียงเครื่องสาย
+        thaiBase = {
           'c': 230.3,
           'd': 254.2,
           'e': 280.7,
@@ -139,8 +144,11 @@ var rtttlPlay = (function () {
           'a': 377.8,
           'b': 417.2
         };
-      } else {
-        var thaiBase = {
+        o = 1 //บังคับช่วงทบเสียงตามโน้ตที่เขียน
+  
+      } else if (k === 13) {
+        // เสียงปี่พาทย์กรมศิลป์
+        thaiBase = {
           'c': 254.2,
           'd': 280.7,
           'e': 309.9,
@@ -149,38 +157,67 @@ var rtttlPlay = (function () {
           'a': 417.2,
           'b': 460.6
         };
+        o = 1 //บังคับช่วงทบเสียงตามโน้ตที่เขียน
       }
-
-      var noteOrder = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b'];
+  
+      var noteOrder = [
+        'c', 'c#', 'd', 'd#', 'e', 'f',
+        'f#', 'g', 'g#', 'a', 'a#', 'b'
+      ];
+  
       var baseNote = note.replace('#', '');
       var baseFreq = thaiBase[baseNote];
-
-      if (!baseFreq || !isFinite(baseFreq)) baseFreq = 230.3;
-
-      var semitoneShift = noteOrder.indexOf(note) - noteOrder.indexOf(baseNote);
-      if (!isFinite(semitoneShift)) semitoneShift = 0;
-
-      var freq = baseFreq * Math.pow(2, semitoneShift / 12) * o;
-      var freqAdjusted = freq * Math.pow(2, octave - 4) * (1 + 0 * 0.02);
-
+  
+      if (!baseFreq || !isFinite(baseFreq)) {
+        baseFreq = 230.3;
+      }
+  
+      var semitoneShift =
+        noteOrder.indexOf(note) -
+        noteOrder.indexOf(baseNote);
+  
+      if (!isFinite(semitoneShift)) {
+        semitoneShift = 0;
+      }
+  
+      // ช่วงทบเสียง
+      var octaveMultiplier = Math.pow(2, o - 1);
+  
+      var freq =
+        baseFreq *
+        Math.pow(2, semitoneShift / 12) *
+        octaveMultiplier;
+  
+      var freqAdjusted =
+        freq * Math.pow(2, octave - 4);
+  
       return Math.round(freqAdjusted * 10) / 10;
     }
-
-
+  
     // ====== เสียงดนตรีตะวันตก ======
-    var DO4;
-    if (o >= 1) {
-      DO4 = (233.082 + (28.544 * k)) * o;
-    } else {
-      DO4 = (233.082 + (28.544 * k)) / (o * -1);
-    }
-
-    var TWELFTH_ROOT = Math.pow(2, 1 / 12);
+  
+    // A#/Bb = 466.164 Hz
+    // k = จำนวนครึ่งเสียงจาก A#/Bb
+    var DO4 = 466.164 * Math.pow(2, k / 12);
+  
+    // ช่วงทบเสียง
+    // o = 1 → ปกติ
+    // o = 2 → สูงขึ้น 1 octave
+    // o = 3 → สูงขึ้น 2 octave
+    var octaveMultiplier = Math.pow(2, o - 1);
+  
+    DO4 *= octaveMultiplier;
+  
+    // ระยะห่างของโน้ตจาก C4
     var N = _calculateSemitonesFromC4(note, octave);
-    var FREQUENCY = DO4 * Math.pow(TWELFTH_ROOT, N);
-
-    if (!isFinite(FREQUENCY)) FREQUENCY = 0; // Safety fallback
-
+  
+    var FREQUENCY =
+      DO4 * Math.pow(2, N / 12);
+  
+    if (!isFinite(FREQUENCY)) {
+      FREQUENCY = 0;
+    }
+  
     return Math.round(FREQUENCY * 10) / 10;
   }
 
