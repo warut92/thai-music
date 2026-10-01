@@ -215,47 +215,56 @@ loadShareSong()
 
 //ฟังก์ชันคีย์บอร์ดสำหรับมือถือ
 //ใส่ค่าโน้ต/สัญญลักษณ์ที่ต้องการ
-function keyboardInput(note) {
-    let thmNote = document.getElementById('thm');
-    if (thmNote.value || !thmNote.value) {
-        let noteVal = note.value
-        thmNote.value += noteVal
-    }
-    thmNote.focus()
-}
+const thmNote = document.getElementById('thm');
+
+document.querySelectorAll("button").forEach(button => {
+    button.addEventListener("click", function () {
+        const value = this.value;
+
+        // ตำแหน่ง caret
+        const start = thmNote.selectionStart;
+        const end = thmNote.selectionEnd;
+
+        // แทรกข้อความ
+        thmNote.value =
+            thmNote.value.substring(0, start) +
+            value +
+            thmNote.value.substring(end);
+
+        // ย้าย caret ไปหลังข้อความที่เพิ่งแทรก
+        thmNote.focus();
+        thmNote.selectionStart = thmNote.selectionEnd =
+            start + value.length;
+    });
+});
 
 function keyboardDelete() {
-  const thmNote = document.getElementById('thm');
+  const start = thmNote.selectionStart;
+  const end = thmNote.selectionEnd;
+  const text = thmNote.value;
 
-  const pos = thmNote.selectionStart;
-console.log(pos);
-  if (pos > 0) {
-      let before = thmNote.value.slice(0, pos - 1);
-      let after = thmNote.value.slice(10);
-      console.log(before);
-      console.log(after);
-          thmNote = before + after;
-      thmNote.setSelectionRange(pos - 1, pos - 1);
+  // ถ้ามีการเลือกข้อความ ไม่ต้องทำอะไร
+  if (start !== end) {
+      return;
   }
 
+  // ถ้า caret อยู่ต้นข้อความ
+  if (start === 0) {
+      return;
+  }
+
+  // ลบเฉพาะตัวก่อนหน้า caret
+  thmNote.value =
+      text.substring(0, start - 1) +
+      text.substring(start);
+
+  // เลื่อน caret กลับไป 1 ตำแหน่ง
   thmNote.focus();
+  thmNote.selectionStart = start - 1;
+  thmNote.selectionEnd = start - 1;
 }
 
 const textarea = document.getElementById('thm');
-const deleteBtn = document.getElementById('btn12');
-
-deleteBtn.addEventListener('click', () => {
-  const pos = textarea.selectionStart; // caret position
-  const text = textarea.value;
-
-  const charsToDelete = 5; // you can change this
-  const newText = text.slice(0, pos) + text.slice(pos + charsToDelete);
-
-  textarea.value = newText;
-  textarea.selectionStart = textarea.selectionEnd = pos; // keep caret in same spot
-});
-
-
 
 //หน้าต่างผุดสำหรับการโหลดไฟล์
 var modal = document.getElementById("saveFilePopup");
@@ -845,4 +854,19 @@ function saveTextAsFile() {
     } else {
         k.style.display = "none"
     }
+}
+ 
+// แสดงพาเนลธีม
+function themePanel() {
+  let themePanel = document.getElementById('theme');
+  let editor = document.getElementById('editor');
+
+  if (themePanel.style.display === "none") {
+    themePanel.style.display = "block"
+    editor.style.display = "none"   
+  } else {
+    themePanel.style.display = "none"
+    editor.style.display = "block"   
+
+  }
 }

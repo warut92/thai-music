@@ -2,10 +2,16 @@
 @import url(https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@500&display=swap);
 
 body {
-	font-family: 'IBM Plex Sans Thai Looped', sans-serif;
-  font-size: 20px;
-  color: rgb(255, 255, 255);
-  background-color: #4b5a71;
+  margin: 0;
+  padding: 30px;
+  font-family: var(--font-normal);
+  background: var(--background);
+  color: var(--text);
+  transition: 0.3s;
+}
+
+h1, h2, h3, strong, b {
+  font-family: var(--font-bold);
 }
 
 .center {
@@ -13,9 +19,9 @@ body {
 }
 
 button, optgroup, option, option, #melody, code, input, select {
-  font-family: 'Tlwg Typist', monospace;
+  font-family: var(--font-normal);
   font-size: 15px;
-  border: 2px solid blue;
+  border: 2px solid var(--border-color);
   }
 
 .setting {
@@ -62,12 +68,13 @@ button, optgroup, option, option, #melody, code, input, select {
 }
 
 a {
-  font-size: 30px;
+  /* font-size: 30px; */
   color: aqua;
 }
+
 pre, textarea {
   font-family: 'Tlwg Typist', monospace;
-  font-size: 18px;
+  /* font-size: 18px; */
   width: 100%;
   max-width: 900px;
 }
@@ -77,7 +84,7 @@ pre, textarea {
   textarea,
   pre {
     font-family: 'Tlwg Typist', monospace;
-    font-size: 26px;
+    /* font-size: 26px; */
   }
 }
 

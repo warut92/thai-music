@@ -76,7 +76,7 @@
             <button name="button" id="btn6" value="ท" onclick="keyboardInput(this)">ท</button>
             <button name="button" id="btn7" value="ํ" onclick="keyboardInput(this)">สูง</button>
             <button name="button" id="btn8" value="ฺ" onclick="keyboardInput(this)">ต่ำ</button>
-            <button name="button" id="btn12" onclick="keyboardDelete()">⌫</button>
+            <button type="button" name="button" id="btn12" onclick="keyboardDelete()">⌫</button>
             <br>
             <button name="button" id="btn9" value="-" onclick="keyboardInput(this)">-</button>
             <button name="button" id="btn9" value=" " onclick="keyboardInput(this)">⎵</button>
@@ -95,7 +95,7 @@
                   <div class="menu-title">☐ ไฟล์</div>
                   <button id="openFile">🗁 เปิดไฟล์</button>
                   <button onclick="saveTextAsFile()">🡻 บันทึกไฟล์</button>
-                  <button onclick="getSongHash()">🖇️ คัดลอกลิงก์ URL</button>
+                  <button onclick="getSongHash()">↗ คัดลอกลิงก์ URL</button> <abbr title="หากเพลงยาวจะใช้ไม่ได้"> ⓘ</abbr> <br>
                   <button onclick="showTable()">▦ แสดงตารางโน้ต</button>
                 </div>
               
@@ -109,11 +109,12 @@
                 <!-- APP -->
                 <div class="menu-group">
                   <div class="menu-title">☼ การตั้งค่า</div>
-                  <button disabled>☺ ธีม</button>
+                  <button onclick="themePanel()">☺ ธีม</button>
                   <button disabled>🅰︎ แบบอักษร</button>
                 </div>
               
               </div>
+              
             </div>
             <!-- CONVERTOR -->
             <div class="small" id="editor" style="display: block;">
@@ -168,6 +169,14 @@
                 <button id="increaseBtn">+</button>
               </div>
 
+              
+            </div>
+            <div id="theme" style="display: none;">
+              ☺ ธีม <br>
+              <button onclick="setTheme('theme1')">ธีม 1</button>
+              <button onclick="setTheme('theme2')">ธีม 2</button>
+              <button onclick="setTheme('theme3')">ธีม 3</button>
+              <button onclick="setTheme('theme4')">ธีม 4</button>
             </div>
             <!-- <div class="empty"></div> -->
           </div>
@@ -189,7 +198,7 @@
   </div>
 
 <div id="footnote">
-  <a class="small" href="./about.html">ⓘ เกี่ยวกับเว็บไซต์นี้ v. 0.023 [26-09-20]</a><br>
+  <a class="small" href="./about.html">ⓘ เกี่ยวกับเว็บไซต์นี้ v. 0.023.1 [26-10-01]</a><br>
   <a class="small" href="http://music.warut.net" target="_blank">↪︎ ไปที่ music.warut.net</a>
 </div>
   <div id="saveFilePopup" class="load-file">
@@ -201,6 +210,7 @@
   </div>
 </body>
 <script src="./script/index.js"></script>
+<script src="./script/theme.js"></script>
 <script src="./script/rtttl.js"></script>
 <script>
       addRowTextarea()
