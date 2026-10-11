@@ -47,10 +47,10 @@
     }
   </style>
 
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 <body class="relative w-full h-full">
 
@@ -61,7 +61,7 @@
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
-    <span>เปลี่ยนชุดโน้ต</span>
+    <span>เปลี่ยนเสียง</span>
   </button>
 
   <div id="noteModal" class="fixed inset-0 z-30 modal-backdrop flex items-center justify-center p-4 hidden">
@@ -73,7 +73,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
           </svg>
-          <h2 class="text-lg font-bold">เลือกชุดโน้ต (17 โน้ต)</h2>
+          <h2 class="text-lg font-bold">เลือกเสียง (เครื่องสาย/ปี่พาทย์)</h2>
         </div>
         <button id="closePanelBtn" class="text-white hover:bg-amber-700 p-1.5 rounded-lg transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -84,12 +84,12 @@
 
       <!-- Modal Content Body -->
       <div class="p-6 overflow-y-auto custom-scrollbar space-y-4">
-        <p class="text-sm text-gray-600">กรุณาเลือกชุดเสียงที่ต้องการใช้งาน:</p>
+        <p class="text-sm text-gray-600">กรุณาเลือกรูปแบบตัวอักษรโน้ตกำกับลูกระนาด:</p>
         
         <div class="grid grid-cols-1 gap-3" id="presetButtonsContainer">
           <!-- Dynamically populated preset buttons -->
         </div>
-        <p class="text-sm text-gray-600">ระนาดทุ้มมือถือรุ่นนี้เป็นเพียงการเลียนแบบของเก่าที่เคยสร้างมา แต่ครั้งนี้สร้างด้วย AI (เดิมใช้ construct2)  และมีการเพิ่มฟังก์ชันแสดงโน้ตกำกับในระบบเครื่องสายและปี่พาทย์ 11 ต.ค. 2569</p>
+        <p class="text-sm text-gray-600">ระนาดทุ้มมือถือรุ่นนี้เป็นเพียงการเลียนแบบของเก่าที่เคยสร้างมา แต่ครั้งนี้สร้างด้วย AI (เดิมใช้ construct2) และมีการเพิ่มฟังก์ชันแสดงโน้ตกำกับในระบบเครื่องสายและปี่พาทย์ 11 ต.ค. 2569</p>
       </div>
 
       <!-- Modal Footer -->
@@ -103,7 +103,6 @@
   </div>
 
   <script>
-    
     // Thai Fine Arts Department (กรมศิลปากร) Base Scale Frequencies (Hz)
     const FINE_ARTS_BASE_FREQ = {
       'ด': 230.3,
@@ -115,36 +114,31 @@
       'ท': 417.2
     };
 
-    /**
-     * Converts Thai note symbol to frequency:
-     * Removes diacritics including Phinthu (\u0E3A / \u0E38) and Nikhahit (\u0E4D).
-     * - Low Octave (contains dot below) -> Base Freq / 2
-     * - High Octave (contains dot above) -> Base Freq * 2
-     * - Middle Octave -> Base Freq
-     */
+    // ล็อกระดับเสียงของลูกระนาดทั้ง 17 ลูกให้คงที่เสมอ
+    const FIXED_SOUND_NOTES = [
+      "มฺ", "ฟฺ", "ซฺ", "ลฺ", "ทฺ",
+      "ด", "ร", "ม", "ฟ", "ซ", "ล", "ท",
+      "ดํ", "รํ", "มํ", "ฟํ", "ซํ"
+    ];
+
     function getFrequencyForThaiNote(noteStr) {
       if (!noteStr) return null;
       
       const cleanNote = noteStr.trim();
-      // Clean base letter by stripping Phinthu (\u0E3A, \u0E38) and Nikhahit (\u0E4D)
       const baseChar = cleanNote.replace(/[\u0E38\u0E3A\u0E4D]/g, '').trim(); 
       const baseFreq = FINE_ARTS_BASE_FREQ[baseChar];
 
       if (!baseFreq) return null;
 
       if (cleanNote.includes('\u0E3A') || cleanNote.includes('\u0E38') || cleanNote.includes('ฺ')) {
-        // Low Octave (Divide by 2)
         return baseFreq / 2;
       } else if (cleanNote.includes('\u0E4D') || cleanNote.includes('ํ')) {
-        // High Octave (Multiply by 2)
         return baseFreq * 2;
       } else {
-        // Middle Octave
         return baseFreq;
       }
     }
 
-    // Audio Context & Sound Synthesizer setup
     let audioCtx = null;
 
     function initAudioContext() {
@@ -159,32 +153,22 @@
       }
     }
 
-    /**
-     * Synthesizes an enhanced Kalimba sound.
-     * For low notes (< 200 Hz), harmonic overtones and gain compensation are added
-     * so small speakers (smartphones/laptops) can clearly project the pitch.
-     */
     function playKalimbaSound(freq) {
       if (!freq || !audioCtx) return;
 
       const now = audioCtx.currentTime;
-
-      // Dynamic gain boost for lower frequencies
       const isLowNote = freq < 200;
       const volumeBoost = isLowNote ? 1.4 : (freq < 300 ? 1.15 : 1.0);
 
-      // Master gain node
       const masterGain = audioCtx.createGain();
       masterGain.gain.setValueAtTime(0.001, now);
       masterGain.gain.linearRampToValueAtTime(0.85 * volumeBoost, now + 0.004); 
       masterGain.gain.exponentialRampToValueAtTime(0.0001, now + (isLowNote ? 1.8 : 1.4)); 
 
-      // Fundamental tone oscillator (Sine wave)
       const oscFundamental = audioCtx.createOscillator();
       oscFundamental.type = 'sine';
       oscFundamental.frequency.setValueAtTime(freq, now);
 
-      // Body tone oscillator (Triangle wave)
       const oscBody = audioCtx.createOscillator();
       oscBody.type = 'triangle';
       oscBody.frequency.setValueAtTime(freq, now);
@@ -192,7 +176,6 @@
       const bodyGain = audioCtx.createGain();
       bodyGain.gain.setValueAtTime(0.4, now);
 
-      // Metallic overtone harmonic
       const tineHarmonic = audioCtx.createOscillator();
       tineHarmonic.type = 'sine';
       tineHarmonic.frequency.setValueAtTime(freq * 3.92, now);
@@ -201,7 +184,6 @@
       tineGain.gain.setValueAtTime(0.35, now);
       tineGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
 
-      // CONNECT NODES
       oscFundamental.connect(masterGain);
       oscBody.connect(bodyGain);
       bodyGain.connect(masterGain);
@@ -216,9 +198,7 @@
       oscBody.stop(now + 1.9);
       tineHarmonic.stop(now + 0.15);
 
-      // EXTRA HARMONICS FOR LOW NOTES
       if (isLowNote) {
-        // 2nd Harmonic (1 octave above)
         const osc2nd = audioCtx.createOscillator();
         osc2nd.type = 'triangle';
         osc2nd.frequency.setValueAtTime(freq * 2, now);
@@ -233,7 +213,6 @@
         osc2nd.start(now);
         osc2nd.stop(now + 1.3);
 
-        // 3rd Harmonic (Octave + 5th)
         const osc3rd = audioCtx.createOscillator();
         osc3rd.type = 'sine';
         osc3rd.frequency.setValueAtTime(freq * 3, now);
@@ -249,7 +228,6 @@
         osc3rd.stop(now + 0.9);
       }
 
-      // Output filtering
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(Math.min(freq * 8, 9000), now);
@@ -290,31 +268,27 @@
     let keyRects = [];
 
     function resizeCanvas() {
-  const MIN_WIDTH = 800; // 👈 กำหนดความกว้างขั้นต่ำเดียวกับ CSS
-  
-  // เลือกค่าที่มากกว่าระหว่างความกว้างหน้าจอจริง กับความกว้างขั้นต่ำ
-  const width = Math.max(window.innerWidth, MIN_WIDTH);
-  const height = window.innerHeight;
+      const MIN_WIDTH = 800; 
+      const width = Math.max(window.innerWidth, MIN_WIDTH);
+      const height = window.innerHeight;
 
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
 
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
 
-  ctx.scale(dpr, dpr);
-  drawCanvas(width, height);
-}
+      ctx.scale(dpr, dpr);
+      drawCanvas(width, height);
+    }
 
     function drawCanvas(width, height) {
       ctx.clearRect(0, 0, width, height);
 
-      // Background
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, width, height);
 
-      // Geometry calculations
       const gapRatio = 0.12; 
       const totalGaps = totalKeys - 1;
       const keyWidth = width / (totalKeys + totalGaps * gapRatio);
@@ -332,11 +306,9 @@
 
         const isPressed = keyStates[i];
 
-        // Red (#DC2626) while pressed down, Gold (#D0B038) otherwise
         ctx.fillStyle = isPressed ? '#DC2626' : '#D0B038';
         ctx.fillRect(x, y, w, h);
 
-        // Render Thai note label
         const labelText = activeNotes[i] || "";
         const fontSize = Math.min(Math.max(14, w * 0.42), height * 0.05);
         ctx.font = `600 ${fontSize}px 'Sarabun', sans-serif`;
@@ -372,10 +344,11 @@
       return -1;
     }
 
+    // เล่นเสียงตามลำดับคีย์คงที่ ไม่เปลี่ยนตามป้ายชื่อโน้ต
     function triggerNoteSound(keyIndex) {
       initAudioContext();
-      const noteLabel = activeNotes[keyIndex];
-      const freq = getFrequencyForThaiNote(noteLabel);
+      const soundNote = FIXED_SOUND_NOTES[keyIndex];
+      const freq = getFrequencyForThaiNote(soundNote);
       if (freq) {
         playKalimbaSound(freq);
       }
