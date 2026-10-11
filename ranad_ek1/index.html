@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thai Xylophone Keys Canvas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Sarabun', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    canvas {
+      display: block;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="keysCanvas"></canvas>
+
+  <script>
+    const NOTE_LABELS = [
+      "มฺ", "ฟฺ", "ซฺ", "ลฺ", "ทฺ",
+      "ด", "ร", "ม", "ฟ", "ซ", "ล", "ท",
+      "ดํ", "รํ", "มํ", "ฟํ", "ซํ"
+    ];
+
+    const totalKeys = NOTE_LABELS.length;
+    let keyStates = new Array(totalKeys).fill(false); // false = Yellow/Gold, true = Red
+
+    const canvas = document.getElementById('keysCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let keyRects = [];
+
+    function resizeCanvas() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.scale(dpr, dpr);
+      drawCanvas(width, height);
+    }
+
+    function drawCanvas(width, height) {
+      ctx.clearRect(0, 0, width, height);
+
+      // White background matching image
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
+
+      // Key positioning parameters
+      const gapRatio = 0.12; // Gap size relative to key width
+      const totalGaps = totalKeys - 1;
+      const keyWidth = width / (totalKeys + totalGaps * gapRatio);
+      const gapWidth = keyWidth * gapRatio;
+
+      keyRects = [];
+
+      for (let i = 0; i < totalKeys; i++) {
+        const x = i * (keyWidth + gapWidth);
+        const y = 0;
+        const w = keyWidth;
+        const h = height;
+
+        keyRects.push({ x, y, w, h, index: i });
+
+        const isRed = keyStates[i];
+
+        // Key color: Gold (#D0B038) vs Red (#DC2626)
+        ctx.fillStyle = isRed ? '#DC2626' : '#D0B038';
+        ctx.fillRect(x, y, w, h);
+
+        // Thai Note Label Text
+        const fontSize = Math.min(Math.max(16, w * 0.42), height * 0.05);
+        ctx.font = `600 ${fontSize}px 'Sarabun', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#000000';
+
+        const textY = height * 0.04;
+        ctx.fillText(NOTE_LABELS[i], x + (w / 2), textY);
+      }
+    }
+
+    function handleInteraction(event) {
+      const rect = canvas.getBoundingClientRect();
+      let clientX, clientY;
+
+      if (event.touches && event.touches.length > 0) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      }
+
+      const clickX = clientX - rect.left;
+      const clickY = clientY - rect.top;
+
+      for (const key of keyRects) {
+        if (
+          clickX >= key.x &&
+          clickX <= key.x + key.w &&
+          clickY >= key.y &&
+          clickY <= key.y + key.h
+        ) {
+          keyStates[key.index] = !keyStates[key.index];
+          const dpr = window.devicePixelRatio || 1;
+          drawCanvas(canvas.width / dpr, canvas.height / dpr);
+          break;
+        }
+      }
+    }
+
+    canvas.addEventListener('click', handleInteraction);
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      handleInteraction(e);
+    }, { passive: false });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    window.onload = function() {
+      resizeCanvas();
+    };
+  </script>
+</body>
+</html>
