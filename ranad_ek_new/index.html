@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระนาดเอกมือถือ (ใหม่)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #f8fafc;
+      font-family: 'Sarabun', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    canvas {
+      display: block;
+      cursor: pointer;
+    }
+    .modal-backdrop {
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      transition: opacity 0.25s ease-in-out;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+</head>
+<body class="relative w-full h-full">
+
+  <canvas id="keysCanvas" class="w-full h-full"></canvas>
+
+  <button id="openPanelBtn" class="fixed bottom-5 right-5 z-20 flex items-center gap-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-semibold py-3 px-5 rounded-full shadow-lg hover:shadow-xl transition-all duration-200">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+    <span>เปลี่ยนเสียง</span>
+  </button>
+
+  <div id="noteModal" class="fixed inset-0 z-30 modal-backdrop flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="bg-amber-600 text-white px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+          <h2 class="text-lg font-bold">เลือกเสียง(เครื่องสาย/ปี่พาทย์)</h2>
+        </div>
+        <button id="closePanelBtn" class="text-white hover:bg-amber-700 p-1.5 rounded-lg transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="p-6 overflow-y-auto custom-scrollbar space-y-4">
+        <p class="text-sm text-gray-600">กรุณาเลือกรูปแบบตัวอักษรโน้ตกำกับลูกระนาดเอก:</p>
+        
+        <div class="grid grid-cols-1 gap-3" id="presetButtonsContainer">
+          <!-- Dynamically populated preset buttons -->
+        </div>
+        <p class="text-sm text-gray-600">ระนาดเอกมือถือ 22 ลูก พัฒนาโดยใช้ Web Audio API สเกลเสียงมาตรฐานกรมศิลปากร เลียนแบบ<a href="/ranad_thum_new/">ระนาดทุ้มมือถือ (ใหม่) 11 ต.ค. 69</a></p>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end">
+        <button id="cancelModalBtn" class="px-5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200 rounded-lg transition-colors">
+          ปิด
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Thai Fine Arts Department (กรมศิลปากร) Base Scale Frequencies (Hz)
+    const FINE_ARTS_BASE_FREQ = {
+      'ด': 230.3,
+      'ร': 254.2,
+      'ม': 280.7,
+      'ฟ': 309.9,
+      'ซ': 342.2,
+      'ล': 377.8,
+      'ท': 417.2
+    };
+
+    // ล็อกระดับเสียงระนาดเอกทั้ง 22 ลูก เริ่มที่ ซฺ (ซอลต่ำ) ถึง ดํํ (โดสูงมาก)
+    const FIXED_SOUND_NOTES = [
+      "ซฺ", "ลฺ", "ทฺ",
+      "ด", "ร", "ม", "ฟ", "ซ", "ล", "ท",
+      "ดํ", "รํ", "มํ", "ฟํ", "ซํ", "ลํ", "ทํ",
+      "ดํํ", "รํํ", "มํํ", "ฟํํ", "ซํํ"
+    ];
+
+    function getFrequencyForThaiNote(noteStr) {
+      if (!noteStr) return null;
+      
+      const cleanNote = noteStr.trim();
+      // ดึงเฉพาะตัวอักษรตั้งต้น
+      const baseChar = cleanNote.replace(/[\u0E38\u0E3A\u0E4D\u0E31\u0E47\u0E48\u0E49\u0E4A\u0E4B]/g, '').trim(); 
+      const baseFreq = FINE_ARTS_BASE_FREQ[baseChar];
+
+      if (!baseFreq) return null;
+
+      // ตรวจสอบพินทุ/สระอุ ( octave ต่ำ )
+      if (cleanNote.includes('\u0E3A') || cleanNote.includes('\u0E38') || cleanNote.includes('ฺ')) {
+        return baseFreq / 2;
+      }
+      
+      // นับจำนวนนิคหิต/พินทุบน ( octave สูง )
+      const highDotMatch = cleanNote.match(/[\u0E4Dํ]/g);
+      if (highDotMatch) {
+        const dotCount = highDotMatch.length;
+        return baseFreq * Math.pow(2, dotCount); // 1 จุด = *2, 2 จุด = *4
+      }
+
+      return baseFreq;
+    }
+
+    let audioCtx = null;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // ฟังก์ชันสังเคราะห์เสียงระนาดไม้เนื้อแข็ง กังวาน ใส (Hardwood Ranad Sound)
+function playRanadEkSound(freq) {
+  if (!freq || !audioCtx) return;
+
+  const now = audioCtx.currentTime;
+  
+  // ระยะเวลาความกังวาน (Decay) แปรผันตามความถี่ (ลูกเสียงต่ำจะกังวานนานกว่าลูกเสียงสูง)
+  const decayTime = Math.max(0.6, 2.0 - (freq / 800));
+
+  // Master Volume Gain
+  const masterGain = audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0.001, now);
+  // Attack สั้นและเร็ว เพื่อให้ได้เสียงกระทบผืนไม้ที่เด็ดขาด
+  masterGain.gain.linearRampToValueAtTime(0.85, now + 0.003); 
+  masterGain.gain.exponentialRampToValueAtTime(0.0001, now + decayTime);
+
+  // 1. Fundamental Pitch (Sine Wave - เสียงโน้ตหลัก)
+  const oscFundamental = audioCtx.createOscillator();
+  oscFundamental.type = 'sine';
+  oscFundamental.frequency.setValueAtTime(freq, now);
+
+  // 2. High Resonance Body (Triangle Wave - เสียงเนื้อไม้แน่นๆ)
+  const oscBody = audioCtx.createOscillator();
+  oscBody.type = 'triangle';
+  oscBody.frequency.setValueAtTime(freq, now);
+
+  const bodyGain = audioCtx.createGain();
+  bodyGain.gain.setValueAtTime(0.35, now);
+  bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + (decayTime * 0.7));
+
+  // 3. Bright Inharmonic Overtones (ฮาร์มอนิกของไม้เนื้อแข็ง)
+  const woodHarmonic = audioCtx.createOscillator();
+  woodHarmonic.type = 'sine';
+  woodHarmonic.frequency.setValueAtTime(freq * 3.82, now); // สัดส่วนโหมดการสั่นสะเทือนของผืนไม้แข็ง
+
+  const woodGain = audioCtx.createGain();
+  woodGain.gain.setValueAtTime(0.3, now);
+  woodGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15); // หายไปเร็วทิ้งไว้เฉพาะเสียงกังวานหลัก
+
+  // 4. Attack Click/Transient (เสียงกระทบสั้นๆ ของหัวนวดไม้แข็ง)
+  const bufferSize = audioCtx.sampleRate * 0.01; // 10ms transient
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    output[i] = Math.random() * 2 - 1;
+  }
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = noiseBuffer;
+
+  const noiseFilter = audioCtx.createBiquadFilter();
+  noiseFilter.type = 'highpass';
+  noiseFilter.frequency.setValueAtTime(1500, now); // กรองเอาเฉพาะเสียงจิกหัวไม้สดใส
+
+  const noiseGain = audioCtx.createGain();
+  noiseGain.gain.setValueAtTime(0.2, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.01);
+
+  noise.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(masterGain);
+
+  // เชื่อมต่อวงจรออสซิลเลเตอร์
+  oscFundamental.connect(masterGain);
+  oscBody.connect(bodyGain);
+  bodyGain.connect(masterGain);
+  woodHarmonic.connect(woodGain);
+  woodGain.connect(masterGain);
+
+  // Bandpass / Lowpass Filter เปิดย่านความถี่สูงเล็กน้อยเพื่อให้เสียงใสฉ่ำแบบไม้แข็ง
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(Math.min(freq * 8, 12000), now);
+
+  masterGain.connect(filter);
+  filter.connect(audioCtx.destination);
+
+  // เริ่มเล่นเสียง
+  oscFundamental.start(now);
+  oscBody.start(now);
+  woodHarmonic.start(now);
+  noise.start(now);
+
+  // หยุดเล่นตามเวลา
+  oscFundamental.stop(now + decayTime + 0.1);
+  oscBody.stop(now + decayTime);
+  woodHarmonic.stop(now + 0.2);
+  noise.stop(now + 0.015);
+}
+
+    const NOTE_PRESETS = [
+      {
+        id: "ranad_ek_standard",
+        name: "เสียงเครื่องสาย",
+        notes: [
+          "ซฺ", "ลฺ", "ทฺ",
+          "ด", "ร", "ม", "ฟ", "ซ", "ล", "ท",
+          "ดํ", "รํ", "มํ", "ฟํ", "ซํ", "ลํ", "ทํ",
+          "ดํํ", "รํํ", "มํํ", "ฟํํ", "ซํํ"
+        ]
+      },
+      {
+        id: "piphat_ensemble",
+        name: "เสียงปี่พาทย์",
+        notes: [
+          "ฟฺ", "ซฺ", "ลฺ", "ทฺ",
+          "ด", "ร", "ม", "ฟ", "ซ", "ล", "ท",
+          "ดํ", "รํ", "มํ", "ฟํ", "ซํ", "ลํ", "ทํ",
+          "ดํํ", "รํํ", "มํํ", "ฟํํ"
+        ]
+      }
+    ];
+
+    let activePresetId = "ranad_ek_standard";
+    let activeNotes = [...NOTE_PRESETS[0].notes];
+    
+    const totalKeys = 22; // ระนาดเอก 22 ลูก
+    let keyStates = new Array(totalKeys).fill(false);
+
+    const canvas = document.getElementById('keysCanvas');
+    const ctx = canvas.getContext('2d');
+    let keyRects = [];
+
+    function resizeCanvas() {
+      const MIN_WIDTH = 1000; // ปรับความกว้างขั้นต่ำให้เหมาะกับ 22 ลูก
+      const width = Math.max(window.innerWidth, MIN_WIDTH);
+      const height = window.innerHeight;
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.scale(dpr, dpr);
+      drawCanvas(width, height);
+    }
+
+    function drawCanvas(width, height) {
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
+
+      const gapRatio = 0.10; 
+      const totalGaps = totalKeys - 1;
+      const keyWidth = width / (totalKeys + totalGaps * gapRatio);
+      const gapWidth = keyWidth * gapRatio;
+
+      keyRects = [];
+
+      for (let i = 0; i < totalKeys; i++) {
+        const x = i * (keyWidth + gapWidth);
+        const y = 0;
+        const w = keyWidth;
+        const h = height;
+
+        keyRects.push({ x, y, w, h, index: i });
+
+        const isPressed = keyStates[i];
+
+        ctx.fillStyle = isPressed ? '#DC2626' : '#D0B038';
+        ctx.fillRect(x, y, w, h);
+
+        const labelText = activeNotes[i] || "";
+        const fontSize = Math.min(Math.max(12, w * 0.40), height * 0.045);
+        ctx.font = `600 ${fontSize}px 'Sarabun', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#000000';
+
+        const textY = height * 0.04;
+        ctx.fillText(labelText, x + (w / 2), textY);
+      }
+    }
+
+    function render() {
+      const dpr = window.devicePixelRatio || 1;
+      drawCanvas(canvas.width / dpr, canvas.height / dpr);
+    }
+
+    function getKeyIndexAt(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = clientX - rect.left;
+      const clickY = clientY - rect.top;
+
+      for (const key of keyRects) {
+        if (
+          clickX >= key.x &&
+          clickX <= key.x + key.w &&
+          clickY >= key.y &&
+          clickY <= key.y + key.h
+        ) {
+          return key.index;
+        }
+      }
+      return -1;
+    }
+
+    function triggerNoteSound(keyIndex) {
+      initAudioContext();
+      const soundNote = FIXED_SOUND_NOTES[keyIndex];
+      const freq = getFrequencyForThaiNote(soundNote);
+      if (freq) {
+        playRanadEkSound(freq);
+      }
+    }
+
+    function clearAllStates() {
+      let changed = false;
+      for (let i = 0; i < totalKeys; i++) {
+        if (keyStates[i]) {
+          keyStates[i] = false;
+          changed = true;
+        }
+      }
+      if (changed) render();
+    }
+
+    // Mouse Interaction Handlers
+    canvas.addEventListener('mousedown', (e) => {
+      initAudioContext();
+      const idx = getKeyIndexAt(e.clientX, e.clientY);
+      clearAllStates();
+      if (idx !== -1) {
+        keyStates[idx] = true;
+        triggerNoteSound(idx);
+        render();
+      }
+    });
+
+    window.addEventListener('mouseup', () => clearAllStates());
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (e.buttons === 1) {
+        const idx = getKeyIndexAt(e.clientX, e.clientY);
+        let changed = false;
+        for (let i = 0; i < totalKeys; i++) {
+          const shouldBeActive = (i === idx);
+          if (keyStates[i] !== shouldBeActive) {
+            keyStates[i] = shouldBeActive;
+            changed = true;
+            if (shouldBeActive) {
+              triggerNoteSound(i);
+            }
+          }
+        }
+        if (changed) render();
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => clearAllStates());
+
+    // Touch Interaction Handlers
+    function handleTouch(e) {
+      e.preventDefault();
+      initAudioContext();
+
+      const activeIndices = new Set();
+
+      for (let i = 0; i < e.touches.length; i++) {
+        const touch = e.touches[i];
+        const idx = getKeyIndexAt(touch.clientX, touch.clientY);
+        if (idx !== -1) {
+          activeIndices.add(idx);
+        }
+      }
+
+      let changed = false;
+      for (let i = 0; i < totalKeys; i++) {
+        const shouldBeActive = activeIndices.has(i);
+        if (keyStates[i] !== shouldBeActive) {
+          keyStates[i] = shouldBeActive;
+          changed = true;
+          if (shouldBeActive) {
+            triggerNoteSound(i);
+          }
+        }
+      }
+
+      if (changed) render();
+    }
+
+    canvas.addEventListener('touchstart', handleTouch, { passive: false });
+    canvas.addEventListener('touchmove', handleTouch, { passive: false });
+    canvas.addEventListener('touchend', handleTouch, { passive: false });
+    canvas.addEventListener('touchcancel', handleTouch, { passive: false });
+
+    // Panel UI Handlers
+    const openPanelBtn = document.getElementById('openPanelBtn');
+    const closePanelBtn = document.getElementById('closePanelBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const noteModal = document.getElementById('noteModal');
+    const presetButtonsContainer = document.getElementById('presetButtonsContainer');
+
+    function renderPresetCards() {
+      presetButtonsContainer.innerHTML = '';
+      NOTE_PRESETS.forEach((preset) => {
+        const isSelected = preset.id === activePresetId;
+        
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = `w-full text-left p-4 rounded-xl border-2 transition-all flex flex-col gap-2 ${
+          isSelected 
+            ? 'border-amber-600 bg-amber-50 shadow-md' 
+            : 'border-gray-200 hover:border-amber-300 hover:bg-amber-50/50'
+        }`;
+
+        const notesPreview = preset.notes.join(' ');
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between w-full">
+            <span class="font-bold text-base ${isSelected ? 'text-amber-900' : 'text-gray-800'}">
+              ${preset.name}
+            </span>
+            ${isSelected ? `
+              <span class="bg-amber-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                กำลังใช้งาน
+              </span>
+            ` : ''}
+          </div>
+          <div class="text-xs font-mono text-gray-600 bg-white/80 p-2 rounded-lg border border-gray-100 overflow-x-auto whitespace-nowrap">
+            ${notesPreview}
+          </div>
+        `;
+
+        card.onclick = () => {
+          activePresetId = preset.id;
+          activeNotes = [...preset.notes];
+          render();
+          renderPresetCards();
+          closeModal();
+        };
+
+        presetButtonsContainer.appendChild(card);
+      });
+    }
+
+    openPanelBtn.addEventListener('click', () => {
+      initAudioContext();
+      renderPresetCards();
+      noteModal.classList.remove('hidden');
+    });
+
+    function closeModal() {
+      noteModal.classList.add('hidden');
+    }
+
+    closePanelBtn.addEventListener('click', closeModal);
+    cancelModalBtn.addEventListener('click', closeModal);
+
+    window.addEventListener('resize', resizeCanvas);
+
+    window.onload = function() {
+      resizeCanvas();
+    };
+  </script>
+</body>
+</html>
