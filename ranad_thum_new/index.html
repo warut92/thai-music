@@ -89,6 +89,7 @@
         <div class="grid grid-cols-1 gap-3" id="presetButtonsContainer">
           <!-- Dynamically populated preset buttons -->
         </div>
+        <p class="text-sm text-gray-600">ระนาดทุ้มมือถือรุ่นนี้เป็นเพียงการเลียนแบบของเก่าที่เคยสร้างมา แต่ครั้งนี้สร้างด้วย AI (เดิมใช้ construct2)  และมีการเพิ่มฟังก์ชันแสดงโน้ตกำกับในระบบเครื่องสายและปี่พาทย์ 11 ต.ค. 2569</p>
       </div>
 
       <!-- Modal Footer -->
@@ -289,19 +290,22 @@
     let keyRects = [];
 
     function resizeCanvas() {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+  const MIN_WIDTH = 800; // 👈 กำหนดความกว้างขั้นต่ำเดียวกับ CSS
+  
+  // เลือกค่าที่มากกว่าระหว่างความกว้างหน้าจอจริง กับความกว้างขั้นต่ำ
+  const width = Math.max(window.innerWidth, MIN_WIDTH);
+  const height = window.innerHeight;
 
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
 
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
 
-      ctx.scale(dpr, dpr);
-      drawCanvas(width, height);
-    }
+  ctx.scale(dpr, dpr);
+  drawCanvas(width, height);
+}
 
     function drawCanvas(width, height) {
       ctx.clearRect(0, 0, width, height);
