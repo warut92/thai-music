@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thai Xylophone Keys Canvas</title>
+  <title>ระนาดทุ้มมือถือ (ใหม่)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -46,6 +46,11 @@
       background: #94a3b8;
     }
   </style>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
 </head>
 <body class="relative w-full h-full">
 
@@ -111,24 +116,26 @@
 
     /**
      * Converts Thai note symbol to frequency:
-     * - Low Octave (contains dot below 'ฺ') -> Base Freq / 2
-     * - High Octave (contains dot above 'ํ') -> Base Freq * 2
-     * - Middle Octave (standard note) -> Base Freq
+     * Removes diacritics including Phinthu (\u0E3A / \u0E38) and Nikhahit (\u0E4D).
+     * - Low Octave (contains dot below) -> Base Freq / 2
+     * - High Octave (contains dot above) -> Base Freq * 2
+     * - Middle Octave -> Base Freq
      */
     function getFrequencyForThaiNote(noteStr) {
       if (!noteStr) return null;
       
       const cleanNote = noteStr.trim();
-      const baseChar = cleanNote.replace(/[\u0E38\u0E4D]/g, ''); // Extract base letter
+      // Clean base letter by stripping Phinthu (\u0E3A, \u0E38) and Nikhahit (\u0E4D)
+      const baseChar = cleanNote.replace(/[\u0E38\u0E3A\u0E4D]/g, '').trim(); 
       const baseFreq = FINE_ARTS_BASE_FREQ[baseChar];
 
       if (!baseFreq) return null;
 
-      if (cleanNote.includes('\u0E38') || cleanNote.includes('ฺ')) {
-        // Dot below -> Low Octave
+      if (cleanNote.includes('\u0E3A') || cleanNote.includes('\u0E38') || cleanNote.includes('ฺ')) {
+        // Low Octave (Divide by 2)
         return baseFreq / 2;
       } else if (cleanNote.includes('\u0E4D') || cleanNote.includes('ํ')) {
-        // Dot above -> High Octave
+        // High Octave (Multiply by 2)
         return baseFreq * 2;
       } else {
         // Middle Octave
@@ -161,15 +168,15 @@
 
       const now = audioCtx.currentTime;
 
-      // Dynamic gain boost for lower frequencies to ensure balanced perceived volume
+      // Dynamic gain boost for lower frequencies
       const isLowNote = freq < 200;
       const volumeBoost = isLowNote ? 1.4 : (freq < 300 ? 1.15 : 1.0);
 
-      // Master gain node for the note
+      // Master gain node
       const masterGain = audioCtx.createGain();
       masterGain.gain.setValueAtTime(0.001, now);
-      masterGain.gain.linearRampToValueAtTime(0.85 * volumeBoost, now + 0.004); // Fast pluck
-      masterGain.gain.exponentialRampToValueAtTime(0.0001, now + (isLowNote ? 1.8 : 1.4)); // Sustained decay for low notes
+      masterGain.gain.linearRampToValueAtTime(0.85 * volumeBoost, now + 0.004); 
+      masterGain.gain.exponentialRampToValueAtTime(0.0001, now + (isLowNote ? 1.8 : 1.4)); 
 
       // Fundamental tone oscillator (Sine wave)
       const oscFundamental = audioCtx.createOscillator();
@@ -184,16 +191,16 @@
       const bodyGain = audioCtx.createGain();
       bodyGain.gain.setValueAtTime(0.4, now);
 
-      // High metallic overtone/harmonic characteristic of Kalimba metal tines
+      // Metallic overtone harmonic
       const tineHarmonic = audioCtx.createOscillator();
       tineHarmonic.type = 'sine';
       tineHarmonic.frequency.setValueAtTime(freq * 3.92, now);
 
       const tineGain = audioCtx.createGain();
       tineGain.gain.setValueAtTime(0.35, now);
-      tineGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12); // Quick metallic ping decay
+      tineGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
 
-      // CONNECT BASIC NODES
+      // CONNECT NODES
       oscFundamental.connect(masterGain);
       oscBody.connect(bodyGain);
       bodyGain.connect(masterGain);
@@ -208,9 +215,9 @@
       oscBody.stop(now + 1.9);
       tineHarmonic.stop(now + 0.15);
 
-      // EXTRA HARMONIC GENERATION FOR LOW NOTES (adds mid-range presence)
+      // EXTRA HARMONICS FOR LOW NOTES
       if (isLowNote) {
-        // 2nd Harmonic (1 octave above) - Adds solid body pitch
+        // 2nd Harmonic (1 octave above)
         const osc2nd = audioCtx.createOscillator();
         osc2nd.type = 'triangle';
         osc2nd.frequency.setValueAtTime(freq * 2, now);
@@ -225,7 +232,7 @@
         osc2nd.start(now);
         osc2nd.stop(now + 1.3);
 
-        // 3rd Harmonic (Octave + 5th) - Adds clear presence for small speakers
+        // 3rd Harmonic (Octave + 5th)
         const osc3rd = audioCtx.createOscillator();
         osc3rd.type = 'sine';
         osc3rd.frequency.setValueAtTime(freq * 3, now);
@@ -241,7 +248,7 @@
         osc3rd.stop(now + 0.9);
       }
 
-      // Output filtering: gentle lowpass to remove harsh digital noise
+      // Output filtering
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(Math.min(freq * 8, 9000), now);
