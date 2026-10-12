@@ -20,6 +20,7 @@
       font-family: 'Sarabun', sans-serif;
       user-select: none;
       -webkit-user-select: none;
+      touch-action: none;
     }
     canvas {
       display: block;
@@ -54,17 +55,15 @@
 </head>
 <body class="relative w-full h-full">
 
-  <!-- Container สำหรับรองรับ Scroll ในแนวนอนบนมือถือ -->
-  <div id="canvasContainer" class="w-full h-full overflow-x-auto overflow-y-hidden custom-scrollbar">
-    <canvas id="keysCanvas" class="h-full"></canvas>
-  </div>
+  <!-- Canvas แสดงผลลูกระนาดเอกเต็มหน้าจอ 22 ลูกพอดี -->
+  <canvas id="keysCanvas" class="w-full h-full"></canvas>
 
   <button id="openPanelBtn" class="fixed bottom-5 right-5 z-20 flex items-center gap-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-semibold py-3 px-5 rounded-full shadow-lg hover:shadow-xl transition-all duration-200">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
-    <span>เปลี่ยนเสียง / ตั้งค่า</span>
+    <span>เปลี่ยนเสียง/ตั้งค่า</span>
   </button>
 
   <div id="noteModal" class="fixed inset-0 z-30 modal-backdrop flex items-center justify-center p-4 hidden">
@@ -93,18 +92,34 @@
           <!-- Dynamically populated preset buttons -->
         </div>
 
-        <!-- Checkbox สำหรับโหมดเล่นคู่ 8 -->
-        <div class="mt-4 pt-4 border-t border-gray-200">
+        <!-- Checkbox ตั้งค่าโหมดการเล่น -->
+        <div class="mt-4 pt-4 border-t border-gray-200 space-y-3">
           <label class="flex items-center gap-3 cursor-pointer select-none">
             <input type="checkbox" id="octaveModeCheckbox" class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500">
             <div>
-              <span class="font-bold text-gray-800 text-sm block">เปิดการเล่นแบบคู่ 8 (Octave Mode)</span>
-              <span class="text-xs text-gray-500 block">สัมผัสคีย์เดียว จะเล่นเสียงและแสดงสถานะคู่แปดต่ำกว่าพร้อมกัน</span>
+              <span class="font-bold text-gray-800 text-sm block">ตีคู่ 8 อัตโนมัติ</span>
+              <span class="text-xs text-gray-500 block">สัมผัสลูกระนาดลูกเดียว ระบบจะเล่นเสียงและแสดงสีสถานะคู่แปดอัตโนมัติ</span>
             </div>
           </label>
+
+          <!-- Checkbox สำหรับโหมดกรอ + ช่องกรอกความเร็ว -->
+          <div id="tremoloContainer" class="flex items-center justify-between gap-3 opacity-50 pl-6 transition-opacity">
+            <label id="tremoloLabel" class="flex items-center gap-3 cursor-not-allowed select-none flex-1">
+              <input type="checkbox" id="tremoloModeCheckbox" disabled class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500 disabled:cursor-not-allowed">
+              <div>
+                <span class="font-bold text-gray-800 text-sm block">กรออัตโนมัติ</span>
+                <span class="text-xs text-gray-500 block">กดค้างไว้เพื่อกรอสลับเสียงต่ำ-สูงอัตโนมัติ</span>
+              </div>
+            </label>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span class="text-xs text-gray-600 font-medium">ตั้งค่าความเร็ว:</span>
+              <input type="number" id="tremoloSpeedInput" value="65" min="30" max="300" disabled class="w-16 px-2 py-1 text-sm text-center border border-gray-300 rounded-lg focus:ring-1 focus:ring-amber-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed">
+              <span class="text-xs text-gray-500">ms</span>
+            </div>
+          </div>
         </div>
 
-        <p class="text-sm text-gray-600 pt-2">ระนาดเอกมือถือ 22 ลูก พัฒนาโดยใช้ Web Audio API สเกลเสียงมาตรฐานกรมศิลปากร เลียนแบบ<a href="/ranad_thum_new/" class="text-amber-600 underline ml-1">ระนาดทุ้มมือถือ (ใหม่) 11 ต.ค. 69</a></p>
+        <p class="text-sm text-gray-600 pt-2">ระนาดเอกมือถือ 22 ลูก พัฒนาโดยใช้ Web Audio API สเกลเสียงมาตรฐานกรมศิลปากร เลียนแบบ<a href="/ranad_thum_new/" class="text-amber-600 underline ml-1">ระนาดทุ้มมือถือ (ใหม่)</a> 11 ต.ค. 69 ปรับปรุงล่าสุด 12 ต.ค. 69</p>
       </div>
 
       <!-- Modal Footer -->
@@ -160,6 +175,12 @@
 
     let audioCtx = null;
     let isOctaveModeEnabled = false;
+    let isTremoloModeEnabled = false;
+    let tremoloSpeedMs = 65;
+
+    let holdTimer = null;
+    let tremoloInterval = null;
+    let currentTremoloKey = -1;
 
     function initAudioContext() {
       if (!audioCtx) {
@@ -282,15 +303,10 @@
     const ctx = canvas.getContext('2d');
     let keyRects = [];
 
+    // คำนวณขนาดย่อ/ขยายให้พอดีกับความกว้างหน้าจอภาพรวม 100%
     function resizeCanvas() {
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-
-      const minKeyWidth = 48;
-      const minTotalWidth = totalKeys * minKeyWidth;
-
-      const width = Math.max(viewportWidth, minTotalWidth);
-      const height = viewportHeight;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
       const dpr = window.devicePixelRatio || 1;
       canvas.width = width * dpr;
@@ -330,7 +346,7 @@
         ctx.fillRect(x, y, w, h);
 
         const labelText = activeNotes[i] || "";
-        const fontSize = Math.min(Math.max(12, w * 0.40), height * 0.045);
+        const fontSize = Math.min(Math.max(10, w * 0.40), height * 0.045);
         ctx.font = `600 ${fontSize}px 'Sarabun', sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
@@ -364,7 +380,6 @@
       return -1;
     }
 
-    // ฟังก์ชันคำนวณตำแหน่งคีย์คู่แปดต่ำกว่า
     function getLowerOctaveIndex(keyIndex) {
       if (keyIndex < 7) {
         return keyIndex > 0 ? 0 : -1;
@@ -381,7 +396,48 @@
       }
     }
 
+    function stopTremolo() {
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+      if (tremoloInterval) {
+        clearInterval(tremoloInterval);
+        tremoloInterval = null;
+      }
+      currentTremoloKey = -1;
+    }
+
+    function startTremoloLoop(highKeyIndex) {
+      currentTremoloKey = highKeyIndex;
+      const lowerKeyIndex = getLowerOctaveIndex(highKeyIndex);
+
+      if (lowerKeyIndex < 0) {
+        triggerNoteSound(highKeyIndex);
+        return;
+      }
+
+      let playLowFirst = true;
+
+      const executeStep = () => {
+        keyStates.fill(false);
+        if (playLowFirst) {
+          keyStates[lowerKeyIndex] = true;
+          triggerNoteSound(lowerKeyIndex);
+        } else {
+          keyStates[highKeyIndex] = true;
+          triggerNoteSound(highKeyIndex);
+        }
+        render();
+        playLowFirst = !playLowFirst;
+      };
+
+      executeStep();
+      tremoloInterval = setInterval(executeStep, tremoloSpeedMs);
+    }
+
     function clearAllStates() {
+      stopTremolo();
       let changed = false;
       for (let i = 0; i < totalKeys; i++) {
         if (keyStates[i]) {
@@ -392,35 +448,70 @@
       if (changed) render();
     }
 
-    // ฟังก์ชันอัปเดตสถานะปุ่มและเล่นเสียง (ใช้ร่วมกันทั้ง Mouse และ Touch)
-    function updateKeyActiveStates(primaryIndices) {
+    function updateKeyActiveStates(primaryIndices, isStartAction = false) {
+      if (primaryIndices.length === 0) {
+        clearAllStates();
+        return;
+      }
+
+      const primaryIdx = primaryIndices[0];
+
+      // กรณีเปิดใช้งานทั้ง Octave Mode และ Tremolo Mode
+      if (isOctaveModeEnabled && isTremoloModeEnabled) {
+        if (currentTremoloKey !== primaryIdx) {
+          stopTremolo();
+          currentTremoloKey = primaryIdx;
+
+          // 1. เล่นเสียงคู่ 8 พร้อมกันทันทีที่สัมผัสครั้งแรก (เพื่อรองรับการกดสั้น/แตะเร็ว)
+          const nextKeyStates = new Array(totalKeys).fill(false);
+          nextKeyStates[primaryIdx] = true;
+          triggerNoteSound(primaryIdx);
+
+          const lowerIdx = getLowerOctaveIndex(primaryIdx);
+          if (lowerIdx >= 0 && lowerIdx < totalKeys) {
+            nextKeyStates[lowerIdx] = true;
+            triggerNoteSound(lowerIdx);
+          }
+
+          for (let i = 0; i < totalKeys; i++) keyStates[i] = nextKeyStates[i];
+          render();
+
+          // 2. ตั้งตัวจับเวลา หากกดค้างไว้เกิน 50ms ให้เปลี่ยนเป็นโหมดกรอ
+          holdTimer = setTimeout(() => {
+            startTremoloLoop(primaryIdx);
+          }, 50);
+        }
+        return;
+      }
+
+      stopTremolo();
       const nextKeyStates = new Array(totalKeys).fill(false);
       const notesToPlay = new Set();
 
       primaryIndices.forEach((idx) => {
         if (idx >= 0 && idx < totalKeys) {
           nextKeyStates[idx] = true;
-          notesToPlay.add(idx);
 
-          // หากเปิดโหมดคู่ 8 ให้เปิดไฮไลต์และเล่นเสียงคีย์ต่ำด้วย
+          if (isStartAction || !keyStates[idx]) {
+            notesToPlay.add(idx);
+          }
+
           if (isOctaveModeEnabled) {
             const lowerIdx = getLowerOctaveIndex(idx);
             if (lowerIdx >= 0 && lowerIdx < totalKeys) {
               nextKeyStates[lowerIdx] = true;
-              notesToPlay.add(lowerIdx);
+              if (isStartAction || !keyStates[lowerIdx]) {
+                notesToPlay.add(lowerIdx);
+              }
             }
           }
         }
       });
 
-      // ตรวจสอบคีย์ที่เพิ่งถูกกดใหม่เพื่อเล่นเสียง
       notesToPlay.forEach((idx) => {
-        if (!keyStates[idx]) {
-          triggerNoteSound(idx);
-        }
+        triggerNoteSound(idx);
       });
 
-      // ตรวจสอบการเปลี่ยนแปลงสถานะเพื่อสั่ง re-render
       let changed = false;
       for (let i = 0; i < totalKeys; i++) {
         if (keyStates[i] !== nextKeyStates[i]) {
@@ -432,12 +523,13 @@
       if (changed) render();
     }
 
-    // Mouse Interaction Handlers
+    // Mouse Event Listeners (mousedown / mousemove)
     canvas.addEventListener('mousedown', (e) => {
+      e.preventDefault();
       initAudioContext();
       const idx = getKeyIndexAt(e.clientX, e.clientY);
       if (idx !== -1) {
-        updateKeyActiveStates([idx]);
+        updateKeyActiveStates([idx], true);
       } else {
         clearAllStates();
       }
@@ -449,7 +541,7 @@
       if (e.buttons === 1) {
         const idx = getKeyIndexAt(e.clientX, e.clientY);
         if (idx !== -1) {
-          updateKeyActiveStates([idx]);
+          updateKeyActiveStates([idx], false);
         } else {
           clearAllStates();
         }
@@ -458,8 +550,9 @@
 
     canvas.addEventListener('mouseleave', () => clearAllStates());
 
-    // Touch Interaction Handlers
-    function handleTouch(e) {
+    // Touch Event Listeners (touchstart / touchmove)
+    function handleTouch(e, isStartAction = false) {
+      e.preventDefault();
       initAudioContext();
       const primaryIndices = [];
 
@@ -471,13 +564,13 @@
         }
       }
 
-      updateKeyActiveStates(primaryIndices);
+      updateKeyActiveStates(primaryIndices, isStartAction);
     }
 
-    canvas.addEventListener('touchstart', handleTouch, { passive: true });
-    canvas.addEventListener('touchmove', handleTouch, { passive: true });
-    canvas.addEventListener('touchend', handleTouch, { passive: true });
-    canvas.addEventListener('touchcancel', handleTouch, { passive: true });
+    canvas.addEventListener('touchstart', (e) => handleTouch(e, true), { passive: false });
+    canvas.addEventListener('touchmove', (e) => handleTouch(e, false), { passive: false });
+    canvas.addEventListener('touchend', () => clearAllStates(), { passive: false });
+    canvas.addEventListener('touchcancel', () => clearAllStates(), { passive: false });
 
     // Panel UI Handlers
     const openPanelBtn = document.getElementById('openPanelBtn');
@@ -485,10 +578,42 @@
     const cancelModalBtn = document.getElementById('cancelModalBtn');
     const noteModal = document.getElementById('noteModal');
     const presetButtonsContainer = document.getElementById('presetButtonsContainer');
+
     const octaveModeCheckbox = document.getElementById('octaveModeCheckbox');
+    const tremoloModeCheckbox = document.getElementById('tremoloModeCheckbox');
+    const tremoloContainer = document.getElementById('tremoloContainer');
+    const tremoloLabel = document.getElementById('tremoloLabel');
+    const tremoloSpeedInput = document.getElementById('tremoloSpeedInput');
 
     octaveModeCheckbox.addEventListener('change', (e) => {
       isOctaveModeEnabled = e.target.checked;
+      
+      if (isOctaveModeEnabled) {
+        tremoloModeCheckbox.disabled = false;
+        tremoloSpeedInput.disabled = false;
+        tremoloContainer.classList.remove('opacity-50');
+        tremoloLabel.classList.remove('cursor-not-allowed');
+        tremoloLabel.classList.add('cursor-pointer');
+      } else {
+        tremoloModeCheckbox.disabled = true;
+        tremoloModeCheckbox.checked = false;
+        tremoloSpeedInput.disabled = true;
+        isTremoloModeEnabled = false;
+        tremoloContainer.classList.add('opacity-50');
+        tremoloLabel.classList.add('cursor-not-allowed');
+        tremoloLabel.classList.remove('cursor-pointer');
+      }
+    });
+
+    tremoloModeCheckbox.addEventListener('change', (e) => {
+      isTremoloModeEnabled = e.target.checked;
+    });
+
+    tremoloSpeedInput.addEventListener('change', (e) => {
+      let val = parseInt(e.target.value) || 65;
+      val = Math.max(30, Math.min(300, val));
+      e.target.value = val;
+      tremoloSpeedMs = val;
     });
 
     function renderPresetCards() {
