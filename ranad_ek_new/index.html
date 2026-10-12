@@ -95,7 +95,7 @@
         <!-- Checkbox ตั้งค่าโหมดการเล่น -->
         <div class="mt-4 pt-4 border-t border-gray-200 space-y-3">
           <label class="flex items-center gap-3 cursor-pointer select-none">
-            <input type="checkbox" id="octaveModeCheckbox" class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500">
+            <input type="checkbox" id="octaveModeCheckbox" checked class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500">
             <div>
               <span class="font-bold text-gray-800 text-sm block">ตีคู่ 8 อัตโนมัติ</span>
               <span class="text-xs text-gray-500 block">สัมผัสลูกระนาดลูกเดียว ระบบจะเล่นเสียงและแสดงสีสถานะคู่แปดอัตโนมัติ</span>
@@ -105,7 +105,7 @@
           <!-- Checkbox สำหรับโหมดกรอ + ช่องกรอกความเร็ว -->
           <div id="tremoloContainer" class="flex items-center justify-between gap-3 opacity-50 pl-6 transition-opacity">
             <label id="tremoloLabel" class="flex items-center gap-3 cursor-not-allowed select-none flex-1">
-              <input type="checkbox" id="tremoloModeCheckbox" disabled class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500 disabled:cursor-not-allowed">
+              <input type="checkbox" id="tremoloModeCheckbox" checked class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500 disabled:cursor-not-allowed">
               <div>
                 <span class="font-bold text-gray-800 text-sm block">กรออัตโนมัติ</span>
                 <span class="text-xs text-gray-500 block">กดค้างไว้เพื่อกรอสลับเสียงต่ำ-สูงอัตโนมัติ</span>
@@ -174,8 +174,8 @@
     }
 
     let audioCtx = null;
-    let isOctaveModeEnabled = false;
-    let isTremoloModeEnabled = false;
+    let isOctaveModeEnabled = true;
+    let isTremoloModeEnabled = true;
     let tremoloSpeedMs = 65;
 
     let holdTimer = null;
