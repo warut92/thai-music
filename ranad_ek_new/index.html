@@ -20,7 +20,6 @@
       font-family: 'Sarabun', sans-serif;
       user-select: none;
       -webkit-user-select: none;
-      touch-action: none;
     }
     canvas {
       display: block;
@@ -32,6 +31,7 @@
       transition: opacity 0.25s ease-in-out;
     }
     .custom-scrollbar::-webkit-scrollbar {
+      height: 8px;
       width: 6px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
@@ -54,14 +54,17 @@
 </head>
 <body class="relative w-full h-full">
 
-  <canvas id="keysCanvas" class="w-full h-full"></canvas>
+  <!-- Container สำหรับรองรับ Scroll ในแนวนอนบนมือถือ -->
+  <div id="canvasContainer" class="w-full h-full overflow-x-auto overflow-y-hidden custom-scrollbar">
+    <canvas id="keysCanvas" class="h-full"></canvas>
+  </div>
 
   <button id="openPanelBtn" class="fixed bottom-5 right-5 z-20 flex items-center gap-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-semibold py-3 px-5 rounded-full shadow-lg hover:shadow-xl transition-all duration-200">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
-    <span>เปลี่ยนเสียง</span>
+    <span>เปลี่ยนเสียง / ตั้งค่า</span>
   </button>
 
   <div id="noteModal" class="fixed inset-0 z-30 modal-backdrop flex items-center justify-center p-4 hidden">
@@ -73,7 +76,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
           </svg>
-          <h2 class="text-lg font-bold">เลือกเสียง(เครื่องสาย/ปี่พาทย์)</h2>
+          <h2 class="text-lg font-bold">เลือกเสียงและตั้งค่าการเล่น</h2>
         </div>
         <button id="closePanelBtn" class="text-white hover:bg-amber-700 p-1.5 rounded-lg transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,7 +92,19 @@
         <div class="grid grid-cols-1 gap-3" id="presetButtonsContainer">
           <!-- Dynamically populated preset buttons -->
         </div>
-        <p class="text-sm text-gray-600">ระนาดเอกมือถือ 22 ลูก พัฒนาโดยใช้ Web Audio API สเกลเสียงมาตรฐานกรมศิลปากร เลียนแบบ<a href="/ranad_thum_new/">ระนาดทุ้มมือถือ (ใหม่) 11 ต.ค. 69</a></p>
+
+        <!-- Checkbox สำหรับโหมดเล่นคู่ 8 -->
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <label class="flex items-center gap-3 cursor-pointer select-none">
+            <input type="checkbox" id="octaveModeCheckbox" class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500">
+            <div>
+              <span class="font-bold text-gray-800 text-sm block">เปิดการเล่นแบบคู่ 8 (Octave Mode)</span>
+              <span class="text-xs text-gray-500 block">สัมผัสคีย์เดียว จะเล่นเสียงและแสดงสถานะคู่แปดต่ำกว่าพร้อมกัน</span>
+            </div>
+          </label>
+        </div>
+
+        <p class="text-sm text-gray-600 pt-2">ระนาดเอกมือถือ 22 ลูก พัฒนาโดยใช้ Web Audio API สเกลเสียงมาตรฐานกรมศิลปากร เลียนแบบ<a href="/ranad_thum_new/" class="text-amber-600 underline ml-1">ระนาดทุ้มมือถือ (ใหม่) 11 ต.ค. 69</a></p>
       </div>
 
       <!-- Modal Footer -->
@@ -114,7 +129,6 @@
       'ท': 417.2
     };
 
-    // ล็อกระดับเสียงระนาดเอกทั้ง 22 ลูก เริ่มที่ ซฺ (ซอลต่ำ) ถึง ดํํ (โดสูงมาก)
     const FIXED_SOUND_NOTES = [
       "ซฺ", "ลฺ", "ทฺ",
       "ด", "ร", "ม", "ฟ", "ซ", "ล", "ท",
@@ -126,28 +140,26 @@
       if (!noteStr) return null;
       
       const cleanNote = noteStr.trim();
-      // ดึงเฉพาะตัวอักษรตั้งต้น
       const baseChar = cleanNote.replace(/[\u0E38\u0E3A\u0E4D\u0E31\u0E47\u0E48\u0E49\u0E4A\u0E4B]/g, '').trim(); 
       const baseFreq = FINE_ARTS_BASE_FREQ[baseChar];
 
       if (!baseFreq) return null;
 
-      // ตรวจสอบพินทุ/สระอุ ( octave ต่ำ )
       if (cleanNote.includes('\u0E3A') || cleanNote.includes('\u0E38') || cleanNote.includes('ฺ')) {
         return baseFreq / 2;
       }
       
-      // นับจำนวนนิคหิต/พินทุบน ( octave สูง )
       const highDotMatch = cleanNote.match(/[\u0E4Dํ]/g);
       if (highDotMatch) {
         const dotCount = highDotMatch.length;
-        return baseFreq * Math.pow(2, dotCount); // 1 จุด = *2, 2 จุด = *4
+        return baseFreq * Math.pow(2, dotCount);
       }
 
       return baseFreq;
     }
 
     let audioCtx = null;
+    let isOctaveModeEnabled = false;
 
     function initAudioContext() {
       if (!audioCtx) {
@@ -161,114 +173,101 @@
       }
     }
 
-    // ฟังก์ชันสังเคราะห์เสียงระนาดไม้เนื้อแข็ง กังวาน ใส (Hardwood Ranad Sound)
-function playRanadEkSound(freq) {
-  if (!freq || !audioCtx) return;
+    function playRanadEkSound(freq) {
+      if (!freq || !audioCtx) return;
 
-  const now = audioCtx.currentTime;
-  
-  // ระยะเวลาความกังวาน (Decay) แปรผันตามความถี่ (ลูกเสียงต่ำจะกังวานนานกว่าลูกเสียงสูง)
-  const decayTime = Math.max(0.6, 2.0 - (freq / 800));
+      const now = audioCtx.currentTime;
+      const decayTime = Math.max(0.6, 2.0 - (freq / 800));
 
-  // Master Volume Gain
-  const masterGain = audioCtx.createGain();
-  masterGain.gain.setValueAtTime(0.001, now);
-  // Attack สั้นและเร็ว เพื่อให้ได้เสียงกระทบผืนไม้ที่เด็ดขาด
-  masterGain.gain.linearRampToValueAtTime(0.85, now + 0.003); 
-  masterGain.gain.exponentialRampToValueAtTime(0.0001, now + decayTime);
+      const masterGain = audioCtx.createGain();
+      masterGain.gain.setValueAtTime(0.001, now);
+      masterGain.gain.linearRampToValueAtTime(0.85, now + 0.003); 
+      masterGain.gain.exponentialRampToValueAtTime(0.0001, now + decayTime);
 
-  // 1. Fundamental Pitch (Sine Wave - เสียงโน้ตหลัก)
-  const oscFundamental = audioCtx.createOscillator();
-  oscFundamental.type = 'sine';
-  oscFundamental.frequency.setValueAtTime(freq, now);
+      const oscFundamental = audioCtx.createOscillator();
+      oscFundamental.type = 'sine';
+      oscFundamental.frequency.setValueAtTime(freq, now);
 
-  // 2. High Resonance Body (Triangle Wave - เสียงเนื้อไม้แน่นๆ)
-  const oscBody = audioCtx.createOscillator();
-  oscBody.type = 'triangle';
-  oscBody.frequency.setValueAtTime(freq, now);
+      const oscBody = audioCtx.createOscillator();
+      oscBody.type = 'triangle';
+      oscBody.frequency.setValueAtTime(freq, now);
 
-  const bodyGain = audioCtx.createGain();
-  bodyGain.gain.setValueAtTime(0.35, now);
-  bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + (decayTime * 0.7));
+      const bodyGain = audioCtx.createGain();
+      bodyGain.gain.setValueAtTime(0.35, now);
+      bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + (decayTime * 0.7));
 
-  // 3. Bright Inharmonic Overtones (ฮาร์มอนิกของไม้เนื้อแข็ง)
-  const woodHarmonic = audioCtx.createOscillator();
-  woodHarmonic.type = 'sine';
-  woodHarmonic.frequency.setValueAtTime(freq * 3.82, now); // สัดส่วนโหมดการสั่นสะเทือนของผืนไม้แข็ง
+      const woodHarmonic = audioCtx.createOscillator();
+      woodHarmonic.type = 'sine';
+      woodHarmonic.frequency.setValueAtTime(freq * 3.82, now);
 
-  const woodGain = audioCtx.createGain();
-  woodGain.gain.setValueAtTime(0.3, now);
-  woodGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15); // หายไปเร็วทิ้งไว้เฉพาะเสียงกังวานหลัก
+      const woodGain = audioCtx.createGain();
+      woodGain.gain.setValueAtTime(0.3, now);
+      woodGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
 
-  // 4. Attack Click/Transient (เสียงกระทบสั้นๆ ของหัวนวดไม้แข็ง)
-  const bufferSize = audioCtx.sampleRate * 0.01; // 10ms transient
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) {
-    output[i] = Math.random() * 2 - 1;
-  }
-  const noise = audioCtx.createBufferSource();
-  noise.buffer = noiseBuffer;
+      const bufferSize = audioCtx.sampleRate * 0.01;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = noiseBuffer;
 
-  const noiseFilter = audioCtx.createBiquadFilter();
-  noiseFilter.type = 'highpass';
-  noiseFilter.frequency.setValueAtTime(1500, now); // กรองเอาเฉพาะเสียงจิกหัวไม้สดใส
+      const noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'highpass';
+      noiseFilter.frequency.setValueAtTime(1500, now);
 
-  const noiseGain = audioCtx.createGain();
-  noiseGain.gain.setValueAtTime(0.2, now);
-  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.01);
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.2, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.01);
 
-  noise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(masterGain);
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(masterGain);
 
-  // เชื่อมต่อวงจรออสซิลเลเตอร์
-  oscFundamental.connect(masterGain);
-  oscBody.connect(bodyGain);
-  bodyGain.connect(masterGain);
-  woodHarmonic.connect(woodGain);
-  woodGain.connect(masterGain);
+      oscFundamental.connect(masterGain);
+      oscBody.connect(bodyGain);
+      bodyGain.connect(masterGain);
+      woodHarmonic.connect(woodGain);
+      woodGain.connect(masterGain);
 
-  // Bandpass / Lowpass Filter เปิดย่านความถี่สูงเล็กน้อยเพื่อให้เสียงใสฉ่ำแบบไม้แข็ง
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(Math.min(freq * 8, 12000), now);
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(Math.min(freq * 8, 12000), now);
 
-  masterGain.connect(filter);
-  filter.connect(audioCtx.destination);
+      masterGain.connect(filter);
+      filter.connect(audioCtx.destination);
 
-  // เริ่มเล่นเสียง
-  oscFundamental.start(now);
-  oscBody.start(now);
-  woodHarmonic.start(now);
-  noise.start(now);
+      oscFundamental.start(now);
+      oscBody.start(now);
+      woodHarmonic.start(now);
+      noise.start(now);
 
-  // หยุดเล่นตามเวลา
-  oscFundamental.stop(now + decayTime + 0.1);
-  oscBody.stop(now + decayTime);
-  woodHarmonic.stop(now + 0.2);
-  noise.stop(now + 0.015);
-}
+      oscFundamental.stop(now + decayTime + 0.1);
+      oscBody.stop(now + decayTime);
+      woodHarmonic.stop(now + 0.2);
+      noise.stop(now + 0.015);
+    }
 
     const NOTE_PRESETS = [
       {
         id: "ranad_ek_standard",
         name: "เสียงเครื่องสาย",
         notes: [
-          "ซฺ", "ลฺ", "ทฺ",
+          "ซฺฺ", "ลฺฺ", "ทฺฺ",
+          "ดฺ", "รฺ", "มฺ", "ฟฺ", "ซฺ", "ลฺ", "ทฺ",
           "ด", "ร", "ม", "ฟ", "ซ", "ล", "ท",
-          "ดํ", "รํ", "มํ", "ฟํ", "ซํ", "ลํ", "ทํ",
-          "ดํํ", "รํํ", "มํํ", "ฟํํ", "ซํํ"
+          "ดํ", "รํ", "มํ", "ฟํ", "ซํ"
         ]
       },
       {
         id: "piphat_ensemble",
         name: "เสียงปี่พาทย์",
         notes: [
-          "ฟฺ", "ซฺ", "ลฺ", "ทฺ",
+          "ฟฺฺ", "ซฺฺ", "ลฺฺ", "ทฺฺ",
+          "ดฺ", "รฺ", "มฺ", "ฟฺ", "ซฺ", "ลฺ", "ทฺ",
           "ด", "ร", "ม", "ฟ", "ซ", "ล", "ท",
-          "ดํ", "รํ", "มํ", "ฟํ", "ซํ", "ลํ", "ทํ",
-          "ดํํ", "รํํ", "มํํ", "ฟํํ"
+          "ดํ", "รํ", "มํ", "ฟํ"
         ]
       }
     ];
@@ -276,7 +275,7 @@ function playRanadEkSound(freq) {
     let activePresetId = "ranad_ek_standard";
     let activeNotes = [...NOTE_PRESETS[0].notes];
     
-    const totalKeys = 22; // ระนาดเอก 22 ลูก
+    const totalKeys = 22;
     let keyStates = new Array(totalKeys).fill(false);
 
     const canvas = document.getElementById('keysCanvas');
@@ -284,9 +283,14 @@ function playRanadEkSound(freq) {
     let keyRects = [];
 
     function resizeCanvas() {
-      const MIN_WIDTH = 1000; // ปรับความกว้างขั้นต่ำให้เหมาะกับ 22 ลูก
-      const width = Math.max(window.innerWidth, MIN_WIDTH);
-      const height = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      const minKeyWidth = 48;
+      const minTotalWidth = totalKeys * minKeyWidth;
+
+      const width = Math.max(viewportWidth, minTotalWidth);
+      const height = viewportHeight;
 
       const dpr = window.devicePixelRatio || 1;
       canvas.width = width * dpr;
@@ -360,6 +364,14 @@ function playRanadEkSound(freq) {
       return -1;
     }
 
+    // ฟังก์ชันคำนวณตำแหน่งคีย์คู่แปดต่ำกว่า
+    function getLowerOctaveIndex(keyIndex) {
+      if (keyIndex < 7) {
+        return keyIndex > 0 ? 0 : -1;
+      }
+      return keyIndex - 7;
+    }
+
     function triggerNoteSound(keyIndex) {
       initAudioContext();
       const soundNote = FIXED_SOUND_NOTES[keyIndex];
@@ -380,15 +392,54 @@ function playRanadEkSound(freq) {
       if (changed) render();
     }
 
+    // ฟังก์ชันอัปเดตสถานะปุ่มและเล่นเสียง (ใช้ร่วมกันทั้ง Mouse และ Touch)
+    function updateKeyActiveStates(primaryIndices) {
+      const nextKeyStates = new Array(totalKeys).fill(false);
+      const notesToPlay = new Set();
+
+      primaryIndices.forEach((idx) => {
+        if (idx >= 0 && idx < totalKeys) {
+          nextKeyStates[idx] = true;
+          notesToPlay.add(idx);
+
+          // หากเปิดโหมดคู่ 8 ให้เปิดไฮไลต์และเล่นเสียงคีย์ต่ำด้วย
+          if (isOctaveModeEnabled) {
+            const lowerIdx = getLowerOctaveIndex(idx);
+            if (lowerIdx >= 0 && lowerIdx < totalKeys) {
+              nextKeyStates[lowerIdx] = true;
+              notesToPlay.add(lowerIdx);
+            }
+          }
+        }
+      });
+
+      // ตรวจสอบคีย์ที่เพิ่งถูกกดใหม่เพื่อเล่นเสียง
+      notesToPlay.forEach((idx) => {
+        if (!keyStates[idx]) {
+          triggerNoteSound(idx);
+        }
+      });
+
+      // ตรวจสอบการเปลี่ยนแปลงสถานะเพื่อสั่ง re-render
+      let changed = false;
+      for (let i = 0; i < totalKeys; i++) {
+        if (keyStates[i] !== nextKeyStates[i]) {
+          keyStates[i] = nextKeyStates[i];
+          changed = true;
+        }
+      }
+
+      if (changed) render();
+    }
+
     // Mouse Interaction Handlers
     canvas.addEventListener('mousedown', (e) => {
       initAudioContext();
       const idx = getKeyIndexAt(e.clientX, e.clientY);
-      clearAllStates();
       if (idx !== -1) {
-        keyStates[idx] = true;
-        triggerNoteSound(idx);
-        render();
+        updateKeyActiveStates([idx]);
+      } else {
+        clearAllStates();
       }
     });
 
@@ -397,18 +448,11 @@ function playRanadEkSound(freq) {
     canvas.addEventListener('mousemove', (e) => {
       if (e.buttons === 1) {
         const idx = getKeyIndexAt(e.clientX, e.clientY);
-        let changed = false;
-        for (let i = 0; i < totalKeys; i++) {
-          const shouldBeActive = (i === idx);
-          if (keyStates[i] !== shouldBeActive) {
-            keyStates[i] = shouldBeActive;
-            changed = true;
-            if (shouldBeActive) {
-              triggerNoteSound(i);
-            }
-          }
+        if (idx !== -1) {
+          updateKeyActiveStates([idx]);
+        } else {
+          clearAllStates();
         }
-        if (changed) render();
       }
     });
 
@@ -416,38 +460,24 @@ function playRanadEkSound(freq) {
 
     // Touch Interaction Handlers
     function handleTouch(e) {
-      e.preventDefault();
       initAudioContext();
-
-      const activeIndices = new Set();
+      const primaryIndices = [];
 
       for (let i = 0; i < e.touches.length; i++) {
         const touch = e.touches[i];
         const idx = getKeyIndexAt(touch.clientX, touch.clientY);
         if (idx !== -1) {
-          activeIndices.add(idx);
+          primaryIndices.push(idx);
         }
       }
 
-      let changed = false;
-      for (let i = 0; i < totalKeys; i++) {
-        const shouldBeActive = activeIndices.has(i);
-        if (keyStates[i] !== shouldBeActive) {
-          keyStates[i] = shouldBeActive;
-          changed = true;
-          if (shouldBeActive) {
-            triggerNoteSound(i);
-          }
-        }
-      }
-
-      if (changed) render();
+      updateKeyActiveStates(primaryIndices);
     }
 
-    canvas.addEventListener('touchstart', handleTouch, { passive: false });
-    canvas.addEventListener('touchmove', handleTouch, { passive: false });
-    canvas.addEventListener('touchend', handleTouch, { passive: false });
-    canvas.addEventListener('touchcancel', handleTouch, { passive: false });
+    canvas.addEventListener('touchstart', handleTouch, { passive: true });
+    canvas.addEventListener('touchmove', handleTouch, { passive: true });
+    canvas.addEventListener('touchend', handleTouch, { passive: true });
+    canvas.addEventListener('touchcancel', handleTouch, { passive: true });
 
     // Panel UI Handlers
     const openPanelBtn = document.getElementById('openPanelBtn');
@@ -455,6 +485,11 @@ function playRanadEkSound(freq) {
     const cancelModalBtn = document.getElementById('cancelModalBtn');
     const noteModal = document.getElementById('noteModal');
     const presetButtonsContainer = document.getElementById('presetButtonsContainer');
+    const octaveModeCheckbox = document.getElementById('octaveModeCheckbox');
+
+    octaveModeCheckbox.addEventListener('change', (e) => {
+      isOctaveModeEnabled = e.target.checked;
+    });
 
     function renderPresetCards() {
       presetButtonsContainer.innerHTML = '';
