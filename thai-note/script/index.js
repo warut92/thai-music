@@ -191,16 +191,25 @@ function addRowTextarea() {
     document.getElementById("thm").rows = lines;
 }
 
-//สร้างลิงก์สำหรับการแชร์
+
+// สร้างลิงก์สำหรับการแชร์
 function getSongHash() {
-    //สร้างตัวแปรสำหรับการสร้างลิงก์ใหม่ โดยการกดปุ่มเพื่อรันฟังก์ชัน
+    // รับค่าจาก textarea ที่มี id="thm"
     let song = document.getElementById('thm').value;
     song = song.replace(/\n/g, "%0A")
-    let songName = song.split("(")[0]
-    location.hash = song
-    navigator.clipboard.writeText(" https://music.warut.net/thai-note/"+ location.hash)
-    alert(`คัดลอกลิงก์ URL ${songName} เรียบร้อย` )
+    // ชื่อเพลงสำหรับแสดงใน alert
+    let songName = song.split("(")[0];
+    // แปลงข้อความเป็น URL Encoding
+    let encodedSong = encodeURIComponent(song);
+    // สร้าง hash
+    location.hash = encodedSong;
+    // สร้างลิงก์สำหรับแชร์
+    let url = "https://music.warut.net/thai-note/" + location.hash;
+    // คัดลอกลิงก์
+    navigator.clipboard.writeText(url);
+    alert(`คัดลอกลิงก์ URL ${songName} เรียบร้อย`);
 }
+
 
 function loadShareSong() {
     //โหลดเพลง หากลิงก์มีข้อมูลสำหรับโน้ต ให้ดำเนินการรับค่ามาใส่ใน textarea
