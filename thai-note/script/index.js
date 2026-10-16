@@ -192,23 +192,40 @@ function addRowTextarea() {
 }
 
 
-// สร้างลิงก์สำหรับการแชร์
+//สร้างลิงก์สำหรับการแชร์
 function getSongHash() {
-    // รับค่าจาก textarea ที่มี id="thm"
-    let song = document.getElementById('thm').value;
-    song = song.replace(/\n/g, "%0A")
-    // ชื่อเพลงสำหรับแสดงใน alert
-    let songName = song.split("(")[0];
-    // แปลงข้อความเป็น URL Encoding
-    let encodedSong = encodeURIComponent(song);
-    // สร้าง hash
-    location.hash = encodedSong;
-    // สร้างลิงก์สำหรับแชร์
-    let url = "https://music.warut.net/thai-note/" + location.hash;
-    // คัดลอกลิงก์
-    navigator.clipboard.writeText(url);
-    alert(`คัดลอกลิงก์ URL ${songName} เรียบร้อย`);
+  //สร้างตัวแปรสำหรับการสร้างลิงก์ใหม่ โดยการกดปุ่มเพื่อรันฟังก์ชัน
+  let song = document.getElementById('thm').value;
+  song = song.replace(/\n/g, "%0A")
+  let songName = song.split("(")[0];
+  location.hash = song
+  navigator.clipboard.writeText(" https://music.warut.net/thai-note/"+ location.hash)
+  alert(`คัดลอกลิงก์ URL ${songName} เรียบร้อย`)
 }
+
+
+// function getSongQR() {
+//     //สร้างตัวแปรสำหรับการสร้างลิงก์ใหม่ โดยการกดปุ่มเพื่อรันฟังก์ชัน
+//     let song = document.getElementById('thm').value;
+//     song = song.replace(/\n/g, "%0A")
+//     let songName = song.split("(")[0];
+//     location.hash = song
+//   // สร้าง URL สำหรับแชร์
+//   const shareUrl =
+//       "https://music.warut.net/thai-note/" + location.hash;
+
+//   // เตรียมพื้นที่แสดง QR Code
+//   const qrArea = document.getElementById("qrcode");
+//   qrArea.innerHTML = "";
+
+//   // สร้าง QR Code
+//   new QRCode(qrArea, {
+//       text: shareUrl,
+//       width: 1000,
+//       height: 1000,
+//       correctLevel: QRCode.CorrectLevel.H
+//   });
+// }
 
 
 function loadShareSong() {
@@ -322,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
       '.': 'ฺ'
     };
   
-    let isEnabled = false;
+    let isEnabled = true;
   
     // Update button label
     function updateButton() {

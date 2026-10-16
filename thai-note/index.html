@@ -9,6 +9,9 @@
   <link rel="shortcut icon" href="icon.png">
   <link rel="stylesheet" href="style.css">
   <script src="./script/thm2rtttl.js"></script>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> -->
+
 </head>
 
 <body>
@@ -95,7 +98,8 @@
                   <div class="menu-title">☐ ไฟล์</div>
                   <button id="openFile">🗁 เปิดไฟล์</button>
                   <button onclick="saveTextAsFile()">🡻 บันทึกไฟล์</button>
-                  <button onclick="getSongHash()">↗ คัดลอกลิงก์ URL</button> <abbr title="หากเพลงยาวจะใช้ไม่ได้"> ⓘ</abbr> <br>
+                  <button onclick="getSongHash()">↗ คัดลอก URL</button> <abbr title="หากเพลงยาวจะใช้ไม่ได้"> ⓘ</abbr> <br>
+                  <!-- <button onclick="getSongQR()">⛶ QR code</button><br> -->
                   <button onclick="showTable()">▦ แสดงตารางโน้ต</button>
                 </div>
               
@@ -196,7 +200,7 @@
     <button id="increaseSize">+</button>
     <button onclick="showTable()">✐ แสดงเครื่องมือ</button>
   </div>
-
+  <div id="qrcode"></div>
 <div id="footnote">
   <a class="small" href="./about.html">ⓘ เกี่ยวกับเว็บไซต์นี้ v. 0.023.1 [26-10-01]</a><br>
   <a class="small" href="http://music.warut.net" target="_blank">↪︎ ไปที่ music.warut.net</a>

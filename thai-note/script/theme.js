@@ -3,9 +3,10 @@ const themes = {
     theme1: {
         normal: "Sarabun, sans-serif",
         bold: "Kanit, sans-serif",
-        background: "#ffffff",
+        background: "#f9fafb",
         text: "#222222",
-        boxBackground: "#eeeeee"
+        boxBackground: "#eeeeee",
+        border: "#030712"
     },
   
     theme2: {
@@ -13,7 +14,8 @@ const themes = {
         bold: "Arial, sans-serif",
         background: "#fff8dc",
         text: "#333333",
-        boxBackground: "#f5e6b3"
+        boxBackground: "#f5e6b3",
+        border: "#f76a2b"
     },
   
     theme3: {
@@ -21,14 +23,16 @@ const themes = {
         bold: "Trebuchet MS, sans-serif",
         background: "#202124",
         text: "#eeeeee",
-        boxBackground: "#303134"
+        boxBackground: "#303134",
+        border: "#0c0432"
     },
     theme4: {
         normal: "Verdana, sans-serif",
         bold: "Trebuchet MS, sans-serif",
         background: "#4b5a71",
         text: "#eeeeee",
-        boxBackground: "#303134"
+        boxBackground: "#303134",
+        border: "#0c0432"
     }
   
   };
@@ -63,6 +67,11 @@ const themes = {
     document.documentElement.style.setProperty(
         "--box-background",
         theme.boxBackground
+    );
+
+    document.documentElement.style.setProperty(
+        "--border-color",
+        theme.border
     );
   
     // จำธีมที่เลือก
