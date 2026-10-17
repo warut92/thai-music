@@ -1,8 +1,8 @@
 'use strict';
 
 /**
- * RTTTL Parser + Player
- * รวมทั้ง parse และ play/stop เข้าไฟล์เดียว
+ * RTTTL Parser + Player + Audio-Synced Highlighting System
+ * (ซิงค์ Highlight กับ Web Audio API ด้วย audioCtx.currentTime แบบเรียลไทม์)
  */
 
 var rtttlPlay = (function () {
@@ -11,7 +11,9 @@ var rtttlPlay = (function () {
   // =========================
   function parse(rtttl) {
     console.log(rtttl);
-    document.getElementById('status').innerHTML = ": กำลังเล่น"
+    var statusElem = document.getElementById('status');
+    if (statusElem) statusElem.innerHTML = ": กำลังเล่น";
+
     var REQUIRED_SECTIONS_NUM = 3;
     var SECTIONS = rtttl.split(':');
 
@@ -63,24 +65,18 @@ var rtttlPlay = (function () {
 
       switch (KEY) {
         case 'd':
-          if (ALLOWED_DURATION.indexOf(VAL) !== -1) return {
-            duration: VAL
-          };
+          if (ALLOWED_DURATION.indexOf(VAL) !== -1) return { duration: VAL };
           throw new Error('Invalid duration ' + VAL);
         case 'o':
           if (ALLOWED_OCTAVE.indexOf(VAL) === -1) {
             console.warn('Invalid octave ' + VAL);
           }
-          return {
-            octave: VAL
-          };
+          return { octave: VAL };
         case 'b':
           if (ALLOWED_BPM.indexOf(VAL) === -1) {
             console.warn('Invalid BPM ' + VAL);
           }
-          return {
-            bpm: VAL
-          };
+          return { bpm: VAL };
       }
     });
 
@@ -113,118 +109,97 @@ var rtttlPlay = (function () {
       var NOTE_DOTTED = NOTE_PARTS[3] === '.';
       var NOTE_OCTAVE = NOTE_PARTS[4] || parseInt(defaults.octave);
 
+      // ความยาวเวลาจริงของโน้ต (วินาที)
+      var totalDurationSec = _calculateDuration(BEAT_EVERY, parseFloat(NOTE_DURATION), NOTE_DOTTED) / 1000;
+
+      // =========================================
+      // คำนวณจำนวนตำแหน่ง Highlight (Sub-beats)
+      // 8 = 1 ตำแหน่ง, 4 = 2 ตำแหน่ง, 2 = 4 ตำแหน่ง
+      // =========================================
+      var durVal = parseFloat(NOTE_DURATION);
+      var subBeatCount = Math.round(8 / durVal); // 👈 แก้ตรงนี้จาก 16 เป็น 8
+
+      if (NOTE_DOTTED) {
+        subBeatCount = Math.round(subBeatCount * 1.5);
+      }
+      if (subBeatCount < 1) subBeatCount = 1;
+
       return {
         note: NOTE,
-        duration: _calculateDuration(BEAT_EVERY, parseFloat(NOTE_DURATION), NOTE_DOTTED),
-        frequency: _calculateFrequency(NOTE, NOTE_OCTAVE)
+        duration: totalDurationSec,
+        frequency: _calculateFrequency(NOTE, NOTE_OCTAVE),
+        subBeatCount: subBeatCount
       };
     });
   }
 
   function _calculateFrequency(note, octave) {
     if (note === 'p') return 0;
-  
-    // รับค่าในการเปลี่ยนคีย์และช่วงทบเสียง
-    let k = Number(document.getElementById('key').value);
-    let o = Number(document.getElementById('octave').value);
-  
+
+    let kElem = document.getElementById('key');
+    let oElem = document.getElementById('octave');
+    let k = kElem ? Number(kElem.value) : 0;
+    let o = oElem ? Number(oElem.value) : 1;
+
     // ====== เสียงในดนตรีไทย ======
     if (k > 11) {
-  
       let thaiBase;
-  
+
       if (k === 12) {
-        // เสียงเครื่องสาย
         thaiBase = {
-          'c': 230.3,
-          'd': 254.2,
-          'e': 280.7,
-          'f': 309.9,
-          'g': 342.2,
-          'a': 377.8,
-          'b': 417.2
+          'c': 230.3, 'd': 254.2, 'e': 280.7,
+          'f': 309.9, 'g': 342.2, 'a': 377.8, 'b': 417.2
         };
-        o = 1 //บังคับช่วงทบเสียงตามโน้ตที่เขียน
-  
+        o = 1;
       } else if (k === 13) {
-        // เสียงปี่พาทย์กรมศิลป์
         thaiBase = {
-          'c': 254.2,
-          'd': 280.7,
-          'e': 309.9,
-          'f': 342.2,
-          'g': 377.8,
-          'a': 417.2,
-          'b': 460.6
+          'c': 254.2, 'd': 280.7, 'e': 309.9,
+          'f': 342.2, 'g': 377.8, 'a': 417.2, 'b': 460.6
         };
-        o = 1 //บังคับช่วงทบเสียงตามโน้ตที่เขียน
+        o = 1;
       }
-  
+
       var noteOrder = [
         'c', 'c#', 'd', 'd#', 'e', 'f',
         'f#', 'g', 'g#', 'a', 'a#', 'b'
       ];
-  
+
       var baseNote = note.replace('#', '');
-      var baseFreq = thaiBase[baseNote];
-  
+      var baseFreq = thaiBase ? thaiBase[baseNote] : 230.3;
+
       if (!baseFreq || !isFinite(baseFreq)) {
         baseFreq = 230.3;
       }
-  
-      var semitoneShift =
-        noteOrder.indexOf(note) -
-        noteOrder.indexOf(baseNote);
-  
+
+      var semitoneShift = noteOrder.indexOf(note) - noteOrder.indexOf(baseNote);
       if (!isFinite(semitoneShift)) {
         semitoneShift = 0;
       }
-  
-      // ช่วงทบเสียง
+
       var octaveMultiplier = Math.pow(2, o - 1);
-  
-      var freq =
-        baseFreq *
-        Math.pow(2, semitoneShift / 12) *
-        octaveMultiplier;
-  
-      var freqAdjusted =
-        freq * Math.pow(2, octave - 4);
-  
+      var freq = baseFreq * Math.pow(2, semitoneShift / 12) * octaveMultiplier;
+      var freqAdjusted = freq * Math.pow(2, octave - 4);
+
       return Math.round(freqAdjusted * 10) / 10;
     }
-  
+
     // ====== เสียงดนตรีตะวันตก ======
-  
-    // A#/Bb = 466.164 Hz
-    // k = จำนวนครึ่งเสียงจาก A#/Bb
     var DO4 = 466.164 * Math.pow(2, k / 12);
-  
-    // ช่วงทบเสียง
-    // o = 1 → ปกติ
-    // o = 2 → สูงขึ้น 1 octave
-    // o = 3 → สูงขึ้น 2 octave
     var octaveMultiplier = Math.pow(2, o - 1);
-  
     DO4 *= octaveMultiplier;
-  
-    // ระยะห่างของโน้ตจาก C4
+
     var N = _calculateSemitonesFromC4(note, octave);
-  
-    var FREQUENCY =
-      DO4 * Math.pow(2, N / 12);
-  
+    var FREQUENCY = DO4 * Math.pow(2, N / 12);
+
     if (!isFinite(FREQUENCY)) {
       FREQUENCY = 0;
     }
-  
+
     return Math.round(FREQUENCY * 10) / 10;
   }
 
   function _calculateSemitonesFromC4(note, octave) {
-    var NOTE_ORDER = ['c', 'c#', 'd', 'd#', 'e', 'f',
-      'f#', 'g', 'g#', 'a', 'a#', 'b'
-    ];
+    var NOTE_ORDER = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b'];
     var MIDDLE_OCTAVE = 4;
     var SEMITONES_IN_OCTAVE = 12;
     var OCTAVE_JUMP = (octave - MIDDLE_OCTAVE) * SEMITONES_IN_OCTAVE;
@@ -238,15 +213,26 @@ var rtttlPlay = (function () {
   }
 
   // =========================
-  //  PLAYER
+  //  PLAYER + HIGHLIGHT SYSTEM
   // =========================
   var shouldStop = false;
+  var currentActiveNote = null;
+  var animFrameId = null;
+  var audioCtx = null;
 
   function play(rtttl) {
     try {
+      stop(); // รีเซ็ตสถานะเดิมก่อนเล่นใหม่
+      shouldStop = false;
+
       var parsedRtttl = parse(rtttl);
-      var audioCtx = new(AudioContext || webkitAudioContext)();
-      _playMelody(parsedRtttl.melody, audioCtx);
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      // สั่งตั้งตารางเล่นเสียงทั้งหมดล่วงหน้าใน AudioContext
+      var scheduleData = _scheduleMelody(parsedRtttl.melody, audioCtx);
+
+      // เริ่มการตรวจสอบเวลาเพื่อเปลี่ยน Highlight
+      _syncHighlight(audioCtx, scheduleData.timeline);
     } catch (err) {
       alert(err);
     }
@@ -254,35 +240,132 @@ var rtttlPlay = (function () {
 
   function stop() {
     shouldStop = true;
-    document.getElementById('status').innerHTML = ": สั่งหยุด"
+
+    if (animFrameId) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
+    }
+
+    if (audioCtx) {
+      try {
+        audioCtx.close();
+      } catch (e) {}
+      audioCtx = null;
+    }
+
+    clearHighlight();
+    var statusElem = document.getElementById('status');
+    if (statusElem) statusElem.innerHTML = ": สั่งหยุด";
   }
 
-  function _playMelody(melody, audioCtx) {
-    if (shouldStop) {
-      shouldStop = false;
+  function highlightStep(noteIndex) {
+    // ถ้าแสดงตำแหน่งเดิมอยู่อยู่แล้ว ไม่ต้องเปลี่ยน DOM ให้เสีย Performance
+    var elem = document.getElementById('note-' + noteIndex);
+    if (currentActiveNote === elem) return;
+
+    clearHighlight();
+
+    if (elem) {
+      elem.style.backgroundColor = '#ffeb3b'; // สีไฮไลต์ (เหลือง)
+      elem.style.color = '#000000';
+      // elem.style.borderRadius = '3px';
+      // elem.style.padding = '2px 4px';
+      currentActiveNote = elem;
+    }
+  }
+
+  function clearHighlight() {
+    if (currentActiveNote) {
+      currentActiveNote.style.backgroundColor = '';
+      currentActiveNote.style.color = '';
+      currentActiveNote.style.borderRadius = '';
+      currentActiveNote.style.padding = '';
+      currentActiveNote = null;
+    }
+  }
+
+  // =========================================
+  // จัดคิวเสียงใน AudioContext ล่วงหน้า (Hardware Precision)
+  // =========================================
+ function _scheduleMelody(melody, ctx) {
+    var startTime = ctx.currentTime + 0.05;
+    var currentTime = startTime;
+    var currentNoteIndex = 1;
+    var timeline = [];
+
+    var typeElem = document.getElementById('type');
+    var waveType = typeElem ? typeElem.value : 'sine';
+
+    // 💡 กำหนดตัวคูณความช้าของ Highlight (เช่น 1.2 = ช้าลง 20%, 1.5 = ช้าลง 50%)
+    var speedFactor = 1.0; 
+
+    melody.forEach(function (item) {
+      // ปรับเวลาความยาวให้ยาวขึ้นตามตัวคูณ
+      var noteDuration = item.duration * speedFactor; 
+      var subBeats = item.subBeatCount;
+      var stepDuration = noteDuration / subBeats;
+
+      // สร้าง Timeline สำหรับ Highlight
+      for (var i = 0; i < subBeats; i++) {
+        timeline.push({
+          startTime: currentTime + (i * stepDuration),
+          endTime: currentTime + ((i + 1) * stepDuration),
+          noteIndex: currentNoteIndex + i
+        });
+      }
+
+      // ตั้งคิวเล่นเสียง
+      if (item.frequency > 0) {
+        var osc = ctx.createOscillator();
+        osc.type = waveType;
+        osc.frequency.value = item.frequency;
+
+        osc.connect(ctx.destination);
+        osc.start(currentTime);
+        osc.stop(currentTime + noteDuration);
+      }
+
+      currentTime += noteDuration;
+      currentNoteIndex += subBeats;
+    });
+
+    return {
+      timeline: timeline,
+      totalDuration: currentTime - startTime
+    };
+  }
+
+  // =========================================
+  // เช็คเวลาจริงจาก AudioContext และอัปเดต Highlight
+  // =========================================
+  function _syncHighlight(ctx, timeline) {
+    if (shouldStop) return;
+
+    var now = ctx.currentTime;
+    var activeItem = null;
+
+    for (var i = 0; i < timeline.length; i++) {
+      var item = timeline[i];
+      if (now >= item.startTime && now < item.endTime) {
+        activeItem = item;
+        break;
+      }
+    }
+
+    if (activeItem) {
+      highlightStep(activeItem.noteIndex);
+    } else if (timeline.length > 0 && now >= timeline[timeline.length - 1].endTime) {
+      // เล่นจบเพลง
+      clearHighlight();
+      var statusElem = document.getElementById('status');
+      if (statusElem) statusElem.innerHTML = ": จบเพลง";
       return;
     }
-    if (melody.length === 0) {
-      document.getElementById('status').innerHTML = ": จบเพลง"
-    }
-    if (melody.length === 0) return;
-    
-    console.log(melody.length);
 
-    var osc = audioCtx.createOscillator();
-    //รับค่าชนิดของคลื่นเสียง
-    var t = document.getElementById('type').value;
-    osc.type = t;
-    osc.start(0);
-
-    var note = melody[0];
-    osc.frequency.value = note.frequency;
-    osc.connect(audioCtx.destination);
-
-    setTimeout(function () {
-      osc.disconnect(audioCtx.destination);
-      _playMelody(melody.slice(1), audioCtx);
-    }, note.duration);
+    // เรียกตรวจซ้ำในเฟรมถัดไปของหน้าจอ (60fps / 120fps)
+    animFrameId = requestAnimationFrame(function () {
+      _syncHighlight(ctx, timeline);
+    });
   }
 
   // public API

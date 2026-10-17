@@ -532,14 +532,17 @@ document.addEventListener("DOMContentLoaded", function () {
       output.innerHTML = "";
   
       let text = textarea.value.trim();
-      //ลบเครื่องหมาย > สำหรับการเริ่มเล่นเฉพาะจุด
-      text = text.replace(/\>/g,"")
   
       // ถ้าไม่มีข้อความ
       if (!text) {
           return;
       }
   
+      // เช็คว่าในข้อความมีเครื่องหมาย > หรือไม่
+      let isFoundStartPoint = !text.includes(">");
+  
+      // ตัวแปรนับ ID โน้ต
+      let noteIdCounter = 1;
   
       // =========================================
       // แยกข้อความออกเป็นบรรทัด
@@ -548,19 +551,15 @@ document.addEventListener("DOMContentLoaded", function () {
       const lines = text.split(/\r?\n/);
       // table ปัจจุบัน
       let currentTable = null;
-
+  
       // =========================================
       // วนแต่ละบรรทัด
       // =========================================
   
       lines.forEach((line, index) => {
-          // console.log("บรรทัดที่", index, ":", line);
   
           // =====================================
-          // บรรทัดว่าง
-          // =====================================
           // บรรทัดว่าง = จบ table เดิม
-          // และ table ถัดไปจะถูกสร้างใหม่
           // =====================================
   
           if (line.trim() === "") {
@@ -577,31 +576,20 @@ document.addEventListener("DOMContentLoaded", function () {
   
           if (index === 0 && line.includes(":")) {
               const titlePart = line.split(":")[0];
-              // ชื่อเพลง
-              const name = titlePart
-                  .replace(/\(\d+\)/, "")
-                  .trim();
-              // tempo
+              const name = titlePart.replace(/\(\d+\)/, "").trim();
               const tempoMatch = titlePart.match(/\((\d+)\)/);
+              const tempo = tempoMatch ? tempoMatch[1] : "";
   
-              const tempo = tempoMatch
-                  ? tempoMatch[1]
-                  : "";
-
-              // สร้าง h2
               const hTitle = document.createElement("h2");
               hTitle.textContent = name;
               output.appendChild(hTitle);
-
+  
               return;
           }
   
   
           // =========================================
           // ท่อนเพลง
-          // เช่น
-          // (ท่อน 1)
-          // (เที่ยวกลับ)
           // =========================================
   
           if (/^\(.*\)$/.test(line)) {
@@ -609,7 +597,6 @@ document.addEventListener("DOMContentLoaded", function () {
               section.textContent = line.replace(/[()]/g, "");
               output.appendChild(section);
   
-              // เริ่ม table ใหม่
               currentTable = document.createElement("table");
               currentTable.border = "1";
               currentTable.style.borderCollapse = "collapse";
@@ -620,8 +607,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
   
           // =========================================
-          // ถ้ายังไม่มี table
-          // ให้สร้าง table ใหม่
+          // ถ้ายังไม่มี table ให้สร้างใหม่
           // =========================================
   
           if (!currentTable) {
@@ -638,23 +624,70 @@ document.addEventListener("DOMContentLoaded", function () {
   
           const tr = document.createElement("tr");
   
-  
-          // =========================================
           // แยกโน้ตด้วยช่องว่าง
-          // =========================================
-  
           const columns = line.split(/\s+/);
   
   
           // =========================================
-          // สร้าง td
+          // สร้าง td และ span id (รองรับ sabat1, sabat2 และ accidental)
           // =========================================
   
           columns.forEach(col => {
   
               const td = document.createElement("td");
-              td.textContent = col;
               td.style.padding = "6px";
+  
+              const chars = col.split("");
+  
+              for (let i = 0; i < chars.length; i++) {
+                  let char = chars[i];
+  
+                  if (char === ">") {
+                      isFoundStartPoint = true;
+                      continue;
+                  }
+  
+                  // แปลง b เป็น ♭ และ # เป็น ♯
+                  if (char === 'b' || char === '#') {
+                      const spanAcc = document.createElement("span");
+                      spanAcc.className = "accidental";
+                      spanAcc.textContent = (char === 'b') ? '♭' : '♯';
+                      td.appendChild(spanAcc);
+                      continue;
+                  }
+  
+                  // เช็คเครื่องหมายสะบัด ' หรือ ''
+                  let sabatClass = "";
+                  if (char === "'") {
+                      if (chars[i + 1] === "'") {
+                          sabatClass = "sabat2"; // ''
+                          i++; // ข้าม ' ตัวที่สอง
+                      } else {
+                          sabatClass = "sabat1"; // '
+                      }
+  
+                      // เลื่อน index ไปยังตัวโน้ตถัดไปที่โดนสะบัด
+                      if (i + 1 < chars.length) {
+                          i++;
+                          char = chars[i];
+                      }
+                  }
+  
+                  if (isFoundStartPoint && /[ดรมฟซลท-]/.test(char)) {
+                      const span = document.createElement("span");
+                      span.id = `note-${noteIdCounter++}`;
+                      
+                      if (sabatClass) {
+                          span.className = sabatClass;
+                      }
+  
+                      span.textContent = char;
+                      td.appendChild(span);
+                  } else {
+                      td.appendChild(document.createTextNode(char));
+                  }
+              }
+  
               tr.appendChild(td);
           });
   
@@ -664,11 +697,11 @@ document.addEventListener("DOMContentLoaded", function () {
           // =========================================
   
           currentTable.appendChild(tr);
-
+  
       });
   
   }
-
+  
     //การปรับขนาดของฟอนต์
     const decreaseTableBtn = document.getElementById("decreaseSize");
     const increaseTableBtn = document.getElementById("increaseSize");
