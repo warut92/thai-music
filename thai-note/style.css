@@ -178,3 +178,12 @@ table {
   width: 0;               /* ตั้งค่าความกว้างเป็น 0 เพื่อไม่ให้ดันตัวอักษรข้างหลังถัดไป */
   display: inline-block;  
 }
+
+/* ตกแต่งโน้ต Triplet ให้มีขีดเส้นใต้ */
+.triplet {
+  text-decoration: underline;
+  word-wrap: break-word;
+  text-align: center;
+  vertical-align: middle;
+  justify-content: space-between;
+ }

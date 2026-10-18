@@ -490,7 +490,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateTempoInText(value);
       }
     });
-
+    //สร้างตารางโน้ตสำหรับแสดงผล
     function showTable() {
 
       const settingArea = document.getElementById("settingArea");
@@ -629,7 +629,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
   
           // =========================================
-          // สร้าง td และ span id (รองรับ sabat1, sabat2 และ accidental)
+          // สร้าง td และ span id (รองรับ sabat1, sabat2, accidental และ triplet)
           // =========================================
   
           columns.forEach(col => {
@@ -637,10 +637,22 @@ document.addEventListener("DOMContentLoaded", function () {
               const td = document.createElement("td");
               td.style.padding = "6px";
   
+              let isTriplet = false; // ตัวแปรสำหรับเช็คว่า td นี้มี } หรือไม่
               const chars = col.split("");
   
               for (let i = 0; i < chars.length; i++) {
                   let char = chars[i];
+  
+                  // 1. ลบ/ข้ามเครื่องหมาย {
+                  if (char === "{") {
+                      continue;
+                  }
+  
+                  // 2. หากเจอ } ให้ตั้งค่าความสัมพันธ์เพื่อใส่ class triplet และข้ามการแสดงผล
+                  if (char === "}") {
+                      isTriplet = true;
+                      continue;
+                  }
   
                   if (char === ">") {
                       isFoundStartPoint = true;
@@ -673,7 +685,7 @@ document.addEventListener("DOMContentLoaded", function () {
                       }
                   }
   
-                  if (isFoundStartPoint && /[ดรมฟซลท-]/.test(char)) {
+                  if (isFoundStartPoint && /[xดรมฟซลท-]/.test(char)) {
                       const span = document.createElement("span");
                       span.id = `note-${noteIdCounter++}`;
                       
@@ -686,6 +698,11 @@ document.addEventListener("DOMContentLoaded", function () {
                   } else {
                       td.appendChild(document.createTextNode(char));
                   }
+              }
+  
+              // เพิ่ม class triplet ให้กับ td หากพบเครื่องหมาย } ในคอลัมน์นี้
+              if (isTriplet) {
+                  td.classList.add("triplet");
               }
   
               tr.appendChild(td);

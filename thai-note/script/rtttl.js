@@ -2,7 +2,7 @@
 
 /**
  * RTTTL Parser + Player + Audio-Synced Highlighting System
- * (ซิงค์ Highlight กับ Web Audio API ด้วย audioCtx.currentTime แบบเรียลไทม์)
+ * (รองรับ Triplet Notes: 3, 6, 12, 24)
  */
 
 var rtttlPlay = (function () {
@@ -33,9 +33,9 @@ var rtttlPlay = (function () {
   }
 
   function getName(name) {
-    var MAX_LENGTH = 10;
+    var MAX_LENGTH = 30; // ขยายความยาวชื่อเพลง
     if (name.length > MAX_LENGTH) {
-      console.warn('Tune name should not exceed 10 characters.');
+      console.warn('Tune name exceeds 30 characters.');
     }
     return name || 'Unknown';
   }
@@ -53,7 +53,8 @@ var rtttlPlay = (function () {
       var KEY = KEY_VAL[0];
       var VAL = KEY_VAL[1];
 
-      var ALLOWED_DURATION = ['1', '2', '4', '8', '16', '32'];
+      // เพิ่มความยาวโน้ต Triplet (3, 6, 12, 24)
+      var ALLOWED_DURATION = ['1', '2', '3', '4', '6', '8', '12', '16', '24', '32', '64'];
       var ALLOWED_OCTAVE = ['4', '5', '6', '7'];
       var ALLOWED_BPM = [
         '25', '28', '31', '35', '40', '45', '50', '56',
@@ -101,8 +102,13 @@ var rtttlPlay = (function () {
     var BEAT_EVERY = 60000 / parseInt(defaults.bpm);
 
     return NOTES.map(function (note) {
-      var NOTE_REGEX = /(1|2|4|8|16|32|64)?((?:[a-g]|h|p)#?){1}(\.?)(4|5|6|7)?/;
+      // ปรับ Regex รองรับตัวเลขสัดส่วนโน้ตทุกรูปแบบ (\d+)
+      var NOTE_REGEX = /(\d+)?((?:[a-g]|h|p)#?){1}(\.?)(4|5|6|7)?/;
       var NOTE_PARTS = note.match(NOTE_REGEX);
+
+      if (!NOTE_PARTS) {
+        throw new Error('Invalid note format: ' + note);
+      }
 
       var NOTE_DURATION = NOTE_PARTS[1] || parseInt(defaults.duration);
       var NOTE = NOTE_PARTS[2] === 'h' ? 'b' : NOTE_PARTS[2];
@@ -112,12 +118,9 @@ var rtttlPlay = (function () {
       // ความยาวเวลาจริงของโน้ต (วินาที)
       var totalDurationSec = _calculateDuration(BEAT_EVERY, parseFloat(NOTE_DURATION), NOTE_DOTTED) / 1000;
 
-      // =========================================
       // คำนวณจำนวนตำแหน่ง Highlight (Sub-beats)
-      // 8 = 1 ตำแหน่ง, 4 = 2 ตำแหน่ง, 2 = 4 ตำแหน่ง
-      // =========================================
       var durVal = parseFloat(NOTE_DURATION);
-      var subBeatCount = Math.round(8 / durVal); // 👈 แก้ตรงนี้จาก 16 เป็น 8
+      var subBeatCount = Math.round(8 / durVal);
 
       if (NOTE_DOTTED) {
         subBeatCount = Math.round(subBeatCount * 1.5);
@@ -222,16 +225,13 @@ var rtttlPlay = (function () {
 
   function play(rtttl) {
     try {
-      stop(); // รีเซ็ตสถานะเดิมก่อนเล่นใหม่
+      stop();
       shouldStop = false;
 
       var parsedRtttl = parse(rtttl);
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-      // สั่งตั้งตารางเล่นเสียงทั้งหมดล่วงหน้าใน AudioContext
       var scheduleData = _scheduleMelody(parsedRtttl.melody, audioCtx);
-
-      // เริ่มการตรวจสอบเวลาเพื่อเปลี่ยน Highlight
       _syncHighlight(audioCtx, scheduleData.timeline);
     } catch (err) {
       alert(err);
@@ -259,17 +259,14 @@ var rtttlPlay = (function () {
   }
 
   function highlightStep(noteIndex) {
-    // ถ้าแสดงตำแหน่งเดิมอยู่อยู่แล้ว ไม่ต้องเปลี่ยน DOM ให้เสีย Performance
     var elem = document.getElementById('note-' + noteIndex);
     if (currentActiveNote === elem) return;
 
     clearHighlight();
 
     if (elem) {
-      elem.style.backgroundColor = '#ffeb3b'; // สีไฮไลต์ (เหลือง)
+      elem.style.backgroundColor = '#ffeb3b';
       elem.style.color = '#000000';
-      // elem.style.borderRadius = '3px';
-      // elem.style.padding = '2px 4px';
       currentActiveNote = elem;
     }
   }
@@ -278,16 +275,11 @@ var rtttlPlay = (function () {
     if (currentActiveNote) {
       currentActiveNote.style.backgroundColor = '';
       currentActiveNote.style.color = '';
-      currentActiveNote.style.borderRadius = '';
-      currentActiveNote.style.padding = '';
       currentActiveNote = null;
     }
   }
 
-  // =========================================
-  // จัดคิวเสียงใน AudioContext ล่วงหน้า (Hardware Precision)
-  // =========================================
- function _scheduleMelody(melody, ctx) {
+  function _scheduleMelody(melody, ctx) {
     var startTime = ctx.currentTime + 0.05;
     var currentTime = startTime;
     var currentNoteIndex = 1;
@@ -295,17 +287,13 @@ var rtttlPlay = (function () {
 
     var typeElem = document.getElementById('type');
     var waveType = typeElem ? typeElem.value : 'sine';
-
-    // 💡 กำหนดตัวคูณความช้าของ Highlight (เช่น 1.2 = ช้าลง 20%, 1.5 = ช้าลง 50%)
     var speedFactor = 1.0; 
 
     melody.forEach(function (item) {
-      // ปรับเวลาความยาวให้ยาวขึ้นตามตัวคูณ
       var noteDuration = item.duration * speedFactor; 
       var subBeats = item.subBeatCount;
       var stepDuration = noteDuration / subBeats;
 
-      // สร้าง Timeline สำหรับ Highlight
       for (var i = 0; i < subBeats; i++) {
         timeline.push({
           startTime: currentTime + (i * stepDuration),
@@ -314,7 +302,6 @@ var rtttlPlay = (function () {
         });
       }
 
-      // ตั้งคิวเล่นเสียง
       if (item.frequency > 0) {
         var osc = ctx.createOscillator();
         osc.type = waveType;
@@ -335,9 +322,6 @@ var rtttlPlay = (function () {
     };
   }
 
-  // =========================================
-  // เช็คเวลาจริงจาก AudioContext และอัปเดต Highlight
-  // =========================================
   function _syncHighlight(ctx, timeline) {
     if (shouldStop) return;
 
@@ -355,20 +339,17 @@ var rtttlPlay = (function () {
     if (activeItem) {
       highlightStep(activeItem.noteIndex);
     } else if (timeline.length > 0 && now >= timeline[timeline.length - 1].endTime) {
-      // เล่นจบเพลง
       clearHighlight();
       var statusElem = document.getElementById('status');
       if (statusElem) statusElem.innerHTML = ": จบเพลง";
       return;
     }
 
-    // เรียกตรวจซ้ำในเฟรมถัดไปของหน้าจอ (60fps / 120fps)
     animFrameId = requestAnimationFrame(function () {
       _syncHighlight(ctx, timeline);
     });
   }
 
-  // public API
   return {
     parse: parse,
     play: play,
@@ -376,7 +357,6 @@ var rtttlPlay = (function () {
   };
 })();
 
-// ใช้ได้ทั้ง Node และ Browser
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = rtttlPlay;
 } else {

@@ -84,6 +84,26 @@ if (result) {
 
   //ลบ string ที่อยู่ในวงเล็บ คือเราจะไม่แปลงอะไรในวงเล็บ ก็เลยต้องลบทิ้งเสีย
   note = note.replace(/ *\([^)]*\) */g, "");
+  
+  // triplet ปล. ยังไ่มได้เพิ่มโน้ตครึ่งเสียง
+  const charMap = {
+    'ดํ': '6c6,', 'รํ': '6d6,', 'มํ': '6e6,',
+    'ฟํ': '6f6,', 'ซํ': '6g6,', 'ลํ': '6a6,', 'ทํ': '6b6,',
+
+    'ดฺ': '6c4,', 'รฺ': '6d4,', 'มฺ': '6e4,',
+    'ฟฺ': '6f4,', 'ซฺ': '6g4,', 'ลฺ': '6a4,', 'ทฺ': '6b4,',
+
+    'ด': '6c5,', 'ร': '6d5,', 'ม': '6e5,',
+    'ฟ': '6f5,', 'ซ': '6g5,', 'ล': '6a5,', 'ท': '6b5,'
+  };
+  
+  // แปลงตัวอักษรไทย 3 ตัวใน {}
+  note = note.replace(/\{([ดรดมฟซลท]{3})\}/g, (match, group) => {
+    const converted = group.split('').map(ch => charMap[ch]).join('');
+    return `${converted}`;
+  });
+  console.log(note);
+
   //โน้ตไทยต่อไปนี้จะใช้ทางเพียงออ
   //กลุ่ม ท
   note = note.replace(/ทํb-------/g, '1a#6,');
@@ -531,3 +551,4 @@ function checkMultipleLine() {
     document.getElementById('status').innerHTML = ": โน้ต 1 บรรทัด"
   }
 }
+checkMultipleLine()
