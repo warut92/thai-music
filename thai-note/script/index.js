@@ -575,17 +575,21 @@ document.addEventListener("DOMContentLoaded", function () {
           // =========================================
   
           if (index === 0 && line.includes(":")) {
-              const titlePart = line.split(":")[0];
-              const name = titlePart.replace(/\(\d+\)/, "").trim();
-              const tempoMatch = titlePart.match(/\((\d+)\)/);
-              const tempo = tempoMatch ? tempoMatch[1] : "";
-  
-              const hTitle = document.createElement("h2");
-              hTitle.textContent = name;
-              output.appendChild(hTitle);
-  
-              return;
-          }
+            const titlePart = line.split(":")[0];
+            
+            // ลบวงเล็บและข้อความทั้งหมดที่อยู่ในวงเล็บออก
+            const name = titlePart.replace(/\([^)]*\)/g, "").trim();
+            
+            // ดึงข้อมูลในวงเล็บ (ถ้าต้องการเก็บค่าไว้ใช้ใน tempo)
+            const tempoMatch = titlePart.match(/\((.*?)\)/);
+            const tempo = tempoMatch ? tempoMatch[1] : "";
+        
+            const hTitle = document.createElement("h2");
+            hTitle.textContent = name;
+            output.appendChild(hTitle);
+        
+            return;
+        }
   
   
           // =========================================

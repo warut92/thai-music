@@ -24,7 +24,7 @@ const themes = {
         background: "#202124",
         text: "#eeeeee",
         boxBackground: "#303134",
-        border: "#0c0432"
+        border: "#282bbd"
     },
     theme4: {
         normal: "Verdana, sans-serif",
@@ -33,8 +33,23 @@ const themes = {
         text: "#eeeeee",
         boxBackground: "#303134",
         border: "#0c0432"
+    },
+    theme5: {
+        normal: "Verdana, sans-serif",
+        bold: "Trebuchet MS, sans-serif",
+        background: "#312c85",
+        text: "#eeeeee",
+        boxBackground: "#303134",
+        border: "#7b85fd"
+    },
+    theme6: {
+        normal: "Verdana, sans-serif",
+        bold: "Trebuchet MS, sans-serif",
+        background: "#009966",
+        text: "#eeeeee",
+        boxBackground: "#303134",
+        border: "#004f3b"
     }
-  
   };
   
   

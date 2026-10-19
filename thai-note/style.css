@@ -39,17 +39,17 @@ button, optgroup, option, option, #melody, code, input, select {
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  border: 2px solid yellow;
+  border: 2px solid var(--border-color);
   font-size: 18px;
 }
 
 .load-file-content {
   font-family: 'Tlwg Typist', monospace;
   font-size: 20px;
-  background-color: #4b5a71;
+  background-color: var(--background);
   margin: 30px;
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid var(--border-color);
   width: 80%;
 }
 
