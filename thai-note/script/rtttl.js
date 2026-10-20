@@ -103,7 +103,7 @@ var rtttlPlay = (function () {
 
     return NOTES.map(function (note) {
       // ปรับ Regex รองรับตัวเลขสัดส่วนโน้ตทุกรูปแบบ (\d+)
-      var NOTE_REGEX = /(\d+)?((?:[a-g]|h|p)#?){1}(\.?)(4|5|6|7)?/;
+      var NOTE_REGEX = /(\d+)?((?:[a-g]|h|p)#?){1}(\.?)([1-7])?/;
       var NOTE_PARTS = note.match(NOTE_REGEX);
 
       if (!NOTE_PARTS) {
