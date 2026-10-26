@@ -287,7 +287,7 @@ function keyboardDelete() {
       text.substring(start);
 
   // เลื่อน caret กลับไป 1 ตำแหน่ง
-  thmNote.focus();
+  // thmNote.focus();
   thmNote.selectionStart = start - 1;
   thmNote.selectionEnd = start - 1;
 }
