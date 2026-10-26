@@ -4,7 +4,7 @@ const melodies = {
   "template": {
     title: "ชื่อเพลง",
     bpm: 120,
-    notes: `---- ---- ---- ---- ---- ---- ---- ----`
+    notes: `----`
 },
   "lao-kruan": {
       title: "ลาวครวญ 2 ชั้น",
@@ -261,6 +261,7 @@ document.querySelectorAll("button").forEach(button => {
         thmNote.focus();
         thmNote.selectionStart = thmNote.selectionEnd =
             start + value.length;
+            formatTextarea()
     });
 });
 
@@ -935,7 +936,17 @@ function saveTextAsFile() {
         k.style.display = "none"
     }
 }
- 
+
+function showHistory() {
+  let h = document.getElementById('history-panel');
+
+  if (h.style.display === "none") {
+      h.style.display = "block"
+  } else {
+      h.style.display = "none"
+  }
+}
+
 // แสดงพาเนลธีม
 function themePanel() {
   let themePanel = document.getElementById('theme');
@@ -950,3 +961,122 @@ function themePanel() {
 
   }
 }
+
+// ฟังก์ชันการแทรกช่องว่าง
+let spaceEnabled = true;
+
+// ตั้งค่าจำนวนกลุ่มอักขระต่อชุด
+const SPACE_EVERY = 4;
+
+// อักขระที่ไม่นับ
+const IGNORE_CHARS = new Set(["ํ", "ฺ"]);
+
+// ใช้แบ่งข้อความตามกลุ่มอักขระ เช่น ก่ เป็นหนึ่งกลุ่ม
+const segmenter = new Intl.Segmenter("th", {
+    granularity: "grapheme"
+});
+
+// แทรกช่องว่างทุก 4 กลุ่มอักขระ
+function insertSpaceEvery4(text) {
+    const colonIndex = text.indexOf(":");
+
+    // แยกหัวเพลงและเนื้อเพลง
+    const header = colonIndex !== -1
+        ? text.slice(0, colonIndex + 1)
+        : "";
+
+    const melody = colonIndex !== -1
+        ? text.slice(colonIndex + 1)
+        : text;
+
+    const lines = melody.split("\n").map(line => {
+        // เอาช่องว่างเดิมออกก่อน
+        const chars = [...segmenter.segment(
+            line.replace(/\s/g, "")
+        )].map(item => item.segment);
+
+        let result = "";
+        let count = 0;
+
+        for (const char of chars) {
+            result += char;
+
+            // ไม่นับนิคหิตและพินทุ
+            if ([...char].every(c => IGNORE_CHARS.has(c))) {
+                continue;
+            }
+
+            count++;
+
+            if (count === SPACE_EVERY) {
+                result += " ";
+                count = 0;
+            }
+        }
+
+        return result.trimEnd();
+    });
+
+    return header + lines.join("\n");
+}
+
+// เปิด/ปิดการแทรกช่องว่าง
+function toggleSpace() {
+    spaceEnabled = !spaceEnabled;
+
+    const button = document.getElementById("toggleSpace");
+
+    if (button) {
+        button.textContent = spaceEnabled
+            ? "✔ เปิดแทรกช่องว่าง"
+            : "✘ ปิดแทรกช่องว่าง";
+    }
+
+    if (spaceEnabled) {
+        formatTextarea();
+    }
+}
+
+// จัดข้อความขณะพิมพ์
+function formatTextarea() {
+    if (!spaceEnabled) return;
+
+    const textarea = document.getElementById("thm");
+    if (!textarea) return;
+
+    const oldValue = textarea.value;
+    const oldCursor = textarea.selectionStart;
+
+    const newValue = insertSpaceEvery4(oldValue);
+
+    if (newValue === oldValue) return;
+
+    // จัดข้อความก่อนตำแหน่งเคอร์เซอร์เพื่อคำนวณตำแหน่งใหม่
+    const beforeCursor = oldValue.slice(0, oldCursor);
+    const newCursor = insertSpaceEvery4(beforeCursor).length;
+
+    textarea.value = newValue;
+
+    const cursor = Math.min(newCursor, newValue.length);
+    textarea.setSelectionRange(cursor, cursor);
+}
+
+// ผูกเหตุการณ์ input
+const thmTextarea = document.getElementById("thm");
+
+if (thmTextarea) {
+  thmTextarea.addEventListener("keyup", function() {
+      formatTextarea();
+  });
+}
+
+// กำหนดข้อความปุ่มให้ตรงกับสถานะเริ่มต้น
+const spaceButton = document.getElementById("toggleSpace");
+
+if (spaceButton) {
+    spaceButton.textContent = spaceEnabled
+        ? "✔ เปิดแทรกช่องว่าง"
+        : "✘ ปิดแทรกช่องว่าง";
+}
+
+

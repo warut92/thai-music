@@ -70,23 +70,31 @@
           <!-- EDITOR AREA -->
           <!-- KEYBOARD -->
           <div id="keyboard" style="display:none">
-            <button name="button" id="btn1" value="ด" onclick="keyboardInput(this)">ด</button>
-            <button name="button" id="btn1" value="ร" onclick="keyboardInput(this)">ร</button>
-            <button name="button" id="btn2" value="ม" onclick="keyboardInput(this)">ม</button>
-            <button name="button" id="btn3" value="ฟ" onclick="keyboardInput(this)">ฟ</button>
-            <button name="button" id="btn4" value="ซ" onclick="keyboardInput(this)">ซ</button>
-            <button name="button" id="btn5" value="ล" onclick="keyboardInput(this)">ล</button>
-            <button name="button" id="btn6" value="ท" onclick="keyboardInput(this)">ท</button>
-            <button name="button" id="btn7" value="ํ" onclick="keyboardInput(this)">สูง</button>
-            <button name="button" id="btn8" value="ฺ" onclick="keyboardInput(this)">ต่ำ</button>
-            <button type="button" name="button" id="btn12" onclick="keyboardDelete()">⌫</button>
+            <button class="bntKb" value="ด" touchstart="keyboardInput(this)">ด</button>
+            <button class="bntKb" value="ร" touchstart="keyboardInput(this)">ร</button>
+            <button class="bntKb" value="ม" touchstart="keyboardInput(this)">ม</button>
+            <button class="bntKb" value="ฟ" touchstart="keyboardInput(this)">ฟ</button><br>
+            <button class="bntKb" value="ซ" touchstart="keyboardInput(this)">ซ</button>
+            <button class="bntKb" value="ล" touchstart="keyboardInput(this)">ล</button>
+            <button class="bntKb" value="ท" touchstart="keyboardInput(this)">ท</button><br>
+            <button class="bntKb" value="ดํ" touchstart="keyboardInput(this)">ดํ</button>
+            <button class="bntKb" value="รํ" touchstart="keyboardInput(this)">รํ</button>
+            <button class="bntKb" value="มํ" touchstart="keyboardInput(this)">มํ</button>
+            <button class="bntKb" value="ฟํ" touchstart="keyboardInput(this)">ฟํ</button><br>
+            <button class="bntKb" value="ซํ" touchstart="keyboardInput(this)">ซํ</button>
+            <button class="bntKb" value="ลํ" touchstart="keyboardInput(this)">ลํ</button>
+            <button class="bntKb" value="ทํ" touchstart="keyboardInput(this)">ทํ</button><br>
+            <button class="bntKb" value="ํ" touchstart="keyboardInput(this)">สูง</button>
+            <button class="bntKb" value="ฺ" touchstart="keyboardInput(this)">ต่ำ</button>
+            <button type="button" name="button" id="btn12" touchstart="keyboardDelete();">⌫</button>
             <br>
-            <button name="button" id="btn9" value="-" onclick="keyboardInput(this)">-</button>
-            <button name="button" id="btn9" value=" " onclick="keyboardInput(this)">⎵</button>
-            <button name="button" id="btn10" value="/" onclick="keyboardInput(this)">/</button>
-            <button name="button" id="btn10" value="#" onclick="keyboardInput(this)">#</button>
-            <button name="button" id="btn11" value="
-" onclick="keyboardInput(this)">Enter</button>
+            <button class="bntKb" value="-" touchstart="keyboardInput(this)">-</button>
+            <button class="bntKb" value=" " touchstart="keyboardInput(this)">⎵</button>
+            <button class="bntKb" value="/" touchstart="keyboardInput(this)">/</button>
+            <button class="bntKb" value="#" touchstart="keyboardInput(this)">#</button>
+            <button class="bntKb" value="b" touchstart="keyboardInput(this)">b</button>
+            <button class="bntKb" value="
+" touchstart="keyboardInput(this)">Enter</button>
           </div>
           <div class="flex-container" id="settingArea">
 <!-- SETTING -->
@@ -108,6 +116,7 @@
                   <div class="menu-title">⚒︎ แก้ไข</div>
                   <button onclick="editor()">✎ เครื่องมือแก้ไข</button>
                   <button onclick="showKeyboard()">⌨ คีย์บอร์ด</button>
+                  <button onclick="showHistory()">⏱ ประวัติ</button>
                 </div>
               
                 <!-- APP -->
@@ -123,6 +132,9 @@
             <!-- CONVERTOR -->
             <div class="small" id="editor" style="display: block;">
               <div class="menu-title">✑ พาเนลเครื่องมือแก้ไข</div>
+              แทรกช่องว่าง : <button id="toggleSpace" onclick="toggleSpace()">
+                ✔ เปิด
+            </button><br>
               แปลงตัวโน้ต: <button id="toggle" class="">ปุ่มแปลงโน้ต</button> <abbr title="เหมาะสำหรับการพิมพ์ด้วยตัวเลขด้วย Nampad"> ⓘ</abbr> <br>
               แปลงด้วยตัวเอง: <button onclick="changeText()" id="manualNumChange">1234=>ดรมฟ</button>
               <br>
@@ -184,6 +196,18 @@
               <button onclick="setTheme('theme5')">ธีม 5</button>
               <button onclick="setTheme('theme6')">ธีม 6</button>
             </div>
+            <div id="history-panel" style="display: none;">
+              💿 ประวัติการบันทึก<br>
+              <select id="history" onchange="loadHistory()">
+                <option value="">-- เลือกบันทึกย้อนหลัง --</option>
+            </select>
+        
+            
+            <pre id="preview"></pre>
+            <p id="history-status"></p>
+            <button onclick="restoreHistory()">♻ นำกลับมาใช้</button>
+            <button id="deleteHistory"> ⌫ ลบประวัติทั้งหมด</button>
+            </div>
             <!-- <div class="empty"></div> -->
           </div>
         </div>
@@ -231,5 +255,122 @@ function playFromTextarea() {
 
 <script>
       addRowTextarea()
+
+      //ฟังก์ชันการบันทึกอัตโนมัติ
+const thm = document.getElementById("thm");
+const history = document.getElementById("history");
+const preview = document.getElementById("preview");
+const status = document.getElementById("history-status");
+
+// ใช้ชื่อเดียวสำหรับเก็บรายการบันทึกทั้งหมด
+const THM_HISTORY_STORAGE_KEY = "thm_history";
+
+// สร้างชื่อบันทึกจากวันและเวลา
+function getTimestamp() {
+    const d = new Date();
+
+    const pad = n => String(n).padStart(2, "0");
+
+    return d.getFullYear() + ":" +
+        pad(d.getMonth() + 1) + ":" +
+        pad(d.getDate()) + "_" +
+        pad(d.getHours()) + ":" +
+        pad(d.getMinutes()) + ":" +
+        pad(d.getSeconds());
+}
+
+// บันทึกข้อความ
+function saveHistory() {
+    const records = JSON.parse(
+        localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}"
+    );
+
+    const name = getTimestamp();
+
+    records[name] = thm.value;
+
+    localStorage.setItem(
+        THM_HISTORY_STORAGE_KEY,
+        JSON.stringify(records)
+    );
+
+    updateHistoryList(name);
+
+    status.textContent = "บันทึกล่าสุด: " + name;
+}
+
+// แสดงรายการบันทึกใน select
+function updateHistoryList(selected = "") {
+    const records = JSON.parse(
+        localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}"
+    );
+
+    const names = Object.keys(records).sort().reverse();
+
+    history.replaceChildren();
+
+    const first = document.createElement("option");
+    first.value = "";
+    first.textContent = "-- เลือกบันทึกย้อนหลัง --";
+    history.appendChild(first);
+
+    names.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        history.appendChild(option);
+    });
+
+    history.value = selected;
+}
+
+// เรียกดูข้อความจากบันทึกที่เลือก
+function loadHistory() {
+    const records = JSON.parse(
+        localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}"
+    );
+
+    const name = history.value;
+
+    preview.textContent =
+        name ? records[name] ?? "" : "";
+}
+
+// นำข้อความเก่ากลับมาใส่ใน textarea
+function restoreHistory() {
+    const records = JSON.parse(
+        localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}"
+    );
+
+    const name = history.value;
+
+    if (name && Object.hasOwn(records, name)) {
+        thm.value = records[name];
+        status.textContent = "เรียกคืนบันทึก: " + name;
+    }
+}
+
+// แสดงประวัติเดิมเมื่อเปิดหน้าเว็บ
+updateHistoryList();
+
+// บันทึกทุก 10 วินาที
+setInterval(saveHistory, 10000);
+
+document.getElementById("deleteHistory")
+    .addEventListener("click", () => {
+
+        if (!confirm("ต้องการลบประวัติการบันทึกทั้งหมดหรือไม่?")) {
+            return;
+        }
+
+        // ลบประวัติออกจาก localStorage
+        localStorage.removeItem(THM_HISTORY_STORAGE_KEY);
+
+        // อัปเดตรายการและหน้าจอ
+        updateHistoryList();
+        preview.textContent = "";
+
+        status.textContent = "ลบประวัติทั้งหมดแล้ว";
+    });
 </script>
 </html>

@@ -187,3 +187,12 @@ table {
   vertical-align: middle;
   justify-content: space-between;
  }
+
+ .bntKb {
+  border: none;
+  padding: 15px 32px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 10px;
+
+ }
