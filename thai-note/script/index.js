@@ -258,9 +258,10 @@ document.querySelectorAll("button").forEach(button => {
             thmNote.value.substring(end);
 
         // ย้าย caret ไปหลังข้อความที่เพิ่งแทรก
-        thmNote.focus();
+        // thmNote.focus();
         thmNote.selectionStart = thmNote.selectionEnd =
             start + value.length;
+            //แทรกช่องว่างในการใช้ keyboard
             formatTextarea()
     });
 });

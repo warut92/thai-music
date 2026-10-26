@@ -189,10 +189,30 @@ table {
  }
 
  .bntKb {
-  border: none;
-  padding: 15px 32px;
+  padding: 15px 10px;
   text-align: center;
   font-size: 16px;
   border-radius: 10px;
+ }
 
+ .bntKbLow {
+  padding: 15px 10px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 10px;
+ }
+
+ .bntKbHi {
+  padding: 15px 10px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 10px;
+ }
+
+ .bntKbAc {
+  padding: 15px 10px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 10px;
+  background-color: yellow;
  }
