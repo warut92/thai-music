@@ -1081,3 +1081,61 @@ if (spaceButton) {
 }
 
 
+const rtttlNotes = {
+  "ด": "c",
+  "ร": "d",
+  "ม": "e",
+  "ฟ": "f",
+  "ซ": "g",
+  "ล": "a",
+  "ท": "b"
+};
+
+// ค่าเริ่มต้นของ RTTTL
+const rtttlSettings = {
+  duration: 32,
+  octave: 5,
+  bpm: 100
+};
+
+// แปลงโน้ตไทยเป็นโน้ต RTTTL
+function thaiNoteToRTTTL(thaiNote) {
+  // ตรวจสอบเครื่องหมายระดับเสียง
+  let octave = rtttlSettings.octave;
+  let note = thaiNote;
+
+  if (note.includes("ํ")) {
+      octave++;
+      note = note.replace("ํ", "");
+  } else if (note.includes("ฺ")) {
+      octave--;
+      note = note.replace("ฺ", "");
+  }
+
+  // แปลงชื่อโน้ตไทยเป็นโน้ตสากล
+  const rtttlNote = rtttlNotes[note];
+
+  if (!rtttlNote) {
+      return "";
+  }
+
+  return `${rtttlSettings.duration}${rtttlNote}${octave}`;
+}
+
+// รับค่าจากปุ่มและนำไปเล่น
+function keyboardInputPlay(button) {
+  console.log(button);
+  const thaiNote = button.value;
+  const rtttlNote = thaiNoteToRTTTL(thaiNote);
+
+  if (!rtttlNote) return;
+
+  const rtttlSong =
+      `keyboard:d=${rtttlSettings.duration},o=${rtttlSettings.octave},b=${rtttlSettings.bpm}:${rtttlNote}`;
+
+  console.log(rtttlSong);
+
+  // เล่นเสียงด้วย rtttlPlay ที่มีอยู่แล้ว
+  rtttlPlay.play(rtttlSong);
+}
+
