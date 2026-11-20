@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ดรมฟ Online — โปรแกรมพิมพ์โน้ตดนตรีไทย</title>
+  <meta name="description" content="โปรแกรมพิมพ์และเล่นโน้ตดนตรีไทย ออนไลน์" />
+  <meta name="keywords" content="โปรแกรมโน้ตดนตรีไทย, โปรแกรมเล่นโน้ตดนตรีไทย, โปรแกรมพิมพ์โน้ตดนตรีไทย">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/TlwgTypist/TlwgTypist.css">
+  <script src="./script/thm2rtttl.js"></script>
+
+  <style>
+    /* ---------- ค่าพื้นฐาน (theme.js จะเขียนทับตัวแปรเหล่านี้) ---------- */
+    :root {
+      --font-normal: Sarabun, sans-serif;
+      --font-bold: Kanit, sans-serif;
+      --background: #f9fafb;
+      --text: #222222;
+      --box-background: #eeeeee;
+      --border-color: #030712;
+      --music-size: 12px;
+
+      --accent: var(--border-color);
+      --line: color-mix(in srgb, var(--text) 14%, transparent);
+      --line-strong: color-mix(in srgb, var(--text) 26%, transparent);
+      --muted: color-mix(in srgb, var(--text) 62%, transparent);
+      --hover: color-mix(in srgb, var(--text) 8%, transparent);
+      --paper: var(--background);
+      --desk: var(--box-background);
+      --panel: color-mix(in srgb, var(--background) 70%, var(--box-background));
+      --rule: color-mix(in srgb, var(--accent) 14%, transparent);
+      --mono: 'Tlwg Typist', 'Courier New', monospace;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-normal);
+      font-size: 15px;
+      background: var(--desk);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      transition: background .3s, color .3s;
+    }
+
+    h1, h2, h3, strong, b { font-family: var(--font-bold); font-weight: 500; }
+
+    button, input, select, optgroup, option {
+      font-family: var(--font-normal);
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    button {
+      background: var(--paper);
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    button:hover:not(:disabled) { background: var(--hover); border-color: var(--accent); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    select, input[type="number"] {
+      background: var(--paper);
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 5px 8px;
+    }
+    input[type="number"] { width: 64px; text-align: center; }
+
+    a { color: inherit; }
+
+    /* ---------- แถบบนสุด: ชื่อโปรแกรม + การเล่น ---------- */
+    .appbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 10px 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-bold);
+      font-size: 18px;
+      white-space: nowrap;
+    }
+    .brand img { width: 26px; height: 26px; border-radius: 6px; }
+    .brand small {
+      font-family: var(--font-normal);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    #melody { min-width: 220px; max-width: 100%; }
+
+    .transport {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      flex-wrap: wrap;
+    }
+
+    .playBtn {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+      padding: 6px 16px;
+    }
+    .playBtn:hover:not(:disabled) { background: var(--accent); filter: brightness(1.15); }
+
+    .tempo {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding-left: 10px;
+      margin-left: 4px;
+      border-left: 1px solid var(--line);
+    }
+    .tempo label { font-size: 13px; color: var(--muted); }
+    .tempo button { padding: 5px 9px; }
+
+    /* ---------- แถบเครื่องมือ (ribbon) ---------- */
+    .ribbon {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      padding: 0 8px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .rgroup {
+      display: flex;
+      flex-direction: column;
+      padding: 6px 10px 4px;
+      border-right: 1px solid var(--line);
+    }
+    .rgroup:last-child { border-right: none; }
+
+    .rgroup .tools { display: flex; gap: 2px; flex: 1; align-items: center; }
+
+    .rgroup .tools button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: transparent;
+      border-color: transparent;
+      padding: 4px 8px;
+      min-width: 62px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .rgroup .tools button .ic { width: 24px; height: 24px; }
+
+    /* ไอคอน LibreOffice (Colibre) */
+    img.ic { width: 18px; height: 18px; flex: none; vertical-align: middle; }
+    button:has(> img.ic) { display: inline-flex; align-items: center; gap: 6px; }
+    .panel h3 img.ic, .kb-title img.ic, .load-file-content h3 img.ic { width: 20px; height: 20px; }
+    .kb-title, .load-file-content h3 { display: flex; align-items: center; gap: 6px; }
+    .playBtn img.ic { background: #fff; border-radius: 50%; }
+    /* ธีมมืด: กลับสีเส้นไอคอนให้มองเห็น แต่คงโทนสีเดิม */
+    :root[data-dark] img.ic { filter: invert(1) hue-rotate(180deg); }
+    :root[data-dark] .playBtn img.ic { filter: none; }
+
+    .rgroup .gname {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 11px;
+      text-decoration: none;
+      border: 1px solid var(--line-strong);
+      color: var(--muted);
+      cursor: help;
+      vertical-align: middle;
+    }
+
+    /* ---------- พื้นที่ทำงาน ---------- */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    .desk {
+      grid-column: -2 / -1; /* อยู่คอลัมน์ขวาเสมอ แม้แผงซ้ายถูกซ่อน (โหมดตารางโน้ต) */
+      min-width: 0;
+      padding: 24px 16px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* แผ่นกระดาษโน้ต */
+    .sheet {
+      width: 100%;
+      max-width: 960px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08);
+      padding: 28px 32px 36px;
+    }
+
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      border-bottom: 2px solid var(--accent);
+    }
+    .sheet-head h2 { margin: 0; font-size: 17px; }
+    .sheet-head .hint { font-size: 12px; color: var(--muted); }
+
+    #thm {
+      display: block;
+      width: 100%;
+      min-height: 360px;
+      resize: vertical;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 18px;
+      line-height: 2em;
+      padding: 0 4px;
+      background-color: transparent;
+      background-image: linear-gradient(to bottom, transparent calc(2em - 1px), var(--rule) calc(2em - 1px));
+      background-size: 100% 2em;
+      background-attachment: local;
+    }
+    #thm::placeholder { color: var(--muted); }
+
+    /* มุมมองตารางโน้ต */
+    #sizeTable {
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 960px;
+      padding: 8px 12px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    #sizeTable span { font-size: 13px; color: var(--muted); }
+    #sizeTable button:last-child { margin-left: auto; }
+
+    #output { width: 100%; overflow-x: auto; }
+    #output table {
+      font-family: var(--mono);
+      border-collapse: collapse;
+      margin-bottom: 10px;
+    }
+    #output table, #output th, #output td { border: 1px solid var(--line-strong); }
+    #output table td { font-size: var(--music-size); padding: 8px; }
+    #output h2 {
+      font-size: calc(var(--music-size) * 1.6);
+      margin: 0;
+      height: 40px;
+    }
+    #output h { font-size: calc(var(--music-size) * 1.1); }
+
+    .sabat1, .sabat2 {
+      vertical-align: baseline;
+      position: relative;
+      top: -0.4em;
+      font-size: 0.75em;
+      line-height: 0;
+    }
+    .accidental {
+      position: relative;
+      top: -0.6em;
+      left: -0.18em;
+      font-size: 0.7em;
+      line-height: 0;
+      width: 0;
+      display: inline-block;
+    }
+    .triplet {
+      text-decoration: underline;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    /* ---------- แป้นพิมพ์โน้ต ---------- */
+    #keyboard {
+      width: 100%;
+      max-width: 960px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px 14px;
+    }
+    .kb-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-bold);
+      margin-bottom: 8px;
+    }
+    .kb-head .hint { font-family: var(--font-normal); font-size: 12px; color: var(--muted); }
+
+    .kb-row {
+      display: grid;
+      grid-template-columns: 72px repeat(7, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+    .kb-row .lbl { font-size: 12px; color: var(--muted); }
+
+    .bntKb, .bntKbAc {
+      font-family: var(--mono);
+      font-size: 18px;
+      padding: 10px 0;
+      border-radius: 8px;
+      background: var(--panel);
+      min-width: 0;
+    }
+    .bntKbAc {
+      background: color-mix(in srgb, #f5c400 30%, var(--paper));
+      border-color: color-mix(in srgb, #c99a00 55%, transparent);
+    }
+
+    .kb-tools {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--line);
+    }
+    .kb-tools .bntKb { flex: 1 1 56px; font-size: 15px; }
+    .kb-tools .wide { flex: 3 1 120px; }
+
+    /* ---------- แผงคุณสมบัติด้านขวา ---------- */
+    #settingArea {
+      width: 300px;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      order: -1;
+      overflow-y: auto;
+    }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    .panel h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .panel h4 {
+      margin: 14px 0 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .panel h4:first-of-type { margin-top: 0; }
+
+    .field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .field > span { color: var(--text); }
+    .field select { width: 150px; }
+    .stepper { display: flex; gap: 3px; align-items: center; }
+    .stepper button { padding: 5px 9px; }
+    .stepper input { width: 54px; }
+
+    .themes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .themes button { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; }
+    .swatch { width: 100%; height: 22px; border-radius: 4px; border: 1px solid rgba(0,0,0,.15); }
+
+    #history { width: 100%; margin-bottom: 8px; }
+    #preview {
+      font-family: var(--mono);
+      font-size: 13px;
+      max-height: 180px;
+      overflow: auto;
+      white-space: pre-wrap;
+      background: var(--panel);
+      border-radius: 6px;
+      padding: 8px;
+      margin: 0 0 8px;
+    }
+    #preview:empty { display: none; }
+    #history-status { font-size: 12px; color: var(--muted); margin: 0 0 8px; }
+    .row-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* ---------- แถบสถานะ ---------- */
+    /* ---------- ตัวเลือกคลื่นเสียง (SVG) ---------- */
+    .waves {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .wave {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 2px 4px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--paper);
+      color: var(--muted);
+      font-size: 11px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s, color .15s;
+    }
+    .wave:hover { background: var(--hover); }
+    .wave input { position: absolute; opacity: 0; pointer-events: none; }
+    .wave svg { width: 100%; max-width: 48px; height: 24px; overflow: visible; }
+    .wave svg path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .wave svg .axis { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 2 2; }
+    .wave:has(input:checked) {
+      color: var(--text);
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 10%, var(--paper));
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+    .wave:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    /* แถบสถานะลอยติดล่างจอเสมอ — เว้นที่ด้านล่างของหน้าเท่าความสูงแถบ (คำนวณด้วย JS) */
+    body { padding-bottom: var(--statusbar-h, 32px); }
+
+    .statusbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 4px 16px;
+      flex-wrap: wrap;
+      padding: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -2px 8px rgba(0,0,0,.06);
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--paper);
+      border-top: 1px solid var(--line);
+    }
+    .statusbar .dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-right: 4px;
+    }
+    #status { font-family: var(--mono); color: var(--text); }
+    .statusbar .links { margin-left: auto; display: flex; gap: 14px; flex-wrap: wrap; }
+    .statusbar a { text-decoration: none; }
+    .statusbar a:hover { text-decoration: underline; }
+
+    /* ---------- หน้าต่างเปิดไฟล์ ---------- */
+    .load-file {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      overflow: auto;
+    }
+    .load-file-content {
+      position: relative;
+      max-width: 460px;
+      margin: 12vh auto 0;
+      background: var(--paper);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.3);
+    }
+    .load-file-content h3 { margin: 0 0 6px; }
+    .load-file-content p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .load-file-content input[type="file"] {
+      width: 100%;
+      padding: 18px;
+      border: 2px dashed var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 20px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .close:hover { color: var(--text); }
+
+    /* ---------- จอเล็ก ---------- */
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: 1fr; }
+      #settingArea { width: auto; order: 0; border-right: none; border-top: 1px solid var(--line); }
+      .transport { margin-left: 0; }
+    }
+    @media (max-width: 560px) {
+      .sheet { padding: 18px 16px 24px; }
+      .brand small { display: none; }
+      #melody { min-width: 0; flex: 1; }
+      .kb-row { grid-template-columns: 44px repeat(7, minmax(0, 1fr)); gap: 4px; }
+      .bntKb, .bntKbAc { font-size: 16px; padding: 9px 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== แถบบน ===================== -->
+  <header class="appbar">
+    <div class="titlebar">
+      <div class="brand">
+        <img src="icon.png" alt="">
+        ดรมฟ Online
+        <small>โปรแกรมพิมพ์โน้ตดนตรีไทย</small>
+      </div>
+
+      <select id="melody" onchange="changeMelody(); getTempo()" aria-label="เลือกเพลงตัวอย่าง">
+        <option value="">♪ เลือกเพลงตัวอย่าง…</option>
+        <optgroup label="ตัวอย่างเปล่า">
+          <option value="template">ตัวอย่างเปล่า</option>
+        </optgroup>
+        <optgroup label="เพลงไทยเดิม">
+          <option value="lao-kruan">ลาวครวญ 2 ชั้น</option>
+          <option value="lao-phung-khao">ลาวพุงขาว 2 ชั้น</option>
+          <option value="lao-joy-song">ลาวจ้อย สองชั้น</option>
+          <option value="lao-joy-single">ลาวจ้อย ชั้นเดียว</option>
+          <option value="lao-long-nan">ลาวล่องน่าน ชั้นเดียว</option>
+          <option value="khaek-borathete">แขกบรเทศ ชั้นเดียว</option>
+          <option value="lao-siang-thian">ลาวเสี่ยงเทียน 2 ชั้น</option>
+        </optgroup>
+        <optgroup label="ตัวอย่างโน้ตฆ้องวง">
+          <option value="khaek-borathete-khong">แขกบรเทศ ชั้นเดียว [ฆ้องวงใหญ่]</option>
+          <option value="laa">ลา [ฆ้องวงใหญ่]</option>
+        </optgroup>
+        <optgroup label="เพลงป๊อป">
+          <option value="luk-om">ลูกอม</option>
+          <option value="sai-ta-lok-kan">สายตาหลอกกันไม่ได้</option>
+          <option value="tai-thang-pen">ตายทั้งเป็น</option>
+          <option value="kaem-nong-nang">แก้มน้องนางนั้นแดงกว่าใคร</option>
+          <option value="thak-khrab">ทักครับ - Lipta</option>
+        </optgroup>
+        <optgroup label="เพลงลูกทุ่ง">
+          <option value="sao-suan-taeng">สาวสวนแตง</option>
+          <option value="nirat-wiang-phing">นิราศเวียงพิงค์</option>
+        </optgroup>
+      </select>
+
+      <div class="transport">
+        <button class="playBtn"
+          onclick="checkMultipleLine();convert();rtttlPlay.play(document.querySelector('.rtttl').value)"><img class="ic" src="icons/lc_runbasic.svg" alt="">เล่น</button>
+        <button type="button" onclick="rtttlPlay.stop();rtttlPlay.stop()"><img class="ic" src="icons/lc_basicstop.svg" alt="">หยุด</button>
+        <div class="tempo">
+          <label for="tempoInput">♩ =</label>
+          <button id="deBtn" title="ลดจังหวะ">−</button>
+          <input type="number" id="tempoInput" min="20" max="300" aria-label="จังหวะ (BPM)">
+          <button id="inBtn" title="เพิ่มจังหวะ">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== แถบเครื่องมือ ===================== -->
+    <nav class="ribbon" aria-label="เครื่องมือ">
+      <div class="rgroup">
+        <div class="tools">
+          <button id="openFile"><img class="ic" src="icons/lc_open.svg" alt="">เปิดไฟล์</button>
+          <button onclick="saveTextAsFile()"><img class="ic" src="icons/lc_save.svg" alt="">บันทึกไฟล์</button>
+          <button onclick="getSongHash()" title="หากเพลงยาวจะใช้ไม่ได้"><img class="ic" src="icons/lc_inserthyperlink.svg" alt="">คัดลอก URL</button>
+        </div>
+        <div class="gname">ไฟล์</div>
+      </div>
+
+      <div class="rgroup">
+        <div class="tools">
+          <button onclick="editor()"><img class="ic" src="icons/lc_editdoc.svg" alt="">เครื่องมือแก้ไข</button>
+          <button onclick="showKeyboard()"><img class="ic" src="icons/lc_charmapcontrol.svg" alt="">คีย์บอร์ดโน้ต</button>
+          <button onclick="showHistory()"><img class="ic" src="icons/lc_versiondialog.svg" alt="">ประวัติ</button>
+        </div>
+        <div class="gname">แก้ไข</div>
+      </div>
+
+      <div class="rgroup">
+        <div class="tools">
+          <button onclick="showTable()"><img class="ic" src="icons/lc_inserttable.svg" alt="">ตารางโน้ต</button>
+        </div>
+        <div class="gname">มุมมอง</div>
+      </div>
+
+      <div class="rgroup">
+        <div class="tools">
+          <button onclick="themePanel()"><img class="ic" src="icons/lc_colorsettings.svg" alt="">ธีม</button>
+          <button disabled><img class="ic" src="icons/lc_fontdialog.svg" alt="">แบบอักษร</button>
+        </div>
+        <div class="gname">การตั้งค่า</div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ===================== พื้นที่ทำงาน ===================== -->
+  <main class="workspace">
+
+    <section class="desk">
+
+      <!-- แถบปรับขนาดในมุมมองตารางโน้ต -->
+      <div id="sizeTable" style="display:none;">
+        <span>ขนาดโน้ต</span>
+        <button id="decreaseSize">−</button>
+        <input type="number" id="sizeInput" value="12" min="10" max="60">
+        <button id="increaseSize">+</button>
+        <button onclick="showTable()"><img class="ic" src="icons/lc_editdoc.svg" alt="">กลับไปหน้าพิมพ์โน้ต</button>
+      </div>
+
+      <!-- แผ่นโน้ต -->
+      <article class="sheet">
+        <div class="sheet-head">
+          <h2>แผ่นโน้ต</h2>
+          <span class="hint">บรรทัดแรก: ชื่อเพลง (BPM) : · พิมพ์ตัวเลข 1–7 บน Numpad เพื่อแปลงเป็น ด ร ม ฟ ซ ล ท</span>
+        </div>
+
+        <!-- ตารางโน้ต -->
+        <div id="output"></div>
+
+        <!-- ช่องพิมพ์โน้ต -->
+        <textarea id="thm" class="thm" rows="3" spellcheck="false"
+          oninput="addRowTextarea();checkMultipleLine()"
+          onfocus="addRowTextarea();checkMultipleLine()" onchange="getTempo()"
+          placeholder="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร"></textarea>
+      </article>
+
+      <!-- คีย์บอร์ดโน้ต -->
+      <div id="keyboard" style="display:none">
+        <div class="kb-head">
+          <span class="kb-title"><img class="ic" src="icons/lc_charmapcontrol.svg" alt="">คีย์บอร์ดโน้ต</span>
+          <span class="hint">แตะเพื่อฟังเสียง · เหลือง = ฟ / ท</span>
+        </div>
+
+        <div class="kb-row">
+          <span class="lbl">สูง ํ</span>
+          <button class="bntKb" value="ดํ" onclick="keyboardInputPlay(this)">ดํ</button>
+          <button class="bntKb" value="รํ" onclick="keyboardInputPlay(this)">รํ</button>
+          <button class="bntKb" value="มํ" onclick="keyboardInputPlay(this)">มํ</button>
+          <button class="bntKbAc" value="ฟํ" onclick="keyboardInputPlay(this)">ฟํ</button>
+          <button class="bntKb" value="ซํ" onclick="keyboardInputPlay(this)">ซํ</button>
+          <button class="bntKb" value="ลํ" onclick="keyboardInputPlay(this)">ลํ</button>
+          <button class="bntKbAc" value="ทํ" onclick="keyboardInputPlay(this)">ทํ</button>
+        </div>
+        <div class="kb-row">
+          <span class="lbl">กลาง</span>
+          <button class="bntKb" value="ด" onclick="keyboardInputPlay(this)">ด</button>
+          <button class="bntKb" value="ร" onclick="keyboardInputPlay(this)">ร</button>
+          <button class="bntKb" value="ม" onclick="keyboardInputPlay(this)">ม</button>
+          <button class="bntKbAc" value="ฟ" onclick="keyboardInputPlay(this)">ฟ</button>
+          <button class="bntKb" value="ซ" onclick="keyboardInputPlay(this)">ซ</button>
+          <button class="bntKb" value="ล" onclick="keyboardInputPlay(this)">ล</button>
+          <button class="bntKbAc" value="ท" onclick="keyboardInputPlay(this)">ท</button>
+        </div>
+        <div class="kb-row">
+          <span class="lbl">ต่ำ ฺ</span>
+          <button class="bntKb" value="ดฺ" onclick="keyboardInputPlay(this)">ดฺ</button>
+          <button class="bntKb" value="รฺ" onclick="keyboardInputPlay(this)">รฺ</button>
+          <button class="bntKb" value="มฺ" onclick="keyboardInputPlay(this)">มฺ</button>
+          <button class="bntKbAc" value="ฟฺ" onclick="keyboardInputPlay(this)">ฟฺ</button>
+          <button class="bntKb" value="ซฺ" onclick="keyboardInputPlay(this)">ซฺ</button>
+          <button class="bntKb" value="ลฺ" onclick="keyboardInputPlay(this)">ลฺ</button>
+          <button class="bntKbAc" value="ทฺ" onclick="keyboardInputPlay(this)">ทฺ</button>
+        </div>
+
+        <div class="kb-tools">
+          <button class="bntKb" value="-" onclick="keyboardInputPlay(this)">-</button>
+          <button class="bntKb" value="--" onclick="keyboardInputPlay(this)">--</button>
+          <button class="bntKb" value="---" onclick="keyboardInputPlay(this)">---</button>
+          <button class="bntKb" value="----" onclick="keyboardInputPlay(this)">----</button>
+          <button class="bntKb" value="ํ" onclick="keyboardInputPlay(this)">สูง</button>
+          <button class="bntKb" value="ฺ" onclick="keyboardInputPlay(this)">ต่ำ</button>
+          <button class="bntKb" value="#" onclick="keyboardInputPlay(this)">#</button>
+          <button class="bntKb" value="b" onclick="keyboardInputPlay(this)">b</button>
+          <button class="bntKb" value="/" onclick="keyboardInputPlay(this)">/</button>
+        </div>
+        <div class="kb-tools">
+          <button class="bntKb wide" value=" " onclick="keyboardInputPlay(this)">⎵ เว้นวรรค</button>
+          <button class="bntKb" value="&#10;" onclick="keyboardInputPlay(this)">↵ Enter</button>
+          <button class="bntKb" onclick="keyboardDelete();">⌫ ลบ</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== แผงคุณสมบัติ ===================== -->
+    <aside class="flex-container" id="settingArea" style="display:flex">
+
+      <!-- เครื่องมือแก้ไข -->
+      <div class="panel" id="editor" style="display: block;">
+        <h3><img class="ic" src="icons/lc_editdoc.svg" alt="">เครื่องมือแก้ไข</h3>
+
+        <h4>การพิมพ์</h4>
+        <div class="field">
+          <span>แทรกช่องว่าง</span>
+          <button id="toggleSpace" onclick="toggleSpace()">✔ เปิด</button>
+        </div>
+        <div class="field">
+          <span>แปลงตัวโน้ต <abbr class="info" title="เหมาะสำหรับการพิมพ์ด้วยตัวเลขด้วย Numpad">i</abbr></span>
+          <button id="toggle">ปุ่มแปลงโน้ต</button>
+        </div>
+        <div class="field">
+          <span>แปลงด้วยตัวเอง</span>
+          <button onclick="changeText()" id="manualNumChange">1234=>ดรมฟ</button>
+        </div>
+        <div class="field">
+          <span>ขนาดโน้ต</span>
+          <div class="stepper">
+            <button id="decreaseBtn">−</button>
+            <input type="number" id="fontInput" min="8" max="100">
+            <button id="increaseBtn">+</button>
+          </div>
+        </div>
+
+        <h4>เสียง</h4>
+        <div class="field">
+          <span>คีย์</span>
+          <select id="key" onchange="changeKeyText()">
+            <option value="12">เครื่องสาย</option>
+            <option value="13">ปี่พาทย์</option>
+            <option value="0">A#/Bb</option>
+            <option value="1">B</option>
+            <option value="2">C</option>
+            <option value="3">C#/Db</option>
+            <option value="4">D</option>
+            <option value="5">D#/Eb</option>
+            <option value="6">E</option>
+            <option value="7">F</option>
+            <option value="8">F#/Gb</option>
+            <option value="9">G</option>
+            <option value="10">G#/Ab</option>
+            <option value="11">A</option>
+          </select>
+        </div>
+        <div class="field">
+          <span>ช่วงทบเสียง</span>
+          <select id="octave">
+            <option value="2">+2</option>
+            <option value="1">+1</option>
+            <option value="0" selected="selected">0</option>
+            <option value="-1">-1</option>
+            <option value="-2">-2</option>
+          </select>
+        </div>
+        <div class="field"><span>คลื่นเสียง</span></div>
+        <!-- select เดิมยังอยู่ (ซ่อนไว้) เพราะ rtttl.js อ่านค่าจาก #type -->
+        <select id="type" hidden>
+          <option value="sine">Sine</option>
+          <option value="square">Square</option>
+          <option value="sawtooth">Sawtooth</option>
+          <option value="triangle">Triangle</option>
+        </select>
+        <div class="waves" role="radiogroup" aria-label="คลื่นเสียง">
+          <label class="wave">
+            <input type="radio" name="wave" value="sine" checked>
+            <svg viewBox="0 0 48 24" aria-hidden="true">
+              <line class="axis" x1="2" y1="12" x2="46" y2="12"/>
+              <path d="M2 12 Q7.5 1 13 12 T24 12 T35 12 T46 12"/>
+            </svg>
+            <span>Sine</span>
+          </label>
+          <label class="wave">
+            <input type="radio" name="wave" value="square">
+            <svg viewBox="0 0 48 24" aria-hidden="true">
+              <line class="axis" x1="2" y1="12" x2="46" y2="12"/>
+              <path d="M2 12 V4 H13 V20 H24 V4 H35 V20 H46 V12"/>
+            </svg>
+            <span>Square</span>
+          </label>
+          <label class="wave">
+            <input type="radio" name="wave" value="sawtooth">
+            <svg viewBox="0 0 48 24" aria-hidden="true">
+              <line class="axis" x1="2" y1="12" x2="46" y2="12"/>
+              <path d="M2 12 L13 4 V20 L35 4 V20 L46 12"/>
+            </svg>
+            <span>Sawtooth</span>
+          </label>
+          <label class="wave">
+            <input type="radio" name="wave" value="triangle">
+            <svg viewBox="0 0 48 24" aria-hidden="true">
+              <line class="axis" x1="2" y1="12" x2="46" y2="12"/>
+              <path d="M2 12 L7.5 4 L18.5 20 L29.5 4 L40.5 20 L46 12"/>
+            </svg>
+            <span>Triangle</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ธีม -->
+      <div class="panel" id="theme" style="display: none;">
+        <h3><img class="ic" src="icons/lc_colorsettings.svg" alt="">ธีม</h3>
+        <div class="themes">
+          <button onclick="setTheme('theme1')"><span class="swatch" style="background:#f9fafb"></span>สว่าง</button>
+          <button onclick="setTheme('theme2')"><span class="swatch" style="background:#fff8dc"></span>ครีม</button>
+          <button onclick="setTheme('theme3')"><span class="swatch" style="background:#202124"></span>มืด</button>
+          <button onclick="setTheme('theme4')"><span class="swatch" style="background:#4b5a71"></span>หมอก</button>
+          <button onclick="setTheme('theme5')"><span class="swatch" style="background:#312c85"></span>คราม</button>
+          <button onclick="setTheme('theme6')"><span class="swatch" style="background:#009966"></span>เขียว</button>
+        </div>
+      </div>
+
+      <!-- ประวัติ -->
+      <div class="panel" id="history-panel" style="display: none;">
+        <h3><img class="ic" src="icons/lc_versiondialog.svg" alt="">ประวัติการบันทึก</h3>
+        <select id="history" onchange="loadHistory()">
+          <option value="">-- เลือกบันทึกย้อนหลัง --</option>
+        </select>
+        <pre id="preview"></pre>
+        <p id="history-status"></p>
+        <div class="row-btns">
+          <button onclick="restoreHistory()">♻ นำกลับมาใช้</button>
+          <button id="deleteHistory">⌫ ลบประวัติทั้งหมด</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ===================== แถบสถานะ ===================== -->
+  <footer class="statusbar" id="footnote">
+    <span><span class="dot"></span>สถานะ<span id="status">: พร้อม</span></span>
+    <span>บันทึกอัตโนมัติทุก 10 วินาที</span>
+    <span class="links">
+      <a href="./about.html#log">ⓘ เกี่ยวกับ v. 0.023.3 [26-10-26]</a>
+      <a href="http://music.warut.net" target="_blank">↪︎ music.warut.net</a>
+    </span>
+  </footer>
+
+  <!-- RTTTL (ซ่อน) -->
+  <div style="display: none;">
+    <textarea id="rtttl" class="rtttl" rows="3" cols="100"></textarea>
+    <textarea id="rtttl1" class="rtttl1" rows="3" cols="100"></textarea>
+  </div>
+  <div id="qrcode"></div>
+
+  <!-- หน้าต่างเปิดไฟล์ -->
+  <div id="saveFilePopup" class="load-file">
+    <div class="load-file-content">
+      <span class="close" title="ปิด">✕</span>
+      <h3><img class="ic" src="icons/lc_open.svg" alt="">เปิดไฟล์โน้ต</h3>
+      <p>อัปโหลดไฟล์โน้ตในรูปแบบ ดรมฟ Online นามสกุล .txt</p>
+      <input type="file" accept=".txt,text/plain" onchange="readFile(this)">
+    </div>
+  </div>
+
+  <script src="./script/index.js"></script>
+  <script src="./script/theme.js"></script>
+  <script src="./script/rtttl.js"></script>
+
+  <script>
+    addRowTextarea();
+
+    // ===== ตรวจว่าธีมเป็นโทนมืดหรือไม่ เพื่อปรับสีไอคอน =====
+    function applyIconMode() {
+      const bg = getComputedStyle(document.documentElement).getPropertyValue("--background").trim();
+      const m = bg.match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
+      if (!m) return;
+      const [r, g, b] = m.slice(1).map(h => parseInt(h, 16) / 255);
+      const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      document.documentElement.toggleAttribute("data-dark", lum < 0.5);
+    }
+    const originalSetTheme = setTheme;
+    setTheme = function (name) { originalSetTheme(name); applyIconMode(); };
+    applyIconMode();
+
+    // ===== ตัวเลือกคลื่นเสียง: ซิงก์ปุ่มรูปคลื่นกับ select#type ที่ rtttl.js ใช้ =====
+    const waveSelect = document.getElementById("type");
+    document.querySelectorAll('input[name="wave"]').forEach(radio => {
+      radio.checked = radio.value === waveSelect.value;
+      radio.addEventListener("change", () => {
+        if (radio.checked) waveSelect.value = radio.value;
+      });
+    });
+
+    // ===== ให้เนื้อหาไม่ถูกแถบสถานะบัง: วัดความสูงแถบทุกครั้งที่ขนาดเปลี่ยน =====
+    const statusbarEl = document.getElementById("footnote");
+    function syncStatusbarHeight() {
+      document.documentElement.style.setProperty("--statusbar-h", statusbarEl.offsetHeight + "px");
+    }
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(syncStatusbarHeight).observe(statusbarEl);
+    }
+    window.addEventListener("resize", syncStatusbarHeight);
+    syncStatusbarHeight();
+
+    // ===== ฟังก์ชันการบันทึกอัตโนมัติ (เหมือน index.html) =====
+    const thm = document.getElementById("thm");
+    const history = document.getElementById("history");
+    const preview = document.getElementById("preview");
+    const status = document.getElementById("history-status");
+
+    const THM_HISTORY_STORAGE_KEY = "thm_history";
+
+    function getTimestamp() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return d.getFullYear() + ":" + pad(d.getMonth() + 1) + ":" + pad(d.getDate()) + "_" +
+        pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+    }
+
+    function saveHistory() {
+      const records = JSON.parse(localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}");
+      const name = getTimestamp();
+      records[name] = thm.value;
+      localStorage.setItem(THM_HISTORY_STORAGE_KEY, JSON.stringify(records));
+      updateHistoryList(name);
+      status.textContent = "บันทึกล่าสุด: " + name;
+    }
+
+    function updateHistoryList(selected = "") {
+      const records = JSON.parse(localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}");
+      const names = Object.keys(records).sort().reverse();
+      history.replaceChildren();
+      const first = document.createElement("option");
+      first.value = "";
+      first.textContent = "-- เลือกบันทึกย้อนหลัง --";
+      history.appendChild(first);
+      names.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        history.appendChild(option);
+      });
+      history.value = selected;
+    }
+
+    function loadHistory() {
+      const records = JSON.parse(localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}");
+      const name = history.value;
+      preview.textContent = name ? records[name] ?? "" : "";
+    }
+
+    function restoreHistory() {
+      const records = JSON.parse(localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}");
+      const name = history.value;
+      if (name && Object.hasOwn(records, name)) {
+        thm.value = records[name];
+        status.textContent = "เรียกคืนบันทึก: " + name;
+      }
+    }
+
+    updateHistoryList();
+    setInterval(saveHistory, 10000);
+
+    document.getElementById("deleteHistory").addEventListener("click", () => {
+      if (!confirm("ต้องการลบประวัติการบันทึกทั้งหมดหรือไม่?")) return;
+      localStorage.removeItem(THM_HISTORY_STORAGE_KEY);
+      updateHistoryList();
+      preview.textContent = "";
+      status.textContent = "ลบประวัติทั้งหมดแล้ว";
+    });
+  </script>
+</body>
+</html>
