@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <title>ดรมฟ Online</title>
+  <meta name="description" content="โปรแกรมเล่นโน้ตดนตรีไทย ออนไลน์" />
+  <meta name="keywords" content="โปรแกรมโน้ตดนตรีไทย, โปรแกรมเล่นโน้ตดนตรีไทย">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+  <script src="./script/thm2rtttl.js"></script>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> -->
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="page-header">
+      <div class="center"><img src="icon.png" alt="" height="20px"> ดรมฟ Online - เล่นโน้ตดนตรีไทยออนไลน์</span>
+      </div>
+      <select id="melody" onchange="changeMelody(); getTempo()">
+        <option value="">☞เลือกเพลงตัวอย่าง:</option>
+        <optgroup label="ตัวอย่างเปล่า">
+          <option value="template">ตัวอย่างเปล่า</option>
+        </optgroup>
+
+        <optgroup label="เพลงไทยเดิม">
+            <option value="lao-kruan">ลาวครวญ 2 ชั้น</option>
+            <option value="lao-phung-khao">ลาวพุงขาว 2 ชั้น</option>
+            <option value="lao-joy-song">ลาวจ้อย สองชั้น</option>
+            <option value="lao-joy-single">ลาวจ้อย ชั้นเดียว</option>
+            <option value="lao-long-nan">ลาวล่องน่าน ชั้นเดียว</option>
+            <option value="khaek-borathete">แขกบรเทศ ชั้นเดียว</option>
+            <option value="lao-siang-thian">ลาวเสี่ยงเทียน 2 ชั้น</option>
+        </optgroup>
+    
+        <optgroup label="ตัวอย่างโน้ตฆ้องวง">
+            <option value="khaek-borathete-khong">แขกบรเทศ ชั้นเดียว [ฆ้องวงใหญ่]</option>
+            <option value="laa">ลา [ฆ้องวงใหญ่]</option>
+        </optgroup>
+    
+        <optgroup label="เพลงป๊อป">
+            <option value="luk-om">ลูกอม</option>
+            <option value="sai-ta-lok-kan">สายตาหลอกกันไม่ได้</option>
+            <option value="tai-thang-pen">ตายทั้งเป็น</option>
+            <option value="kaem-nong-nang">แก้มน้องนางนั้นแดงกว่าใคร</option>
+            <option value="thak-khrab">ทักครับ - Lipta</option>
+        </optgroup>
+    
+        <optgroup label="เพลงลูกทุ่ง">
+            <option value="sao-suan-taeng">สาวสวนแตง</option>
+            <option value="nirat-wiang-phing">นิราศเวียงพิงค์</option>
+        </optgroup>
+    </select>
+      <!-- NOTE TABLE -->
+      <div id="output"></div>
+      <div class="rows">
+        <div id="mianArea">
+          <!-- NOTE AREA -->
+          <p><textarea type="text" id="thm" class="thm" rows="3" cols="5" oninput="addRowTextarea();checkMultipleLine()"
+              onfocus="addRowTextarea();checkMultipleLine()" onchange="getTempo()"
+              placeholder="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร"></textarea></p>
+          <!-- สำหรับการทดสอบ PLAY STOP -->
+          <!-- <button onclick="convert()">test</button> -->
+          <button class="playBtn"
+            onclick="checkMultipleLine();convert();rtttlPlay.play(document.querySelector('.rtttl').value)">▶︎เล่น</button>
+          <button type="button" onclick="rtttlPlay.stop();rtttlPlay.stop()">⏹︎หยุด</button>
+          <span id="status">: สถานะ</span>
+          <!-- EDITOR AREA -->
+          <!-- KEYBOARD -->
+          <div id="keyboard" style="display:none">
+            <button class="bntKb" value="-" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">-</button>
+            <button class="bntKb" value="--" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">--</button>
+            <button class="bntKb" value="---" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">---</button>
+            <button class="bntKb" value="----" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">----</button>
+            <br>
+            <button class="bntKb" value="ด" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ด</button>
+            <button class="bntKb" value="ร" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ร</button>
+            <button class="bntKb" value="ม" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ม</button>
+            <button class="bntKbAc" value="ฟ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ฟ</button>
+            <button class="bntKb" value="ซ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ซ</button>
+            <button class="bntKb" value="ล" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ล</button>
+            <button class="bntKbAc" value="ท" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ท</button><br>
+            <button class="bntKb" value="ดํ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ดํ</button>
+            <button class="bntKb" value="รํ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">รํ</button>
+            <button class="bntKb" value="มํ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">มํ</button>
+            <button class="bntKbAc" value="ฟํ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ฟํ</button>
+            <button class="bntKb" value="ซํ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ซํ</button>
+            <button class="bntKb" value="ลํ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ลํ</button>
+            <button class="bntKbAc" value="ทํ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ทํ</button><br>
+            <button class="bntKb" value="ดฺ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ดฺ</button>
+            <button class="bntKb" value="รฺ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">รฺ</button>
+            <button class="bntKb" value="มฺ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">มฺ</button>
+            <button class="bntKbAc" value="ฟฺ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ฟฺ</button>
+            <button class="bntKb" value="ซฺ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ซฺ</button>
+            <button class="bntKb" value="ลฺ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ลฺ</button>
+            <button class="bntKbAc" value="ทฺ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ทฺ</button><br>
+            <button class="bntKb" value="ํ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">สูง</button>
+            <button class="bntKb" value="ฺ" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">ต่ำ</button>
+            
+            <br>
+            <button class="bntKb" value=" " touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">  ⎵  </button>
+            <button class="bntKb" value="/" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">/</button>
+            <button class="bntKb" value="#" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">#</button>
+            <button class="bntKb" value="b" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">b</button>
+            <button class="bntKb" value="
+" touchstart="keyboardInput(this)" onclick="keyboardInputPlay(this)">Enter</button><button class="bntKb" onclick="keyboardDelete();">  ⌫  </button>
+          </div>
+          <div class="flex-container" id="settingArea">
+<!-- SETTING -->
+            <div class="setting">
+              <div class="setting">
+
+                <!-- FILE -->
+                <div class="menu-group">
+                  <div class="menu-title">☐ ไฟล์</div>
+                  <button id="openFile">🗁 เปิดไฟล์</button>
+                  <button onclick="saveTextAsFile()">🡻 บันทึกไฟล์</button>
+                  <button onclick="getSongHash()">↗ คัดลอก URL</button> <abbr title="หากเพลงยาวจะใช้ไม่ได้"> ⓘ</abbr> <br>
+                  <!-- <button onclick="getSongQR()">⛶ QR code</button><br> -->
+                  <button onclick="showTable()">▦ แสดงตารางโน้ต</button>
+                </div>
+              
+                <!-- EDIT -->
+                <div class="menu-group">
+                  <div class="menu-title">⚒︎ แก้ไข</div>
+                  <button onclick="editor()">✎ เครื่องมือแก้ไข</button>
+                  <button onclick="showKeyboard()">⌨ คีย์บอร์ด</button>
+                  <button onclick="showHistory()">⏱ ประวัติ</button>
+                </div>
+              
+                <!-- APP -->
+                <div class="menu-group">
+                  <div class="menu-title">☼ การตั้งค่า</div>
+                  <button onclick="themePanel()">☺ ธีม</button>
+                  <button disabled>🅰︎ แบบอักษร</button>
+                </div>
+              
+              </div>
+              
+            </div>
+            <!-- CONVERTOR -->
+            <div class="small" id="editor" style="display: block;">
+              <div class="menu-title">✑ พาเนลเครื่องมือแก้ไข</div>
+              แทรกช่องว่าง : <button id="toggleSpace" onclick="toggleSpace()">
+                ✔ เปิด
+            </button><br>
+              แปลงตัวโน้ต: <button id="toggle" class="">ปุ่มแปลงโน้ต</button> <abbr title="เหมาะสำหรับการพิมพ์ด้วยตัวเลขด้วย Nampad"> ⓘ</abbr> <br>
+              แปลงด้วยตัวเอง: <button onclick="changeText()" id="manualNumChange">1234=>ดรมฟ</button>
+              <br>
+              <!-- TEMPO -->
+              <div>
+                จังหวะ:
+                <button id="deBtn">−</button>
+                <input type="number" id="tempoInput" min="20" max="300">
+                <button id="inBtn">+</button>
+              </div>
+              <!-- SOUND -->
+              คีย์:<select id="key" onchange="changeKeyText()">
+                <option value="12">เครื่องสาย</option>
+                <option value="13">ปี่พาทย์</option>
+                <option value="0">A#/Bb</option>
+                <option value="1">B</option>
+                <option value="2">C</option>
+                <option value="3">C#/Db</option>
+                <option value="4">D</option>
+                <option value="5">D#/Eb</option>
+                <option value="6">E</option>
+                <option value="7">F</option>
+                <option value="8">F#/Gb</option>
+                <option value="9">G</option>
+                <option value="10">G#/Ab</option>
+                <option value="11">A</option>
+              </select>
+              <br>
+              ช่วงทบเสียง:<select id="octave">
+                <option value="2">+2</option>
+                <option value="1">+1</option>
+                <option value="0" selected="selected">0</option>
+                <option value="-1">-1</option>
+                <option value="-2">-2</option>
+            </select>
+              <br>
+              คลื่นเสียง:<select id="type">
+                <option value="sine">∿ Sine</option>
+                <option value="square">⎍ Square</option>
+                <option value="sawtooth">𝆱 Sawtooth</option>
+                <option value="triangle">Λ Triangle</option>
+              </select>
+              <br>
+              <div>
+                ขนาดโน้ต:
+                <button id="decreaseBtn">−</button>
+                <input type="number" id="fontInput" min="8" max="100">
+                <button id="increaseBtn">+</button>
+              </div>
+
+              
+            </div>
+            <div id="theme" style="display: none;">
+              ☺ ธีม <br>
+              <button onclick="setTheme('theme1')">ธีม 1</button>
+              <button onclick="setTheme('theme2')">ธีม 2</button>
+              <button onclick="setTheme('theme3')">ธีม 3</button>
+              <button onclick="setTheme('theme4')">ธีม 4</button>
+              <button onclick="setTheme('theme5')">ธีม 5</button>
+              <button onclick="setTheme('theme6')">ธีม 6</button>
+            </div>
+            <div id="history-panel" style="display: none;">
+              💿 ประวัติการบันทึก<br>
+              <select id="history" onchange="loadHistory()">
+                <option value="">-- เลือกบันทึกย้อนหลัง --</option>
+            </select>
+        
+            
+            <pre id="preview"></pre>
+            <p id="history-status"></p>
+            <button onclick="restoreHistory()">♻ นำกลับมาใช้</button>
+            <button id="deleteHistory"> ⌫ ลบประวัติทั้งหมด</button>
+            </div>
+            <!-- <div class="empty"></div> -->
+          </div>
+        </div>
+        <div style="display: none;">
+          <h4>RTTTL</h4>
+          <p><textarea id="rtttl" class="rtttl" rows="3" cols="100"></textarea></p>
+          <p><textarea id="rtttl1" class="rtttl1" rows="3" cols="100"></textarea></p>
+        </div>
+      </div>
+      </p>
+    </div>
+  </div>
+  <div id="sizeTable" style="display:none;"><span>ขนาดโน้ต:</span>
+    <button id="decreaseSize">−</button>
+    <input type="number" id="sizeInput" value="12" min="10" max="60">
+    <button id="increaseSize">+</button>
+    <button onclick="showTable()">✐ แสดงเครื่องมือ</button>
+  </div>
+  <div id="qrcode"></div>
+<div id="footnote">
+  <a class="small" href="./about.html#log">ⓘ เกี่ยวกับเว็บไซต์นี้ v. 0.023.3 [26-10-26]</a><br>
+  <a class="small" href="http://music.warut.net" target="_blank">↪︎ ไปที่ music.warut.net</a>
+</div>
+  <div id="saveFilePopup" class="load-file">
+    <div class="load-file-content">
+      <span class="close">🆇</span>
+      อัปโหลดไฟล์โน้ตในรูปแบบ ดรมฟ Online นามสกุล .txt <br>
+      <input type="file" onchange="readFile(this)"></input>
+    </div>
+  </div>
+</body>
+<script src="./script/index.js"></script>
+<script src="./script/theme.js"></script>
+<script src="./script/rtttl.js"></script>
+<!-- Textarea สำหรับใส่โน้ต RTTTL สำหรับทดสอบเท่านั้น -->
+<!-- <p>Textarea สำหรับใส่โน้ต RTTTL สำหรับทดสอบเท่านั้น </p>
+<textarea id="rtttlInput" placeholder="กรอกรหัส RTTTL ที่นี่...">SuperMario:d=4,o=5,b=100:16e6,16e6,32p,16e6,32p,16c6,16e6,32p,16g6,8p,16g</textarea>
+<button onclick="playFromTextarea()">เล่นเพลง</button>
+<script>
+function playFromTextarea() {
+    const code = document.getElementById('rtttlInput').value;
+    rtttlPlay.play(code);
+}
+</script> -->
+
+<script>
+      addRowTextarea()
+
+      //ฟังก์ชันการบันทึกอัตโนมัติ
+const thm = document.getElementById("thm");
+const history = document.getElementById("history");
+const preview = document.getElementById("preview");
+const status = document.getElementById("history-status");
+
+// ใช้ชื่อเดียวสำหรับเก็บรายการบันทึกทั้งหมด
+const THM_HISTORY_STORAGE_KEY = "thm_history";
+
+// สร้างชื่อบันทึกจากวันและเวลา
+function getTimestamp() {
+    const d = new Date();
+
+    const pad = n => String(n).padStart(2, "0");
+
+    return d.getFullYear() + ":" +
+        pad(d.getMonth() + 1) + ":" +
+        pad(d.getDate()) + "_" +
+        pad(d.getHours()) + ":" +
+        pad(d.getMinutes()) + ":" +
+        pad(d.getSeconds());
+}
+
+// บันทึกข้อความ
+function saveHistory() {
+    const records = JSON.parse(
+        localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}"
+    );
+
+    const name = getTimestamp();
+
+    records[name] = thm.value;
+
+    localStorage.setItem(
+        THM_HISTORY_STORAGE_KEY,
+        JSON.stringify(records)
+    );
+
+    updateHistoryList(name);
+
+    status.textContent = "บันทึกล่าสุด: " + name;
+}
+
+// แสดงรายการบันทึกใน select
+function updateHistoryList(selected = "") {
+    const records = JSON.parse(
+        localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}"
+    );
+
+    const names = Object.keys(records).sort().reverse();
+
+    history.replaceChildren();
+
+    const first = document.createElement("option");
+    first.value = "";
+    first.textContent = "-- เลือกบันทึกย้อนหลัง --";
+    history.appendChild(first);
+
+    names.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        history.appendChild(option);
+    });
+
+    history.value = selected;
+}
+
+// เรียกดูข้อความจากบันทึกที่เลือก
+function loadHistory() {
+    const records = JSON.parse(
+        localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}"
+    );
+
+    const name = history.value;
+
+    preview.textContent =
+        name ? records[name] ?? "" : "";
+}
+
+// นำข้อความเก่ากลับมาใส่ใน textarea
+function restoreHistory() {
+    const records = JSON.parse(
+        localStorage.getItem(THM_HISTORY_STORAGE_KEY) || "{}"
+    );
+
+    const name = history.value;
+
+    if (name && Object.hasOwn(records, name)) {
+        thm.value = records[name];
+        status.textContent = "เรียกคืนบันทึก: " + name;
+    }
+}
+
+// แสดงประวัติเดิมเมื่อเปิดหน้าเว็บ
+updateHistoryList();
+
+// บันทึกทุก 10 วินาที
+setInterval(saveHistory, 10000);
+
+document.getElementById("deleteHistory")
+    .addEventListener("click", () => {
+
+        if (!confirm("ต้องการลบประวัติการบันทึกทั้งหมดหรือไม่?")) {
+            return;
+        }
+
+        // ลบประวัติออกจาก localStorage
+        localStorage.removeItem(THM_HISTORY_STORAGE_KEY);
+
+        // อัปเดตรายการและหน้าจอ
+        updateHistoryList();
+        preview.textContent = "";
+
+        status.textContent = "ลบประวัติทั้งหมดแล้ว";
+    });
+    
+</script>
+</html>
