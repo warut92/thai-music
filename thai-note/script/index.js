@@ -341,16 +341,19 @@ document.addEventListener("DOMContentLoaded", function () {
       '.': 'ฺ'
     };
   
+    // โหลดค่าที่บันทึกไว้ (ค่าเริ่มต้น = เปิด)
     let isEnabled = true;
-  
+    try { isEnabled = localStorage.getItem("autoNoteConvert") !== "0"; } catch (e) {}
+
     // Update button label
     function updateButton() {
       toggleBtn.textContent = isEnabled ? "✔ แปลงโน้ต Auto" : "✘ แปลงโน้ต Auto";
     }
-  
+
     // Toggle function
     toggleBtn.addEventListener("click", function () {
       isEnabled = !isEnabled;
+      try { localStorage.setItem("autoNoteConvert", isEnabled ? "1" : "0"); } catch (e) {}
       updateButton();
     });
   
@@ -791,8 +794,12 @@ document.addEventListener("DOMContentLoaded", function () {
       let select = document.getElementById("key");
       let options = select.options;
     
+      // เทียบแบบตรงตัว (A ต้องไม่ไปเลือก A#) รองรับทั้ง data-key และข้อความแบบ "A#/Bb"
       for (let i = 0; i < options.length; i++) {
-        if (options[i].text.trim().startsWith(letter)) {
+        const names = options[i].dataset.key
+          ? [options[i].dataset.key]
+          : options[i].text.split("/").map(s => s.trim());
+        if (names.includes(letter)) {
           select.selectedIndex = i;
           break;
         }
@@ -805,8 +812,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function changeKeyText() {
       //ดึงคีย์จาก select
       let select = document.getElementById("key");
-      let keyText = select.options[select.selectedIndex].text;
-      let key = keyText.split("/")[0];
+      let option = select.options[select.selectedIndex];
+      let key = option.dataset.key || option.text.split("/")[0];
       //ลบคีย์เดิมออก
       let textarea = document.getElementById("thm");
       let str = textarea.value.replace(/\((?!\d+\))[^)]*\)/g, "");
@@ -963,14 +970,29 @@ function themePanel() {
   }
 }
 
-// ฟังก์ชันการแทรกช่องว่าง
+// ฟังก์ชันการแทรกช่องว่าง (โหลดค่าที่บันทึกไว้ ค่าเริ่มต้น = เปิด)
 let spaceEnabled = true;
+try { spaceEnabled = localStorage.getItem("insertSpace") !== "0"; } catch (e) {}
+
+function updateSpaceButton() {
+    const button = document.getElementById("toggleSpace");
+    if (button) {
+        button.textContent = spaceEnabled
+            ? "✔ เปิดแทรกช่องว่าง"
+            : "✘ ปิดแทรกช่องว่าง";
+    }
+}
+document.addEventListener("DOMContentLoaded", updateSpaceButton);
 
 // ตั้งค่าจำนวนกลุ่มอักขระต่อชุด
 const SPACE_EVERY = 4;
 
-// อักขระที่ไม่นับ
-const IGNORE_CHARS = new Set(["ํ", "ฺ"]);
+// อักขระที่ไม่นับ (นิคหิต, พินทุ และเครื่องหมายที่ไม่ใช่ตัวโน้ต ' >)
+const IGNORE_CHARS = new Set(["ํ", "ฺ", "'", ">"]);
+
+// เครื่องหมายที่ "นำหน้า" โน้ต (สะบัด ', เริ่มเล่นที่ >) ต้องอยู่กลุ่มเดียวกับโน้ตตัวถัดไป
+// ส่วน ํ ฺ เป็นเครื่องหมายต่อท้ายโน้ตตัวก่อนหน้า
+const PREFIX_CHARS = new Set(["'", ">"]);
 
 // ใช้แบ่งข้อความตามกลุ่มอักขระ เช่น ก่ เป็นหนึ่งกลุ่ม
 const segmenter = new Intl.Segmenter("th", {
@@ -998,20 +1020,28 @@ function insertSpaceEvery4(text) {
 
         let result = "";
         let count = 0;
+        // น้ำหนักของโน้ตตัวถัดไป: ปกติ 1, หลัง ' = 0.5, หลัง '' = 0.25
+        // เช่น '6'53-5 → 0.5 + 0.5 + 1 + 1 + 1 = 4 (ครบ 1 กลุ่ม)
+        let nextWeight = 1;
 
         for (const char of chars) {
-            result += char;
+            const ignored = [...char].every(c => IGNORE_CHARS.has(c));
+            const prefix = [...char].every(c => PREFIX_CHARS.has(c));
 
-            // ไม่นับนิคหิตและพินทุ
-            if ([...char].every(c => IGNORE_CHARS.has(c))) {
-                continue;
-            }
-
-            count++;
-
-            if (count === SPACE_EVERY) {
+            // ครบกลุ่มแล้ว: เว้นวรรคก่อนโน้ตตัวถัดไป หรือก่อนเครื่องหมายนำหน้าของมัน
+            // เช่น ดรมฟ'ซลทด → "ดรมฟ 'ซลทด" (' อยู่กับ ซ ที่ถูกสะบัด)
+            if (count >= SPACE_EVERY && (!ignored || prefix)) {
                 result += " ";
                 count = 0;
+            }
+
+            result += char;
+
+            if (char === "'") {
+                nextWeight /= 2;            // ' ลดเหลือครึ่ง, '' เหลือหนึ่งในสี่
+            } else if (!ignored) {
+                count += nextWeight;        // อักขระที่ไม่นับ: ไม่เพิ่มตัวนับ
+                nextWeight = 1;
             }
         }
 
@@ -1024,14 +1054,8 @@ function insertSpaceEvery4(text) {
 // เปิด/ปิดการแทรกช่องว่าง
 function toggleSpace() {
     spaceEnabled = !spaceEnabled;
-
-    const button = document.getElementById("toggleSpace");
-
-    if (button) {
-        button.textContent = spaceEnabled
-            ? "✔ เปิดแทรกช่องว่าง"
-            : "✘ ปิดแทรกช่องว่าง";
-    }
+    try { localStorage.setItem("insertSpace", spaceEnabled ? "1" : "0"); } catch (e) {}
+    updateSpaceButton();
 
     if (spaceEnabled) {
         formatTextarea();

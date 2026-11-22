@@ -49,6 +49,60 @@ const themes = {
         text: "#eeeeee",
         boxBackground: "#303134",
         border: "#004f3b"
+    },
+    // ใบเตย
+    theme7: {
+        normal: "Sarabun, sans-serif",
+        bold: "Kanit, sans-serif",
+        background: "#f1f8ee",
+        text: "#1f3a2a",
+        boxBackground: "#dcebd5",
+        border: "#3f7d4e"
+    },
+    // ชมพู
+    theme8: {
+        normal: "Sarabun, sans-serif",
+        bold: "Kanit, sans-serif",
+        background: "#fdf2f5",
+        text: "#3a2230",
+        boxBackground: "#f6dbe4",
+        border: "#c2416b"
+    },
+    // ฟ้า
+    theme9: {
+        normal: "Sarabun, sans-serif",
+        bold: "Kanit, sans-serif",
+        background: "#eef6fc",
+        text: "#1c2c3d",
+        boxBackground: "#d6e7f5",
+        border: "#2563a8"
+    },
+    // แดงชาด
+    theme10: {
+        normal: "Sarabun, sans-serif",
+        bold: "Kanit, sans-serif",
+        background: "#fbf1ea",
+        text: "#3b1d14",
+        boxBackground: "#efd5c6",
+        border: "#b33a1e"
+    },
+    // ลายรดน้ำ (ดำ-ทอง)
+    theme11: {
+        normal: "Sarabun, sans-serif",
+        bold: "Kanit, sans-serif",
+        background: "#1a1410",
+        text: "#f1dfb0",
+        boxBackground: "#0e0b08",
+        border: "#c9a14a"
+    },
+    // ม่วงราตรี
+    theme12: {
+        normal: "Sarabun, sans-serif",
+        bold: "Kanit, sans-serif",
+        background: "#2a2238",
+        text: "#ece6f5",
+        boxBackground: "#1c1726",
+        border: "#a68bd6"
     }
   };
   

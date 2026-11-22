@@ -258,11 +258,21 @@ var rtttlPlay = (function () {
     if (statusElem) statusElem.innerHTML = ": สั่งหยุด";
   }
 
+  // แจ้งตำแหน่งโน้ตที่กำลังเล่น (null = หยุด/จบ) ให้ส่วนอื่นของหน้าใช้
+  // เช่น ตัวแสดงตำแหน่งในหน้าพิมพ์โน้ต: document.addEventListener('rtttl:note', ...)
+  var lastEmittedIndex = null;
+  function emitNote(noteIndex) {
+    if (noteIndex === lastEmittedIndex) return;
+    lastEmittedIndex = noteIndex;
+    document.dispatchEvent(new CustomEvent('rtttl:note', { detail: { noteIndex: noteIndex } }));
+  }
+
   function highlightStep(noteIndex) {
+    emitNote(noteIndex);
     var elem = document.getElementById('note-' + noteIndex);
     if (currentActiveNote === elem) return;
 
-    clearHighlight();
+    clearHighlight(true);
 
     if (elem) {
       elem.style.backgroundColor = '#ffeb3b';
@@ -271,7 +281,9 @@ var rtttlPlay = (function () {
     }
   }
 
-  function clearHighlight() {
+  // keepEmitted = true: ล้างเฉพาะไฮไลต์ในตาราง (ใช้ตอนเปลี่ยนโน้ต) ไม่แจ้งว่าหยุดเล่น
+  function clearHighlight(keepEmitted) {
+    if (!keepEmitted) emitNote(null);
     if (currentActiveNote) {
       currentActiveNote.style.backgroundColor = '';
       currentActiveNote.style.color = '';

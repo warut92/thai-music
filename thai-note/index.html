@@ -10,8 +10,20 @@
   <link rel="shortcut icon" href="icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- แบบอักษรที่เลือกได้ในแผง "แบบอักษร" -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Sarabun/Sarabun.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Kanit/Kanit.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Prompt/Prompt.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Loma/Loma.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Mali/Mali.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/TlwgTypewriter/TlwgTypewriter.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/TlwgTypist/TlwgTypist.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Sriracha/Sriracha.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Srisakdi/Srisakdi.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7.6.0/fonts/Boon/Boon.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Garuda/Garuda.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Umpush/Umpush.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@500&display=swap">
   <script src="./script/thm2rtttl.js"></script>
 
   <style>
@@ -161,7 +173,29 @@
       padding: 6px 10px 4px;
       border-right: 1px solid var(--line);
     }
-    .rgroup:last-child { border-right: none; }
+    .rgroup:last-of-type { border-right: none; }
+
+    /* ซ่อนคำอธิบายใต้ไอคอน (ตั้งค่าในพาเนลธีม) */
+    .ribbon.no-labels .rgroup .tools button { font-size: 0; gap: 0; min-width: 0; padding: 6px; }
+    .ribbon.no-labels .rgroup .gname { display: none; }
+    .ribbon.no-labels .rgroup { padding: 4px 6px; }
+
+    /* ปุ่มย่อ/ขยาย ribbon */
+    #ribbonToggle {
+      align-self: flex-start;
+      margin: 4px 0 4px auto;
+      position: sticky;
+      right: 0;
+      padding: 2px 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--panel);
+      border-color: transparent;
+      white-space: nowrap;
+    }
+    #ribbonToggle:hover { color: var(--text); }
+    .ribbon.collapsed .rgroup { display: none; }
+    .ribbon.collapsed #ribbonToggle { margin-left: auto; }
 
     .rgroup .tools { display: flex; gap: 2px; flex: 1; align-items: center; }
 
@@ -272,20 +306,151 @@
     }
     #thm::placeholder { color: var(--muted); }
 
-    /* มุมมองตารางโน้ต */
-    #sizeTable {
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      width: 100%;
-      max-width: 960px;
-      padding: 8px 12px;
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+    /* ---------- ตัวแสดงตำแหน่งโน้ตที่กำลังเล่น (หน้าพิมพ์โน้ต) ---------- */
+    .sheet { position: relative; }
+    #thm { position: relative; z-index: 1; }
+    .thm-backdrop {
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      color: transparent;          /* เห็นเฉพาะไฮไลต์ ตัวอักษรจริงมาจาก textarea */
     }
-    #sizeTable span { font-size: 13px; color: var(--muted); }
-    #sizeTable button:last-child { margin-left: auto; }
+    .thm-backdrop mark {
+      color: transparent;
+      background: rgba(255, 210, 0, .55);
+      box-shadow: 0 0 0 2px rgba(255, 170, 0, .9);
+      border-radius: 3px;
+    }
+
+    /* มุมมองตารางโน้ต */
+    /* แถบปรับขนาด: ตรึงด้านล่างจอเสมอ ต่อเนื่องกับแถบสถานะ (#footnote) */
+    #sizeTable {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: var(--statusbar-h, 32px);
+      z-index: 19;                 /* ใต้แถบสถานะ (20) เล็กน้อย */
+      align-items: center;
+      gap: 6px 10px;
+      flex-wrap: wrap;
+      padding: 6px 16px;
+      background: var(--panel);
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -2px 8px rgba(0,0,0,.06);
+    }
+    /* เว้นที่ด้านล่างให้เนื้อหาไม่ถูกแถบปรับขนาด + แถบสถานะบัง */
+    body.table-mode { padding-bottom: calc(var(--statusbar-h, 32px) + var(--sizetable-h, 44px)); }
+    #sizeTable .st-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1 1 auto; }
+    #sizeTable .st-label { font-size: 13px; color: var(--muted); }
+    #sizeTable .st-actions { display: flex; gap: 6px; margin-left: auto; }
+    /* ซ่อนแผง: เหลือเฉพาะปุ่ม */
+    #sizeTable.st-collapsed .st-controls { display: none; }
+
+    /* ---------- หน้าต่าง "เกี่ยวกับ" (ใช้สี/ฟอนต์จากธีมที่เลือก) ---------- */
+    #aboutDialog {
+      width: min(760px, calc(100vw - 32px));
+      max-height: min(86vh, 900px);
+      padding: 0;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: var(--paper);
+      color: var(--text);
+      font-family: var(--font-normal);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      overflow: hidden;
+    }
+    #aboutDialog[open] { display: flex; flex-direction: column; }
+    #aboutDialog::backdrop { background: rgba(0,0,0,.45); backdrop-filter: blur(2px); }
+    .about-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px 12px 20px;
+      border-bottom: 1px solid var(--line);
+      border-top: 4px solid var(--accent);
+    }
+    .about-head img { width: 40px; height: 40px; border-radius: 8px; }
+    .about-head h2 { margin: 0; font-size: 20px; }
+    .about-head p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+    .about-head .about-close { margin-left: auto; align-self: flex-start; padding: 4px 10px; }
+    .about-toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+    .about-toc a {
+      font-size: 13px;
+      text-decoration: none;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+    .about-toc a:hover { border-color: var(--accent); }
+    .about-body {
+      position: relative;   /* ให้ offsetTop ของแต่ละหัวข้อวัดจากกล่องนี้ */
+      overflow-y: auto;
+      padding: 4px 20px 16px;
+      line-height: 1.65;
+      font-size: 15px;
+    }
+    .about-body section { padding-top: 12px; }
+    .about-body h3 {
+      font-size: 17px;
+      margin: 8px 0 6px;
+      padding-left: 10px;
+      border-left: 3px solid var(--accent);
+    }
+    .about-body h4 { font-size: 15px; margin: 16px 0 4px; }
+    .about-body p { margin: 0 0 10px; }
+    .about-body a { color: var(--text); text-decoration-color: var(--accent); text-underline-offset: 2px; }
+    .about-body pre, .about-body code, .about-body .mono { font-family: var(--mono); }
+    .about-body pre {
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .about-body code { background: var(--hover); padding: 0 4px; border-radius: 4px; }
+    .about-note { padding: 8px 12px; background: var(--hover); border-radius: 6px; font-size: 14px; }
+    .about-tables { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+    .about-tables table { border-collapse: collapse; font-size: 14px; flex: 1 1 240px; }
+    .about-tables th, .about-tables td { border: 1px solid var(--line-strong); padding: 5px 10px; text-align: left; }
+    .about-tables th { background: var(--panel); font-family: var(--font-bold); font-weight: 500; }
+    .about-tables td.mono { text-align: center; font-size: 16px; width: 4.5em; }
+    .about-log { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+    /* วันที่อยู่คอลัมน์ซ้าย ข้อความ+ลิงก์/โค้ดไหลต่อกันเป็นบรรทัดปกติ */
+    .about-log li { position: relative; padding: 5px 0 5px 7.5em; border-bottom: 1px dashed var(--line); }
+    .about-log time { position: absolute; left: 0; font-family: var(--mono); color: var(--muted); }
+    .about-foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 16px;
+      padding: 10px 20px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      font-size: 13px;
+    }
+    .about-foot a { display: inline-flex; align-items: center; gap: 5px; }
+    .about-foot .about-close { margin-left: auto; }
+    @media (max-width: 560px) {
+      .about-log li { padding-left: 0; }
+      .about-log time { position: static; display: block; }
+    }
+
+    /* มุมมองตารางโน้ต: ไม่ต้องแสดงหัว "แผ่นโน้ต" และคำแนะนำการพิมพ์ */
+    body.table-mode .sheet-head { display: none; }
 
     #output { width: 100%; overflow-x: auto; }
     #output table {
@@ -294,13 +459,42 @@
       margin-bottom: 10px;
     }
     #output table, #output th, #output td { border: 1px solid var(--line-strong); }
-    #output table td { font-size: var(--music-size); padding: 8px; }
+    /* ระยะห่างในตารางโน้ต (ปรับได้จากแถบด้านบน) */
+    :root {
+      --tbl-line: 1.2;        /* ระยะบรรทัด */
+      --tbl-text-gap: 0em;    /* ระยะตัวอักษรของหัวข้อ */
+      --tbl-note-gap: 0em;    /* ระยะตัวโน้ต */
+    }
+    #output table td {
+      font-size: var(--music-size);
+      line-height: var(--tbl-line);
+      letter-spacing: var(--tbl-note-gap);
+      padding: calc((var(--tbl-line) - 0.9) * 0.6em) 0.45em;
+    }
+    /* ความสูงตามขนาดตัวอักษร (ไม่ fix px) เพื่อไม่ให้ h2 กับ h ทับกันเมื่อขยายโน้ต */
     #output h2 {
       font-size: calc(var(--music-size) * 1.6);
-      margin: 0;
-      height: 40px;
+      line-height: var(--tbl-line);
+      letter-spacing: var(--tbl-text-gap);
+      margin: 0 0 calc((var(--tbl-line) - 1) * 0.5em + 0.1em);
     }
-    #output h { font-size: calc(var(--music-size) * 1.1); }
+    #output h {
+      display: block;              /* <h> ไม่ใช่แท็กมาตรฐาน ค่าเริ่มต้นเป็น inline */
+      font-size: calc(var(--music-size) * 1.1);
+      line-height: var(--tbl-line);
+      letter-spacing: var(--tbl-text-gap);
+      margin: calc((var(--tbl-line) - 1) * 0.6em + 0.25em) 0 calc((var(--tbl-line) - 1) * 0.4em + 0.1em);
+    }
+    #output table { margin-bottom: calc((var(--tbl-line) - 1) * 0.5em + 4px); }
+
+    .sp-group { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; }
+    .sp-group .sp-val {
+      min-width: 3.2em;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text);
+    }
 
     .sabat1, .sabat2 {
       vertical-align: baseline;
@@ -376,6 +570,12 @@
     .kb-tools .wide { flex: 3 1 120px; }
 
     /* ---------- แผงคุณสมบัติด้านขวา ---------- */
+    /* ซ่อนแผงคุณสมบัติเมื่อไม่มีพาเนลใดแสดงอยู่ */
+    #settingArea.is-empty { display: none !important; }
+    /* หน้าตารางโน้ต: แสดงแผงด้านข้างเมื่อเปิดพาเนลธีม/แบบอักษร และซ่อนพาเนลที่ใช้กับหน้าพิมพ์โน้ตเท่านั้น */
+    #settingArea.table-visible { display: flex !important; }
+    body.table-mode #editor,
+    body.table-mode #history-panel { display: none !important; }
     #settingArea {
       width: 300px;
       flex-direction: column;
@@ -431,6 +631,27 @@
     }
     .themes button { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; }
     .swatch { width: 100%; height: 22px; border-radius: 4px; border: 1px solid rgba(0,0,0,.15); }
+    .themes button[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .pat-title { margin-top: 16px !important; }
+    .icon-preview { display: flex; justify-content: center; gap: 4px; padding: 2px 0; }
+    .icon-preview img.ic { width: 20px; height: 20px; }
+
+    /* ---------- ลวดลายพื้นหลัง: SVG ขาวดำใช้เป็น mask แล้วระบายด้วยสีตามธีม ---------- */
+    :root { --pat-color: color-mix(in srgb, var(--text) 11%, transparent); }
+    .desk { position: relative; isolation: isolate; }
+    .desk::before,
+    .swatch.pat::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: var(--pat-color);
+      -webkit-mask-image: var(--pat-mask, linear-gradient(transparent, transparent));
+              mask-image: var(--pat-mask, linear-gradient(transparent, transparent));
+      pointer-events: none;
+    }
+    .desk::before { z-index: -1; }
+    .swatch.pat { position: relative; overflow: hidden; height: 34px; background: var(--desk); }
+    .swatch.pat::before { background-color: color-mix(in srgb, var(--text) 35%, transparent); }
 
     #history { width: 100%; margin-bottom: 8px; }
     #preview {
@@ -661,10 +882,12 @@
       <div class="rgroup">
         <div class="tools">
           <button onclick="themePanel()"><img class="ic" src="icons/lc_colorsettings.svg" alt="">ธีม</button>
-          <button disabled><img class="ic" src="icons/lc_fontdialog.svg" alt="">แบบอักษร</button>
+          <button onclick="fontPanel()"><img class="ic" src="icons/lc_fontdialog.svg" alt="">แบบอักษร</button>
         </div>
         <div class="gname">การตั้งค่า</div>
       </div>
+
+      <button id="ribbonToggle" type="button" aria-expanded="true" title="ย่อ/ขยายแถบเครื่องมือ (Ctrl+F1)">︿ ซ่อนแถบ</button>
     </nav>
   </header>
 
@@ -672,15 +895,6 @@
   <main class="workspace">
 
     <section class="desk">
-
-      <!-- แถบปรับขนาดในมุมมองตารางโน้ต -->
-      <div id="sizeTable" style="display:none;">
-        <span>ขนาดโน้ต</span>
-        <button id="decreaseSize">−</button>
-        <input type="number" id="sizeInput" value="12" min="10" max="60">
-        <button id="increaseSize">+</button>
-        <button onclick="showTable()"><img class="ic" src="icons/lc_editdoc.svg" alt="">กลับไปหน้าพิมพ์โน้ต</button>
-      </div>
 
       <!-- แผ่นโน้ต -->
       <article class="sheet">
@@ -693,11 +907,43 @@
         <div id="output"></div>
 
         <!-- ช่องพิมพ์โน้ต -->
+        <!-- ชั้นด้านหลัง textarea ใช้ไฮไลต์โน้ตที่กำลังเล่น (ข้อความโปร่งใส เห็นเฉพาะไฮไลต์) -->
+        <div class="thm-backdrop" id="thmBackdrop" aria-hidden="true"></div>
         <textarea id="thm" class="thm" rows="3" spellcheck="false"
           oninput="addRowTextarea();checkMultipleLine()"
           onfocus="addRowTextarea();checkMultipleLine()" onchange="getTempo()"
           placeholder="ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีในระบบตัวอักษร"></textarea>
       </article>
+
+      <!-- แถบปรับขนาดในมุมมองตารางโน้ต (ติดด้านล่างจอ) -->
+      <div id="sizeTable" style="display:none;">
+        <div class="st-controls" id="stControls">
+          <span class="st-label">ขนาดโน้ต</span>
+          <button id="decreaseSize">−</button>
+          <input type="number" id="sizeInput" value="12" min="10" max="60">
+          <button id="increaseSize">+</button>
+
+          <!-- ปรับความชิด/ห่าง: data-var = ตัวแปร CSS, data-step = ขั้นละ -->
+          <span class="sp-group" data-var="--tbl-line" data-unit="" data-min="1" data-max="2.5" data-step="0.1" data-default="1.2">
+            <span class="st-label" title="ระยะห่างระหว่างบรรทัด (หัวข้อและแถวโน้ต)">↕ บรรทัด</span>
+            <button class="sp-dec" title="ชิดขึ้น">−</button><output class="sp-val"></output><button class="sp-inc" title="ห่างขึ้น">+</button>
+          </span>
+          <span class="sp-group" data-var="--tbl-text-gap" data-unit="em" data-min="-0.1" data-max="0.5" data-step="0.05" data-default="0">
+            <span class="st-label" title="ระยะห่างระหว่างตัวอักษรของชื่อเพลงและท่อนเพลง">↔ ตัวหนังสือ</span>
+            <button class="sp-dec" title="ชิดขึ้น">−</button><output class="sp-val"></output><button class="sp-inc" title="ห่างขึ้น">+</button>
+          </span>
+          <span class="sp-group" data-var="--tbl-note-gap" data-unit="em" data-min="-0.1" data-max="0.8" data-step="0.05" data-default="0">
+            <span class="st-label" title="ระยะห่างระหว่างตัวโน้ตในตาราง">↔ โน้ต</span>
+            <button class="sp-dec" title="ชิดขึ้น">−</button><output class="sp-val"></output><button class="sp-inc" title="ห่างขึ้น">+</button>
+          </span>
+          <button id="spReset" title="คืนค่าระยะห่างเริ่มต้น">↺</button>
+        </div>
+
+        <div class="st-actions">
+          <button id="stToggle" type="button" aria-controls="stControls" aria-expanded="true">︾ ซ่อนแผง</button>
+          <button onclick="showTable()"><img class="ic" src="icons/lc_editdoc.svg" alt="">กลับไปหน้าพิมพ์โน้ต</button>
+        </div>
+      </div>
 
       <!-- คีย์บอร์ดโน้ต -->
       <div id="keyboard" style="display:none">
@@ -789,20 +1035,30 @@
         <div class="field">
           <span>คีย์</span>
           <select id="key" onchange="changeKeyText()">
-            <option value="12">เครื่องสาย</option>
-            <option value="13">ปี่พาทย์</option>
-            <option value="0">A#/Bb</option>
-            <option value="1">B</option>
-            <option value="2">C</option>
-            <option value="3">C#/Db</option>
-            <option value="4">D</option>
-            <option value="5">D#/Eb</option>
-            <option value="6">E</option>
-            <option value="7">F</option>
-            <option value="8">F#/Gb</option>
-            <option value="9">G</option>
-            <option value="10">G#/Ab</option>
-            <option value="11">A</option>
+            <!-- data-key = ข้อความที่ใส่ลงในโน้ตเป็น (คีย์) · value = ระดับเสียงที่ rtttl.js ใช้ -->
+            <optgroup label="ดนตรีไทย">
+              <option value="12" data-key="เครื่องสาย">เครื่องสาย (กรมศิลป์)</option>
+              <option value="13" data-key="ปี่พาทย์">ปี่พาทย์ (กรมศิลป์)</option>
+            </optgroup>
+            <optgroup label="สากล">
+              <option value="2" data-key="C">C</option>
+              <option value="3" data-key="C#">C#</option>
+              <option value="3" data-key="Db">Db</option>
+              <option value="4" data-key="D">D</option>
+              <option value="5" data-key="D#">D#</option>
+              <option value="5" data-key="Eb">Eb</option>
+              <option value="6" data-key="E">E</option>
+              <option value="7" data-key="F">F</option>
+              <option value="8" data-key="F#">F#</option>
+              <option value="8" data-key="Gb">Gb</option>
+              <option value="9" data-key="G">G</option>
+              <option value="10" data-key="G#">G#</option>
+              <option value="10" data-key="Ab">Ab</option>
+              <option value="11" data-key="A">A</option>
+              <option value="0" data-key="A#">A#</option>
+              <option value="0" data-key="Bb">Bb</option>
+              <option value="1" data-key="B">B</option>
+            </optgroup>
           </select>
         </div>
         <div class="field">
@@ -869,6 +1125,44 @@
           <button onclick="setTheme('theme4')"><span class="swatch" style="background:#4b5a71"></span>หมอก</button>
           <button onclick="setTheme('theme5')"><span class="swatch" style="background:#312c85"></span>คราม</button>
           <button onclick="setTheme('theme6')"><span class="swatch" style="background:#009966"></span>เขียว</button>
+          <button onclick="setTheme('theme7')"><span class="swatch" style="background:#f1f8ee;border-color:#3f7d4e"></span>ใบเตย</button>
+          <button onclick="setTheme('theme8')"><span class="swatch" style="background:#fdf2f5;border-color:#c2416b"></span>ชมพู</button>
+          <button onclick="setTheme('theme9')"><span class="swatch" style="background:#eef6fc;border-color:#2563a8"></span>ฟ้า</button>
+          <button onclick="setTheme('theme10')"><span class="swatch" style="background:#fbf1ea;border-color:#b33a1e"></span>แดงชาด</button>
+          <button onclick="setTheme('theme11')"><span class="swatch" style="background:#1a1410;border-color:#c9a14a"></span>ดำทอง</button>
+          <button onclick="setTheme('theme12')"><span class="swatch" style="background:#2a2238;border-color:#a68bd6"></span>ม่วงราตรี</button>
+        </div>
+
+        <h4 class="pat-title">แถบเครื่องมือ</h4>
+        <label class="field">
+          <span>ซ่อนคำอธิบายใต้ไอคอน</span>
+          <input type="checkbox" id="ribbonNoLabels">
+        </label>
+
+        <h4 class="pat-title">ลวดลายพื้นหลัง</h4>
+        <div class="themes" id="patterns"></div>
+
+        <h4 class="pat-title">ชุดไอคอน (LibreOffice)</h4>
+        <div class="themes" id="iconSets"></div>
+      </div>
+
+      <!-- แบบอักษร -->
+      <div class="panel" id="font-panel" style="display: none;">
+        <h3><img class="ic" src="icons/lc_fontdialog.svg" alt="">แบบอักษร</h3>
+        <div class="field">
+          <span>หัวข้อ</span>
+          <select id="fontHeading" data-var="--font-bold" data-store="fontHeading"></select>
+        </div>
+        <div class="field">
+          <span>ข้อความทั่วไป</span>
+          <select id="fontBody" data-var="--font-normal" data-store="fontBody"></select>
+        </div>
+        <div class="field">
+          <span>ตัวโน้ตดนตรี</span>
+          <select id="fontMusic" data-var="--mono" data-store="fontMusic"></select>
+        </div>
+        <div class="row-btns">
+          <button id="fontReset">↺ ค่าเริ่มต้น</button>
         </div>
       </div>
 
@@ -893,7 +1187,7 @@
     <span><span class="dot"></span>สถานะ<span id="status">: พร้อม</span></span>
     <span>บันทึกอัตโนมัติทุก 10 วินาที</span>
     <span class="links">
-      <a href="./about.html#log">ⓘ เกี่ยวกับ v. 0.023.3 [26-10-26]</a>
+      <a href="./about.html#log" id="aboutLink" aria-haspopup="dialog">ⓘ เกี่ยวกับ v. 0.024 [26-11-21]</a>
       <a href="http://music.warut.net" target="_blank">↪︎ music.warut.net</a>
     </span>
   </footer>
@@ -904,6 +1198,128 @@
     <textarea id="rtttl1" class="rtttl1" rows="3" cols="100"></textarea>
   </div>
   <div id="qrcode"></div>
+
+  <!-- หน้าต่างเกี่ยวกับ (ข้อมูลจาก about.html แสดงตามธีมที่เลือก) -->
+  <dialog id="aboutDialog" aria-labelledby="aboutTitle">
+    <header class="about-head">
+      <img src="icon.png" alt="">
+      <div>
+        <h2 id="aboutTitle">ดรมฟ Online</h2>
+        <p>เขียน/เล่นโน้ตดนตรีไทยออนไลน์ · v. 0.024 [26-11-21]</p>
+      </div>
+      <button type="button" class="about-close" title="ปิด (Esc)" aria-label="ปิด">✕</button>
+    </header>
+
+    <nav class="about-toc" aria-label="สารบัญ">
+      <a href="#about-origin">ที่มา</a>
+      <a href="#about-how">การทำงาน</a>
+      <a href="#about-syntax">ไวยากรณ์</a>
+      <a href="#about-symbols">ตัวโน้ตและสัญลักษณ์</a>
+      <a href="#about-log">บันทึกการเปลี่ยนแปลง</a>
+    </nav>
+
+    <div class="about-body">
+      <section id="about-origin">
+        <h3>ที่มา</h3>
+        <p>ช่วงประมาณปี 2565 ได้ศึกษาการสร้างเสียงดนตรีจากการเขียนโค้ด แล้วไปพบกับ
+          <a href="https://github.com/DDRBoxman/RepRapRingtone" target="_blank" rel="noopener noreferrer">RepRapRingtone</a> และ
+          <a href="https://adamonsoon.github.io/rtttl-play/" target="_blank" rel="noopener noreferrer">rtttl-play</a>
+          ซึ่งเป็นโน้ตในรูปแบบที่เรียกว่า RTTTL (อ่านเพิ่มได้ที่
+          <a href="https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language" target="_blank" rel="noopener noreferrer">Ring Tone Text Transfer Language</a>)
+          จึงได้นำมาเรียนรู้และประยุกต์สร้างเป็นเว็บสำหรับเล่นเสียงจากโน้ตดนตรีไทย</p>
+        <p>เวอร์ชันแรกเป็นตัวแปลงโน้ตดนตรีไทยไปเป็นโน้ตระบบ RTTTL และเป็นโปรเจกต์แรกที่ทำให้ได้เรียนรู้ JavaScript ที่มีความซับซ้อนขึ้น
+          เยี่ยมชมได้ที่ <a href="http://warut92.github.io/rtttl-th" target="_blank" rel="noopener noreferrer">warut92.github.io/rtttl-th</a></p>
+      </section>
+
+      <section id="about-how">
+        <h3>การทำงาน</h3>
+        <p>พิมพ์ตัวโน้ตดนตรีไทยในระบบ ดรมฟ หรือระบบ 1–9 จากนั้นโปรแกรมจะแปลงโน้ตเป็นระบบ RTTTL
+          และสังเคราะห์เสียงพื้นฐานด้วย Web Audio API</p>
+        <p class="about-note">📱 การเล่นในโทรศัพท์มือถือ ต้องปิดโหมดห้ามรบกวน/โหมดเงียบ</p>
+        <p>หากไม่คุ้นเคยกับระบบโน้ตดนตรีไทย ดรมฟ เลือกโน้ตตัวอย่างได้ที่ปุ่ม <b>♪ เลือกเพลงตัวอย่าง</b></p>
+        <p>โปรแกรมนี้ไม่มีการเก็บโน้ตของผู้ใช้งาน (โน้ตและการตั้งค่าบันทึกไว้ในเบราว์เซอร์ของผู้ใช้เท่านั้น)
+          โค้ดใช้สัญญาอนุญาต <a href="./LICENSE" target="_blank">MIT</a> และเป็น <a href="./readme.md" target="_blank">Open Source</a></p>
+      </section>
+
+      <section id="about-syntax">
+        <h3>ไวยากรณ์</h3>
+        <pre>ชื่อเพลง (ระบุ BPM) : โน้ตดนตรีไทย ระบบ ดรมฟ</pre>
+        <p>ตัวอย่าง:</p>
+        <pre>ลาวครวญ 2 ชั้น(120):
+/----/----/->ซ-ม/รดรม/----/-ด-ร/-ด-ม/-รรร/
+/---ซ/-ซซซ/ลซมซ/-ล-ดํ/---ดํ/-ดํดํดํ/-ซ-ม/รด-ร/</pre>
+        <p>หรือ</p>
+        <pre>ลาวครวญ 2 ชั้น(120):
+---- ---- ->ซ-ม รดรม ---- -ด-ร -ด-ม -รรร
+---ซ -ซซซ ลซมซ -ล-ดํ ---ดํ -ดํดํดํ -ซ-ม รด-ร</pre>
+        <p>หากต้องการระบุข้อความเพิ่มเติม ให้ใส่ในวงเล็บ ที่ใดก็ได้หลังเครื่องหมาย <code>:</code>
+          เช่น <code>(ท่อน 1)</code> <code>(กลับต้น)</code></p>
+      </section>
+
+      <section id="about-symbols">
+        <h3>ตัวโน้ตและสัญลักษณ์</h3>
+        <p>ตัวโน้ตแต่ละตัวมีค่า 1 จังหวะย่อย</p>
+        <div class="about-tables">
+          <table>
+            <thead><tr><th>โน้ตไทย</th><th>ตัวเลข</th><th>ความหมาย</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">ด</td><td class="mono">1</td><td>เสียงโด</td></tr>
+              <tr><td class="mono">ร</td><td class="mono">2</td><td>เสียงเร</td></tr>
+              <tr><td class="mono">ม</td><td class="mono">3</td><td>เสียงมี</td></tr>
+              <tr><td class="mono">ฟ</td><td class="mono">4</td><td>เสียงฟา</td></tr>
+              <tr><td class="mono">ซ</td><td class="mono">5</td><td>เสียงซอล</td></tr>
+              <tr><td class="mono">ล</td><td class="mono">6</td><td>เสียงลา</td></tr>
+              <tr><td class="mono">ท</td><td class="mono">7</td><td>เสียงที</td></tr>
+              <tr><td class="mono">-ํ</td><td class="mono">*</td><td>เสียงสูง</td></tr>
+              <tr><td class="mono">-ฺ</td><td class="mono">.</td><td>เสียงต่ำ</td></tr>
+            </tbody>
+          </table>
+          <table>
+            <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">-</td><td>แสดงความยาว 1 จังหวะย่อย</td></tr>
+              <tr><td class="mono">x</td><td>แสดงความเงียบ 1 จังหวะย่อย</td></tr>
+              <tr><td class="mono">/</td><td>ห้องเพลง</td></tr>
+              <tr><td class="mono">&gt;</td><td>เริ่มเล่นที่</td></tr>
+              <tr><td class="mono">'</td><td>สัญลักษณ์กำกับโน้ตครึ่งหนึ่งของ -</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="about-log">
+        <h3>บันทึกการเปลี่ยนแปลง (Log)</h3>
+        <ol class="about-log" reversed>
+          <li><time>26-11-21</time><span>เพิ่มการตั้งค่าแบบอักษร, ธีมใหม่ 6 ธีม, ลวดลายพื้นหลัง, ชุดไอคอน LibreOffice, ปรับระยะห่างในตารางโน้ต, ซ่อน/ย่อ ribbon, แยกคีย์ # กับ b, บันทึกการตั้งค่าทั้งหมดอัตโนมัติ, หน้าเกี่ยวกับแบบ popup <a href="./old_index.html">ดูหน้าเพจเก่า</a></span></li>
+          <li><time>26-10-26</time>เพิ่มฟังก์ชันบันทึกโน้ตลง localStorage อัตโนมัติ, ฟังก์ชันการแทรกช่องว่างในระหว่างโน้ต 4 ตัว, ปรับปรุงคีย์บอร์ดสำหรับมือถือ</li>
+          <li><time>26-10-18</time>เพิ่มฟังก์ชันการเล่นโน้ต triplet ในรูปแบบ <code>{ooo}</code></li>
+          <li><time>26-10-17</time>เพิ่มฟังก์ชัน highlight ตัวโน้ตที่กำลังเล่นเสียงอยู่</li>
+          <li><time>26-10-01</time>แก้ปุ่มลบโน้ตในคีย์บอร์ด, เพิ่มพาเนลธีม</li>
+          <li><time>26-09-20</time>แก้การคำนวณการเปลี่ยนคีย์เพลงและช่วงทบเสียง</li>
+          <li><time>26-03-07</time>โหลดคีย์จากข้อความในวงเล็บ</li>
+          <li><time>26-02-25</time>สร้างหน้าแสดงเป็นตารางโน้ตดนตรีไทยโดยอัตโนมัติเมื่อมีการโหลดหน้าจากลิงก์ + และการคัดลอกลิงก์กับชื่อเพลง</li>
+          <li><time>25-11-08</time>เพิ่มเสียงดนตรีไทย ปี่พาทย์ เครื่องสาย</li>
+          <li><time>25-10-04</time><s>เพิ่มระบบการเล่นโน้ต 2 บรรทัด โดยพิมพ์ขึ้นต้นในโน้ต "[ฆ้องวงใหญ่]"</s> เกิดบั๊ก</li>
+          <li><time>25-06-20</time>เพิ่มตัวแปลงโน้ตตัวเลขเป็นตัวอักษรขณะพิมพ์</li>
+          <li><time>23-03-05</time>เพิ่มตัวแปลงโน้ตสบัด ด้วยสัญลักษณ์ <code>'</code></li>
+          <li><time>23-03-05</time>เพิ่มแป้นพิมพ์ตัวโน้ตสำหรับมือถือ (ปิดการทำงานไว้)</li>
+          <li><time>23-02-27</time>สร้างแฮชลิงก์ สำหรับการแชร์เพลงด้วย URL</li>
+          <li><time>22-12-11</time>เพิ่มฟังก์ชันเล่นเฉพาะตำแหน่ง ด้วยเครื่องหมาย <code>&gt;</code> / การระบุ BPM ด้วยวงเล็บหลังชื่อเพลง</li>
+        </ol>
+        <h4>สิ่งที่จะทำต่อ (To Do)</h4>
+        <ul><li>ทำให้สวยน่าใช้งาน เหมาะสำหรับมือถือ</li></ul>
+      </section>
+    </div>
+
+    <footer class="about-foot">
+      <a href="../index.html">↪︎ กลับ music.warut.net</a>
+      <a href="https://github.com/warut92/thai-music/tree/main/thai-note" target="_blank" rel="noopener noreferrer">
+        <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        ดูโค้ดบน GitHub
+      </a>
+      <button type="button" class="about-close">ปิด</button>
+    </footer>
+  </dialog>
 
   <!-- หน้าต่างเปิดไฟล์ -->
   <div id="saveFilePopup" class="load-file">
@@ -932,15 +1348,456 @@
       document.documentElement.toggleAttribute("data-dark", lum < 0.5);
     }
     const originalSetTheme = setTheme;
-    setTheme = function (name) { originalSetTheme(name); applyIconMode(); };
+    setTheme = function (name) {
+      originalSetTheme(name);
+      applyIconMode();
+      applySavedFonts();
+      markSelectedTheme(name);
+    };
     applyIconMode();
+
+    function markSelectedTheme(name) {
+      document.querySelectorAll("#theme .themes:not(#patterns) button").forEach(b => {
+        b.setAttribute("aria-pressed", String(b.getAttribute("onclick") === `setTheme('${name}')`));
+      });
+    }
+
+    // ===== ลวดลายพื้นหลัง =====
+    // แต่ละลายเป็น SVG ขาวดำ 1 ช่อง (tile) ที่ทำซ้ำต่อกัน สีจริงมาจากธีม (--pat-color)
+    const svgTile = (w, h, body) =>
+      `url("data:image/svg+xml,${encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>${body}</svg>`
+      )}")`;
+    const PETAL = "M20 20C15 15 15 9 20 4C25 9 25 15 20 20Z";
+    const PATTERNS = [
+      ["none", "ไม่มี", "linear-gradient(transparent, transparent)"],
+      ["dots", "จุด", svgTile(20, 20, "<circle cx='10' cy='10' r='1.6'/>")],
+      ["grid", "ตาราง", svgTile(24, 24, "<path d='M0 .5H24M.5 0V24' stroke='#000' fill='none'/>")],
+      ["staff", "บรรทัด 5 เส้น", svgTile(80, 72, [12, 20, 28, 36, 44].map(y => `<rect x='0' y='${y}' width='80' height='1'/>`).join(""))],
+      ["diagonal", "เส้นทแยง", svgTile(14, 14, "<path d='M-3.5 3.5L3.5-3.5M0 14L14 0M10.5 17.5L17.5 10.5' stroke='#000' stroke-width='1.2'/>")],
+      ["diamond", "ข้าวหลามตัด", svgTile(24, 24, "<path d='M12 2L22 12L12 22L2 12Z' stroke='#000' fill='none'/>")],
+      ["wave", "คลื่น", svgTile(40, 16, "<path d='M0 8Q10 1 20 8T40 8' stroke='#000' stroke-width='1.2' fill='none'/>")],
+      ["prajamyam", "ประจำยาม", svgTile(40, 40,
+        [0, 90, 180, 270].map(r => `<path d='${PETAL}' transform='rotate(${r} 20 20)'/>`).join("") +
+        "<circle cx='0' cy='0' r='1.8'/><circle cx='40' cy='0' r='1.8'/><circle cx='0' cy='40' r='1.8'/><circle cx='40' cy='40' r='1.8'/>")],
+      ["notes", "ตัวโน้ต", svgTile(64, 64,
+        "<ellipse cx='14' cy='26' rx='4.5' ry='3.2' transform='rotate(-20 14 26)'/><rect x='17.6' y='8' width='1.4' height='18'/>" +
+        "<path d='M19 8Q24 12 23 18Q22 14 19 13Z'/>" +
+        "<ellipse cx='42' cy='54' rx='4' ry='2.9' transform='rotate(-20 42 54)'/><ellipse cx='54' cy='50' rx='4' ry='2.9' transform='rotate(-20 54 50)'/>" +
+        "<rect x='45.3' y='38' width='1.3' height='16'/><rect x='57.3' y='34' width='1.3' height='16'/><path d='M45.3 38L58.6 34V37L45.3 41Z'/>")],
+    ];
+    const PATTERN_STORE = "bgPattern";
+    const patternBox = document.getElementById("patterns");
+
+    function applyPattern(id) {
+      const p = PATTERNS.find(x => x[0] === id) || PATTERNS[0];
+      document.documentElement.style.setProperty("--pat-mask", p[2]);
+      patternBox.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pattern === p[0])));
+      try { localStorage.setItem(PATTERN_STORE, p[0]); } catch (e) {}
+    }
+
+    PATTERNS.forEach(([id, label, mask]) => {
+      const b = document.createElement("button");
+      b.dataset.pattern = id;
+      const sw = document.createElement("span");
+      sw.className = "swatch pat";
+      sw.style.setProperty("--pat-mask", mask);
+      b.append(sw, label);
+      b.addEventListener("click", () => applyPattern(id));
+      patternBox.appendChild(b);
+    });
+
+    let savedPattern = "none";
+    try { savedPattern = localStorage.getItem(PATTERN_STORE) || "none"; } catch (e) {}
+    applyPattern(savedPattern);
+
+    // ===== ชุดไอคอน LibreOffice =====
+    // Colibre อยู่ที่ icons/ (ชุดเดิม) ชุดอื่นอยู่ในโฟลเดอร์ย่อย icons/<ชื่อชุด>/ ชื่อไฟล์เหมือนกัน
+    const ICON_SETS = [
+      ["", "Colibre"],
+      ["breeze", "Breeze"],
+      ["sifr", "Sifr"],
+      ["elementary", "Elementary"],
+      ["sukapura", "Sukapura"],
+    ];
+    const ICON_STORE = "iconSet";
+    const ICON_SRC = /icons\/(?:[a-z_]+\/)?(lc_[a-z_]+\.svg)$/;
+    const iconSetBox = document.getElementById("iconSets");
+
+    function applyIconSet(dir) {
+      if (!ICON_SETS.some(s => s[0] === dir)) dir = "";
+      const prefix = "icons/" + (dir ? dir + "/" : "");
+      document.querySelectorAll("img.ic:not([data-fixed-set])").forEach(img => {
+        const m = img.getAttribute("src").match(ICON_SRC);
+        if (m) img.setAttribute("src", prefix + m[1]);
+      });
+      iconSetBox.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.set === dir)));
+      try { localStorage.setItem(ICON_STORE, dir); } catch (e) {}
+    }
+
+    ICON_SETS.forEach(([dir, label]) => {
+      const b = document.createElement("button");
+      b.dataset.set = dir;
+      const pv = document.createElement("span");
+      pv.className = "icon-preview";
+      ["lc_open.svg", "lc_save.svg", "lc_runbasic.svg"].forEach(f => {
+        const img = document.createElement("img");
+        img.className = "ic";
+        img.dataset.fixedSet = "";   // ตัวอย่างไอคอนต้องคงชุดของตัวเองไว้
+        img.alt = "";
+        img.src = "icons/" + (dir ? dir + "/" : "") + f;
+        pv.appendChild(img);
+      });
+      b.append(pv, label);
+      b.addEventListener("click", () => applyIconSet(dir));
+      iconSetBox.appendChild(b);
+    });
+
+    // ===== ตัวแสดงตำแหน่งโน้ตที่กำลังเล่น ในหน้าพิมพ์โน้ต =====
+    // rtttl.js ส่งอีเวนต์ "rtttl:note" พร้อมลำดับจังหวะย่อย (1, 2, 3, …) หรือ null เมื่อหยุด
+    // ที่นี่นับตำแหน่งตัวอักษรใน textarea ตามกฎเดียวกับ convert() (thm2rtttl.js):
+    //   - เริ่มหลัง ":" ตัวแรก จนถึง ":" ถัดไป
+    //   - ถ้ามี ">" เริ่มหลัง ">" ตัวแรก จนถึง ">" ถัดไป
+    //   - ข้ามข้อความในวงเล็บ
+    //   - ตัวโน้ต ดรมฟซลท, "-" และ "x" = 1 จังหวะย่อย
+    const thmEl = document.getElementById("thm");
+    const thmBackdrop = document.getElementById("thmBackdrop");
+    let noteMap = null;      // [[เริ่ม, จบ], …] ตำแหน่งตัวอักษรของจังหวะย่อยแต่ละตัว
+    let noteMapText = null;  // ข้อความที่ใช้สร้าง noteMap
+
+    function buildNoteMap(text) {
+      const map = [];
+      const colon = text.indexOf(":");
+      if (colon < 0) return map;
+      let start = colon + 1;
+      let end = text.indexOf(":", start);
+      if (end < 0) end = text.length;
+      const gt = text.indexOf(">", start);
+      if (gt >= 0 && gt < end) {
+        start = gt + 1;
+        const gt2 = text.indexOf(">", start);
+        if (gt2 >= 0 && gt2 < end) end = gt2;
+      }
+      let depth = 0;
+      for (let i = start; i < end; i++) {
+        const c = text[i];
+        if (c === "(") { depth++; continue; }
+        if (c === ")") { if (depth) depth--; continue; }
+        if (depth || !"ดรมฟซลทx-".includes(c)) continue;
+        let s = i, e = i + 1;
+        if (c !== "-" && c !== "x") {
+          while (s > start && text[s - 1] === "'") s--;                        // เครื่องหมายสะบัดด้านหน้า
+          while (e < end && /[ฺํ#b]/.test(text[e])) e++;  // พินทุ นิคหิต # b ด้านหลัง
+        }
+        map.push([s, e]);
+      }
+      return map;
+    }
+
+    // ให้ชั้นด้านหลังมีขนาด ตำแหน่ง และรูปแบบตัวอักษรตรงกับ textarea ทุกประการ
+    function syncBackdropBox() {
+      const cs = getComputedStyle(thmEl);
+      const st = thmBackdrop.style;
+      st.left = thmEl.offsetLeft + "px";
+      st.top = thmEl.offsetTop + "px";
+      st.width = thmEl.clientWidth + "px";
+      st.height = thmEl.clientHeight + "px";
+      ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "wordSpacing", "tabSize",
+       "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "textIndent", "direction"]
+        .forEach(p => { st[p] = cs[p]; });
+      thmBackdrop.scrollTop = thmEl.scrollTop;
+    }
+
+    function clearPlayMark() {
+      thmBackdrop.replaceChildren();
+    }
+
+    function showPlayMark(noteIndex) {
+      // แสดงเฉพาะเมื่ออยู่หน้าพิมพ์โน้ต (ไม่ใช่ตารางโน้ต)
+      if (thmEl.offsetParent === null) { clearPlayMark(); return; }
+      const text = thmEl.value;
+      if (noteMapText !== text) { noteMap = buildNoteMap(text); noteMapText = text; }
+      const range = noteMap[noteIndex - 1];
+      if (!range) { clearPlayMark(); return; }
+
+      syncBackdropBox();
+      const mark = document.createElement("mark");
+      mark.textContent = text.slice(range[0], range[1]);
+      // zero-width space ท้ายสุดกันบรรทัดว่างสุดท้ายหายไป ให้ความสูงตรงกับ textarea
+      thmBackdrop.replaceChildren(text.slice(0, range[0]), mark, text.slice(range[1]) + "​");
+      thmBackdrop.scrollTop = thmEl.scrollTop;
+
+      // เลื่อนหน้าให้เห็นโน้ตที่กำลังเล่น
+      const r = mark.getBoundingClientRect();
+      const bottomLimit = window.innerHeight - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--statusbar-h")) || 32) - 16;
+      const topLimit = (document.querySelector(".appbar")?.getBoundingClientRect().bottom || 0) + 16;
+      if (r.bottom > bottomLimit) window.scrollBy({ top: r.bottom - bottomLimit + 40, behavior: "smooth" });
+      else if (r.top < topLimit) window.scrollBy({ top: r.top - topLimit - 40, behavior: "smooth" });
+    }
+
+    document.addEventListener("rtttl:note", e => {
+      const i = e.detail.noteIndex;
+      if (i == null) clearPlayMark(); else showPlayMark(i);
+    });
+    // แก้ไขโน้ตระหว่างเล่น: ตำแหน่งเดิมใช้ไม่ได้แล้ว ล้างไฮไลต์จนกว่าจะถึงโน้ตถัดไป
+    thmEl.addEventListener("input", clearPlayMark);
+    thmEl.addEventListener("scroll", () => { thmBackdrop.scrollTop = thmEl.scrollTop; });
+    window.addEventListener("resize", () => { if (thmBackdrop.firstChild) syncBackdropBox(); });
+
+    // ===== หน้าต่าง "เกี่ยวกับ" =====
+    const aboutDialog = document.getElementById("aboutDialog");
+    function openAbout(sectionId) {
+      if (typeof aboutDialog.showModal !== "function") {   // เบราว์เซอร์เก่า: ไปหน้า about.html เดิม
+        location.href = "./about.html#log";
+        return;
+      }
+      aboutDialog.showModal();
+      const target = sectionId && document.getElementById(sectionId);
+      aboutDialog.querySelector(".about-body").scrollTop = target ? target.offsetTop - 8 : 0;
+    }
+    document.getElementById("aboutLink").addEventListener("click", e => {
+      e.preventDefault();
+      openAbout();
+    });
+    aboutDialog.querySelectorAll(".about-close").forEach(b => b.addEventListener("click", () => aboutDialog.close()));
+    // คลิกพื้นที่มืดด้านนอกเพื่อปิด
+    aboutDialog.addEventListener("click", e => { if (e.target === aboutDialog) aboutDialog.close(); });
+    // ลิงก์สารบัญ: เลื่อนภายในหน้าต่าง ไม่เปลี่ยน URL (URL ใช้แชร์เพลง)
+    aboutDialog.querySelectorAll(".about-toc a").forEach(a => a.addEventListener("click", e => {
+      e.preventDefault();
+      const target = document.getElementById(a.getAttribute("href").slice(1));
+      aboutDialog.querySelector(".about-body").scrollTo({ top: target.offsetTop - 8, behavior: "smooth" });
+    }));
+
+    // ===== Ribbon: ซ่อนคำอธิบาย / ย่อแถบ =====
+    const ribbonEl = document.querySelector(".ribbon");
+    const ribbonToggle = document.getElementById("ribbonToggle");
+    const noLabelsBox = document.getElementById("ribbonNoLabels");
+
+    // ให้ปุ่มมี tooltip เป็นชื่อปุ่ม (จำเป็นเมื่อซ่อนคำอธิบาย) โดยไม่ทับ title เดิม
+    ribbonEl.querySelectorAll(".rgroup .tools button").forEach(b => {
+      if (!b.title) b.title = b.textContent.trim();
+    });
+
+    function setRibbonLabels(hide) {
+      ribbonEl.classList.toggle("no-labels", hide);
+      noLabelsBox.checked = hide;
+      try { localStorage.setItem("ribbonNoLabels", hide ? "1" : ""); } catch (e) {}
+    }
+    function setRibbonCollapsed(collapsed) {
+      ribbonEl.classList.toggle("collapsed", collapsed);
+      ribbonToggle.textContent = collapsed ? "﹀ แสดงแถบเครื่องมือ" : "︿ ซ่อนแถบ";
+      ribbonToggle.setAttribute("aria-expanded", String(!collapsed));
+      try { localStorage.setItem("ribbonCollapsed", collapsed ? "1" : ""); } catch (e) {}
+    }
+
+    noLabelsBox.addEventListener("change", () => setRibbonLabels(noLabelsBox.checked));
+    ribbonToggle.addEventListener("click", () => setRibbonCollapsed(!ribbonEl.classList.contains("collapsed")));
+    document.addEventListener("keydown", e => {
+      if (e.ctrlKey && e.key === "F1") {
+        e.preventDefault();
+        setRibbonCollapsed(!ribbonEl.classList.contains("collapsed"));
+      }
+    });
+
+    try {
+      setRibbonLabels(localStorage.getItem("ribbonNoLabels") === "1");
+      setRibbonCollapsed(localStorage.getItem("ribbonCollapsed") === "1");
+    } catch (e) {}
+
+    // ===== มุมมองตารางโน้ต =====
+    // showTable() (index.js) สลับ style.display ของ #sizeTable — ใช้ค่านี้บอกว่าอยู่ในโหมดตาราง
+    const sizeTableEl = document.getElementById("sizeTable");
+    const stToggle = document.getElementById("stToggle");
+
+    function syncTableMode() {
+      document.body.classList.toggle("table-mode", sizeTableEl.style.display !== "none");
+      syncSizeTableHeight();
+    }
+    // วัดความสูงจริงของแถบ (เปลี่ยนเมื่อขึ้นบรรทัดใหม่บนจอแคบ หรือเมื่อซ่อน/แสดงแผง)
+    function syncSizeTableHeight() {
+      document.documentElement.style.setProperty("--sizetable-h", sizeTableEl.offsetHeight + "px");
+    }
+    if ("ResizeObserver" in window) new ResizeObserver(syncSizeTableHeight).observe(sizeTableEl);
+    window.addEventListener("resize", syncSizeTableHeight);
+    new MutationObserver(syncTableMode).observe(sizeTableEl, { attributes: true, attributeFilter: ["style"] });
+    syncTableMode();
+
+    function setSizeTableCollapsed(collapsed) {
+      sizeTableEl.classList.toggle("st-collapsed", collapsed);
+      stToggle.textContent = collapsed ? "︽ แสดงแผง" : "︾ ซ่อนแผง";
+      stToggle.setAttribute("aria-expanded", String(!collapsed));
+      try { localStorage.setItem("sizeTableCollapsed", collapsed ? "1" : ""); } catch (e) {}
+    }
+    stToggle.addEventListener("click", () => setSizeTableCollapsed(!sizeTableEl.classList.contains("st-collapsed")));
+    try { setSizeTableCollapsed(localStorage.getItem("sizeTableCollapsed") === "1"); } catch (e) {}
+
+    // ===== ปรับความชิด/ห่างในตารางโน้ต =====
+    const spGroups = [...document.querySelectorAll("#sizeTable .sp-group")];
+
+    function spSet(g, value) {
+      const { var: cssVar, unit, min, max, step } = g.dataset;
+      const decimals = (step.split(".")[1] || "").length;
+      const v = Math.min(+max, Math.max(+min, +(+value).toFixed(decimals)));
+      document.documentElement.style.setProperty(cssVar, v + unit);
+      g.querySelector(".sp-val").textContent = v.toFixed(decimals);
+      try { localStorage.setItem("spacing" + cssVar, v); } catch (e) {}
+    }
+
+    spGroups.forEach(g => {
+      g.querySelector(".sp-dec").addEventListener("click", () =>
+        spSet(g, parseFloat(g.querySelector(".sp-val").textContent) - +g.dataset.step));
+      g.querySelector(".sp-inc").addEventListener("click", () =>
+        spSet(g, parseFloat(g.querySelector(".sp-val").textContent) + +g.dataset.step));
+      let saved = null;
+      try { saved = localStorage.getItem("spacing" + g.dataset.var); } catch (e) {}
+      spSet(g, saved !== null && !isNaN(saved) ? saved : g.dataset.default);
+    });
+
+    document.getElementById("spReset").addEventListener("click", () =>
+      spGroups.forEach(g => spSet(g, g.dataset.default)));
+
+    let savedIconSet = "";
+    try { savedIconSet = localStorage.getItem(ICON_STORE) || ""; } catch (e) {}
+    applyIconSet(savedIconSet);
+
+    // ===== แบบอักษร: หัวข้อ / ข้อความทั่วไป / ตัวโน้ตดนตรี =====
+    const FONT_CHOICES = [
+      ["Sarabun", "สารบรรณ (Sarabun)", "sans-serif"],
+      ["Kanit", "คณิต (Kanit)", "sans-serif"],
+      ["Prompt", "พร้อม (Prompt)", "sans-serif"],
+      ["Loma", "โลมา (Loma)", "sans-serif"],
+      ["Mali", "มะลิ (Mali)", "cursive"],
+      ["Tlwg Typewriter", "Tlwg Typewriter", "monospace"],
+      ["Tlwg Typist", "Tlwg Typist", "monospace"],
+      ["Sriracha", "ศรีราชา (Sriracha)", "cursive"],
+      ["Srisakdi", "ศรีศักดิ์ (Srisakdi)", "cursive"],
+      ["Boon", "บุญ (Boon)", "sans-serif"],
+      ["Garuda", "ครุฑ (Garuda)", "sans-serif"],
+      ["Umpush", "Umpush", "sans-serif"],
+      ["IBM Plex Sans Thai Looped", "IBM Plex Sans Thai Looped", "sans-serif"],
+    ];
+    const fontSelects = [...document.querySelectorAll("#font-panel select")];
+
+    // ค่าว่าง = ใช้แบบอักษรตามธีม (ตัวโน้ตใช้ค่าใน :root)
+    function fontStack(name) {
+      const f = FONT_CHOICES.find(c => c[0] === name);
+      return f ? `'${f[0]}', ${f[2]}` : "";
+    }
+
+    function applySavedFonts() {
+      fontSelects.forEach(sel => {
+        let saved = null;
+        try { saved = localStorage.getItem(sel.dataset.store); } catch (e) {}
+        const stack = fontStack(saved);
+        if (stack) document.documentElement.style.setProperty(sel.dataset.var, stack);
+        else if (sel.dataset.var === "--mono") document.documentElement.style.removeProperty("--mono");
+        sel.value = stack ? saved : "";
+      });
+    }
+
+    fontSelects.forEach(sel => {
+      const def = document.createElement("option");
+      def.value = "";
+      def.textContent = sel.dataset.var === "--mono" ? "ค่าเริ่มต้น (Tlwg Typist)" : "ตามธีม";
+      sel.appendChild(def);
+      FONT_CHOICES.forEach(([name, label, generic]) => {
+        const o = document.createElement("option");
+        o.value = name;
+        o.textContent = label;
+        o.style.fontFamily = `'${name}', ${generic}`;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", () => {
+        try {
+          if (sel.value) localStorage.setItem(sel.dataset.store, sel.value);
+          else localStorage.removeItem(sel.dataset.store);
+        } catch (e) {}
+        // คืนค่าฟอนต์ของธีมก่อน แล้วค่อยใส่ค่าที่ผู้ใช้เลือก
+        setTheme(localStorage.getItem("selectedTheme") || "theme1");
+      });
+    });
+
+    document.getElementById("fontReset").addEventListener("click", () => {
+      fontSelects.forEach(sel => { try { localStorage.removeItem(sel.dataset.store); } catch (e) {} });
+      setTheme(localStorage.getItem("selectedTheme") || "theme1");
+    });
+
+    function fontPanel() {
+      const fp = document.getElementById("font-panel");
+      const show = fp.style.display === "none";
+      fp.style.display = show ? "block" : "none";
+      document.getElementById("editor").style.display = show ? "none" : "block";
+      if (show) document.getElementById("theme").style.display = "none";
+    }
+
+    applySavedFonts();
+    markSelectedTheme(localStorage.getItem("selectedTheme") || "theme1");
+
+    // ===== ซ่อน #settingArea เมื่อไม่มีพาเนลใดแสดงอยู่ =====
+    const settingAreaEl = document.getElementById("settingArea");
+    const settingPanels = [...settingAreaEl.querySelectorAll(":scope > .panel")];
+    // ในหน้าตารางโน้ต ใช้ได้เฉพาะพาเนลธีมและแบบอักษร
+    const TABLE_PANELS = ["theme", "font-panel"];
+    function syncSettingArea() {
+      const inTable = sizeTableEl.style.display !== "none";
+      const visible = settingPanels.filter(p => p.style.display !== "none" &&
+        (!inTable || TABLE_PANELS.includes(p.id)));
+      settingAreaEl.classList.toggle("is-empty", visible.length === 0);
+      // showTable() ซ่อน #settingArea ด้วย style.display (ใช้บอกโหมด) จึงเปิดด้วย class แทน
+      settingAreaEl.classList.toggle("table-visible", inTable && visible.length > 0);
+    }
+    const panelObserver = new MutationObserver(syncSettingArea);
+    panelObserver.observe(sizeTableEl, { attributes: true, attributeFilter: ["style"] });
+    settingPanels.forEach(p => panelObserver.observe(p, { attributes: true, attributeFilter: ["style"] }));
+    syncSettingArea();
+
+    // ===== บันทึก/เรียกคืนค่าที่เหลือ: คีย์, ช่วงทบเสียง, พาเนลที่เปิด, คีย์บอร์ดโน้ต =====
+    const store = {
+      get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    };
+
+    // คีย์: บันทึกด้วย data-key เพราะบางตัวเลือกใช้ value ซ้ำกัน (เช่น C# กับ Db)
+    // ถ้าในโน้ตเพลงระบุคีย์ไว้แล้ว ให้ใช้คีย์จากเพลงก่อน
+    const keySelect = document.getElementById("key");
+    const keyOf = o => o.dataset.key || o.value;
+    const songHasKey = /\(\d+\)\([A-G][#b]?\)/.test(document.getElementById("thm").value);
+    const savedKey = store.get("musicKey");
+    if (savedKey && !songHasKey) {
+      const i = [...keySelect.options].findIndex(o => keyOf(o) === savedKey);
+      if (i >= 0) keySelect.selectedIndex = i;
+    }
+    keySelect.addEventListener("change", () => store.set("musicKey", keyOf(keySelect.options[keySelect.selectedIndex])));
+
+    // ช่วงทบเสียง
+    const octaveSelect = document.getElementById("octave");
+    const savedOctave = store.get("octave");
+    if (savedOctave !== null && [...octaveSelect.options].some(o => o.value === savedOctave)) octaveSelect.value = savedOctave;
+    octaveSelect.addEventListener("change", () => store.set("octave", octaveSelect.value));
+
+    // พาเนลด้านข้าง + คีย์บอร์ดโน้ต: จำว่าเปิดหรือปิดไว้
+    const rememberedBlocks = [...settingPanels, document.getElementById("keyboard")];
+    rememberedBlocks.forEach(el => {
+      const saved = store.get("visible:" + el.id);
+      if (saved === "1") el.style.display = "block";
+      else if (saved === "0") el.style.display = "none";
+      new MutationObserver(() => store.set("visible:" + el.id, el.style.display === "none" ? "0" : "1"))
+        .observe(el, { attributes: true, attributeFilter: ["style"] });
+    });
 
     // ===== ตัวเลือกคลื่นเสียง: ซิงก์ปุ่มรูปคลื่นกับ select#type ที่ rtttl.js ใช้ =====
     const waveSelect = document.getElementById("type");
+    try {
+      const savedWave = localStorage.getItem("waveType");
+      if (savedWave && [...waveSelect.options].some(o => o.value === savedWave)) waveSelect.value = savedWave;
+    } catch (e) {}
     document.querySelectorAll('input[name="wave"]').forEach(radio => {
       radio.checked = radio.value === waveSelect.value;
       radio.addEventListener("change", () => {
-        if (radio.checked) waveSelect.value = radio.value;
+        if (!radio.checked) return;
+        waveSelect.value = radio.value;
+        try { localStorage.setItem("waveType", radio.value); } catch (e) {}
       });
     });
 
