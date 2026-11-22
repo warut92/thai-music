@@ -518,56 +518,134 @@
       vertical-align: middle;
     }
 
-    /* ---------- แป้นพิมพ์โน้ต ---------- */
+    /* ---------- แป้นพิมพ์บนจอ (หน้าตาแบบ SyyDai IME) ---------- */
+    /* ลอยติดด้านล่างจอ เหนือแถบสถานะ · สีอ้างอิงธีมเพื่อให้ใช้ได้ทั้งธีมสว่าง/มืด */
     #keyboard {
+      --kb-bg: color-mix(in srgb, var(--text) 7%, var(--paper));
+      --kb-key: color-mix(in srgb, var(--paper) 90%, transparent);
+      --kb-key-line: color-mix(in srgb, var(--text) 18%, var(--paper));
+      --kb-fn: color-mix(in srgb, var(--text) 12%, var(--paper));
+      --kb-active: color-mix(in srgb, var(--text) 20%, var(--paper));
+      --kb-l3: var(--muted);
+      --kb-row: clamp(34px, 6.4vh, 46px);
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: var(--statusbar-h, 32px);
+      z-index: 22;
       width: 100%;
-      max-width: 960px;
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 12px 14px 14px;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 5px 5px 4px;
+      background: var(--kb-bg);
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 0 2px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.14);
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-    .kb-head {
+    body.table-mode #keyboard { display: none !important; }
+    #keyboard [hidden] { display: none !important; }
+    /* เว้นที่ด้านล่างให้เนื้อหาเลื่อนพ้นคีย์บอร์ด */
+    body.kb-open:not(.table-mode) { padding-bottom: calc(var(--statusbar-h, 32px) + var(--kb-h, 260px)); }
+
+    /* ปุ่มแป้น (ใช้ทั้งผังโน้ตและผังข้อความ) */
+    #keyboard .kb-key,
+    #keyboard .bntKb,
+    #keyboard .bntKbAc {
+      position: relative;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      font-family: var(--font-bold);
-      margin-bottom: 8px;
-    }
-    .kb-head .hint { font-family: var(--font-normal); font-size: 12px; color: var(--muted); }
-
-    .kb-row {
-      display: grid;
-      grid-template-columns: 72px repeat(7, minmax(0, 1fr));
-      gap: 6px;
-      margin-bottom: 6px;
-      align-items: center;
-    }
-    .kb-row .lbl { font-size: 12px; color: var(--muted); }
-
-    .bntKb, .bntKbAc {
-      font-family: var(--mono);
-      font-size: 18px;
-      padding: 10px 0;
-      border-radius: 8px;
-      background: var(--panel);
       min-width: 0;
+      height: auto;
+      padding: 0;
+      margin: 0;
+      border: 0;
+      border-bottom: 1px solid var(--kb-key-line);
+      border-radius: 6px;
+      background: var(--kb-key);
+      color: var(--text);
+      font-family: var(--font-normal);
+      font-size: 24px;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background-color .05s ease-in;
     }
-    .bntKbAc {
-      background: color-mix(in srgb, #f5c400 30%, var(--paper));
-      border-color: color-mix(in srgb, #c99a00 55%, transparent);
+    #keyboard .bntKb, #keyboard .bntKbAc { font-family: var(--mono); font-size: 20px; }
+    #keyboard .kb-key:active, #keyboard .kb-key.pressed,
+    #keyboard .bntKb:active, #keyboard .bntKbAc:active { background: var(--kb-active); }
+    #keyboard .bntKbAc { background: color-mix(in srgb, #f5c400 22%, var(--paper)); }
+    #keyboard .kb-fn {
+      background: var(--kb-fn);
+      color: color-mix(in srgb, var(--text) 55%, var(--paper));
+      font-size: 20px;
     }
+    #keyboard .kb-fn.on { color: var(--text); }
+    #keyboard .kb-fn.locked { background: color-mix(in srgb, var(--accent) 30%, var(--paper)); color: var(--text); }
+    .kb-l3 {
+      position: absolute;
+      top: 2px;
+      right: 3px;
+      font-size: 11px;
+      color: var(--kb-l3);
+    }
+    .kb-space-label { font-size: 13px; color: var(--kb-l3); }
 
-    .kb-tools {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--line);
+    /* ผังข้อความ (ไทย/EN) แบบ PC: กริด 52 คอลัมน์ แถวเหลื่อมกัน Enter สูง 2 แถว */
+    .kb-text { display: grid; gap: 3px; grid-auto-rows: var(--kb-row); }
+    .kb-text.pc { grid-template-columns: repeat(52, minmax(0, 1fr)); }
+    .kb-text.pc .kb-key { grid-column-end: span 4; }
+    .kb-text.pc [data-code="KeyQ"] { grid-column-start: 2; }
+    .kb-text.pc [data-code="KeyA"] { grid-column-start: 3; }
+    .kb-text.pc [data-code="Backslash"] { grid-column-end: span 3; }
+    .kb-text.pc [data-code="Enter"] { grid-column-end: span 3; grid-row-end: span 2; }
+    .kb-text.pc [data-code="Space"] { grid-column: 14 / span 22; }
+    .kb-text.pc .kb-lang { grid-column: 1 / span 13; }
+    .kb-text.pc .kb-hide { grid-column: -5 / -1; }
+    .kb-text.pc [data-code="KeyF"], .kb-text.pc [data-code="KeyJ"] { border-bottom-color: #6a5acd; }
+    /* แบบมือถือ: 11 คอลัมน์ */
+    .kb-text.mbl { grid-template-columns: repeat(11, minmax(0, 1fr)); }
+    .kb-text.mbl [data-code="Space"] { grid-column-end: span 4; }
+    .kb-text.mbl [data-code="Enter"] { grid-column-end: span 2; }
+    .kb-text.mbl .kb-lang { grid-column: 1 / span 8; }
+    .kb-text.mbl .kb-hide { grid-column: 10 / span 2; }
+
+    /* ผังโน้ต ดรมฟ */
+    #kbNote { display: grid; gap: 3px; }
+    #kbNote .kb-row {
+      display: grid;
+      grid-template-columns: 48px repeat(7, minmax(0, 1fr));
+      grid-auto-rows: var(--kb-row);
+      gap: 3px;
     }
-    .kb-tools .bntKb { flex: 1 1 56px; font-size: 15px; }
-    .kb-tools .wide { flex: 3 1 120px; }
+    #kbNote .kb-row .lbl { align-self: center; font-size: 12px; color: var(--kb-l3); text-align: center; }
+    #kbNote .kb-tools { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); grid-auto-rows: var(--kb-row); gap: 3px; }
+    #kbNote .kb-tools .bntKb { font-size: 15px; }
+    #kbNote .kb-tools.kb-tools-2 { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+    #kbNote .kb-tools-2 .wide { grid-column: span 5; }
+    #kbNote .kb-tools-2 .bntKb:not(.wide) { grid-column: span 2; }
+    #kbNote .kb-navrow { display: grid; grid-template-columns: minmax(0, 1fr) 64px; grid-auto-rows: var(--kb-row); gap: 3px; }
+
+    /* แถบเลือกผัง (🌐 ดรมฟ | ไทย | EN) และปุ่มซ่อน ▼ */
+    .kb-lang { display: flex; gap: 0; min-width: 0; }
+    .kb-lang button {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 0 4px;
+      border: 1px solid var(--kb-key-line);
+      border-right: none;
+      border-radius: 0;
+      background: var(--kb-key);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .kb-lang button:first-child { flex: 0 0 40px; border-radius: 6px 0 0 6px; font-size: 18px; }
+    .kb-lang button:last-child { border-right: 1px solid var(--kb-key-line); border-radius: 0 6px 6px 0; }
+    .kb-lang button[aria-selected="true"] { background: var(--kb-active); font-family: var(--font-bold); }
+    #keyboard .kb-hide { font-size: 16px; }
 
     /* ---------- แผงคุณสมบัติด้านขวา ---------- */
     /* ซ่อนแผงคุณสมบัติเมื่อไม่มีพาเนลใดแสดงอยู่ */
@@ -586,6 +664,10 @@
       order: -1;
       overflow-y: auto;
     }
+
+    /* หัว popup แผงตั้งค่า + ฉากหลัง (ใช้เฉพาะจอเล็ก) */
+    .setting-head { display: none; }
+    #settingBackdrop { display: none; }
 
     .panel {
       background: var(--paper);
@@ -784,15 +866,73 @@
     /* ---------- จอเล็ก ---------- */
     @media (max-width: 900px) {
       .workspace { grid-template-columns: 1fr; }
-      #settingArea { width: auto; order: 0; border-right: none; border-top: 1px solid var(--line); }
+      /* จอเล็ก: แผงตั้งค่าแสดงเป็น popup กลางจอ (เปิดจากปุ่มใน ribbon) ไม่ถูกแถบสถานะบัง */
+      #settingArea {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 31;
+        width: min(440px, calc(100vw - 32px));
+        max-height: calc(100vh - 48px);
+        max-height: calc(100dvh - 48px);
+        padding: 0 14px 14px;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        box-shadow: 0 20px 50px rgba(0,0,0,.3);
+      }
+      #settingArea:not(.popup-open) { display: none !important; }
+      /* popup แสดงเฉพาะพาเนลที่เพิ่งกดเปิด */
+      #settingArea.popup-open > .panel:not(.popup-active) { display: none !important; }
+      #settingArea.popup-open:not(.is-empty) ~ #settingBackdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        background: rgba(0,0,0,.4);
+      }
+      .setting-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        margin: 0 -14px;
+        padding: 10px 14px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      .setting-head h3 { margin: 0; font-size: 15px; }
+      .setting-head button { border-color: transparent; font-size: 18px; line-height: 1; padding: 4px 10px; }
       .transport { margin-left: 0; }
+      /* ปุ่มซ่อน ribbon: ห้อยเป็นแถบเล็กต่อจาก ribbon ด้านล่างขวา */
+      #ribbonToggle {
+        position: absolute;
+        top: 100%;
+        right: 12px;
+        margin: 0;
+        padding: 2px 10px 4px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 3px 6px rgba(0,0,0,.08);
+      }
+      .ribbon.collapsed { border-top: none; }
     }
     @media (max-width: 560px) {
       .sheet { padding: 18px 16px 24px; }
       .brand small { display: none; }
       #melody { min-width: 0; flex: 1; }
-      .kb-row { grid-template-columns: 44px repeat(7, minmax(0, 1fr)); gap: 4px; }
-      .bntKb, .bntKbAc { font-size: 16px; padding: 9px 0; }
+      /* มือถือ: คีย์บอร์ดเต็มความกว้าง ทับแถบสถานะ */
+      #keyboard { bottom: 0; z-index: 22; border-radius: 0; padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }
+      body.kb-open:not(.table-mode) { padding-bottom: var(--kb-h, 260px); }
+      #keyboard .kb-key { font-size: 20px; }
+      #keyboard .bntKb, #keyboard .bntKbAc { font-size: 17px; }
+      .kb-l3 { top: 1px; right: 2px; font-size: 9px; }
+      #kbNote .kb-row { grid-template-columns: 36px repeat(7, minmax(0, 1fr)); }
+      #kbNote .kb-tools .bntKb { font-size: 13px; }
     }
   </style>
 </head>
@@ -866,7 +1006,7 @@
       <div class="rgroup">
         <div class="tools">
           <button onclick="editor()"><img class="ic" src="icons/lc_editdoc.svg" alt="">เครื่องมือแก้ไข</button>
-          <button onclick="showKeyboard()"><img class="ic" src="icons/lc_charmapcontrol.svg" alt="">คีย์บอร์ดโน้ต</button>
+          <button onclick="showKeyboard()"><img class="ic" src="icons/lc_keyboard.svg" alt="">คีย์บอร์ดโน้ต</button>
           <button onclick="showHistory()"><img class="ic" src="icons/lc_versiondialog.svg" alt="">ประวัติ</button>
         </div>
         <div class="gname">แก้ไข</div>
@@ -946,12 +1086,10 @@
       </div>
 
       <!-- คีย์บอร์ดโน้ต -->
-      <div id="keyboard" style="display:none">
-        <div class="kb-head">
-          <span class="kb-title"><img class="ic" src="icons/lc_charmapcontrol.svg" alt="">คีย์บอร์ดโน้ต</span>
-          <span class="hint">แตะเพื่อฟังเสียง · เหลือง = ฟ / ท</span>
-        </div>
+      <div id="keyboard" style="display:none" role="group" aria-label="คีย์บอร์ดบนจอ">
 
+        <!-- ผังโน้ต ดรมฟ -->
+        <div class="kb-layout" id="kbNote">
         <div class="kb-row">
           <span class="lbl">สูง ํ</span>
           <button class="bntKb" value="ดํ" onclick="keyboardInputPlay(this)">ดํ</button>
@@ -994,16 +1132,26 @@
           <button class="bntKb" value="b" onclick="keyboardInputPlay(this)">b</button>
           <button class="bntKb" value="/" onclick="keyboardInputPlay(this)">/</button>
         </div>
-        <div class="kb-tools">
+        <div class="kb-tools kb-tools-2">
           <button class="bntKb wide" value=" " onclick="keyboardInputPlay(this)">⎵ เว้นวรรค</button>
           <button class="bntKb" value="&#10;" onclick="keyboardInputPlay(this)">↵ Enter</button>
           <button class="bntKb" onclick="keyboardDelete();">⌫ ลบ</button>
         </div>
+        <!-- แถวล่าง: เลือกผัง + ซ่อน (สร้างจาก script/keyboard.js) -->
+        <div class="kb-navrow" id="kbNoteNav"></div>
+        </div>
+
+        <!-- ผังไทย / อังกฤษ (สร้างจาก script/keyboard.js) -->
+        <div class="kb-layout kb-text" id="kbText" hidden></div>
       </div>
     </section>
 
     <!-- ===================== แผงคุณสมบัติ ===================== -->
     <aside class="flex-container" id="settingArea" style="display:flex">
+      <div class="setting-head">
+        <h3>การตั้งค่า</h3>
+        <button id="settingClose" type="button" title="ปิด (Esc)" aria-label="ปิด">✕</button>
+      </div>
 
       <!-- เครื่องมือแก้ไข -->
       <div class="panel" id="editor" style="display: block;">
@@ -1180,6 +1328,7 @@
         </div>
       </div>
     </aside>
+    <div id="settingBackdrop"></div>
   </main>
 
   <!-- ===================== แถบสถานะ ===================== -->
@@ -1187,7 +1336,7 @@
     <span><span class="dot"></span>สถานะ<span id="status">: พร้อม</span></span>
     <span>บันทึกอัตโนมัติทุก 10 วินาที</span>
     <span class="links">
-      <a href="./about.html#log" id="aboutLink" aria-haspopup="dialog">ⓘ เกี่ยวกับ v. 0.024 [26-11-21]</a>
+      <a href="./about.html#log" id="aboutLink" aria-haspopup="dialog">ⓘ เกี่ยวกับ v. 0.024.1 [26-11-22]</a>
       <a href="http://music.warut.net" target="_blank">↪︎ music.warut.net</a>
     </span>
   </footer>
@@ -1205,7 +1354,7 @@
       <img src="icon.png" alt="">
       <div>
         <h2 id="aboutTitle">ดรมฟ Online</h2>
-        <p>เขียน/เล่นโน้ตดนตรีไทยออนไลน์ · v. 0.024 [26-11-21]</p>
+        <p>เขียน/เล่นโน้ตดนตรีไทยออนไลน์ · v. 0.024.1 [26-11-22]</p>
       </div>
       <button type="button" class="about-close" title="ปิด (Esc)" aria-label="ปิด">✕</button>
     </header>
@@ -1290,6 +1439,7 @@
       <section id="about-log">
         <h3>บันทึกการเปลี่ยนแปลง (Log)</h3>
         <ol class="about-log" reversed>
+          <li><time>26-11-22</time><span>คีย์บอร์ดบนจอแบบใหม่ (ดรมฟ / ไทย / EN) ไม่ให้คีย์บอร์ดระบบเด้งบนมือถือ, ไอคอนคีย์บอร์ด, แผงตั้งค่าแบบ popup บนมือถือ</span></li>
           <li><time>26-11-21</time><span>เพิ่มการตั้งค่าแบบอักษร, ธีมใหม่ 6 ธีม, ลวดลายพื้นหลัง, ชุดไอคอน LibreOffice, ปรับระยะห่างในตารางโน้ต, ซ่อน/ย่อ ribbon, แยกคีย์ # กับ b, บันทึกการตั้งค่าทั้งหมดอัตโนมัติ, หน้าเกี่ยวกับแบบ popup <a href="./old_index.html">ดูหน้าเพจเก่า</a></span></li>
           <li><time>26-10-26</time>เพิ่มฟังก์ชันบันทึกโน้ตลง localStorage อัตโนมัติ, ฟังก์ชันการแทรกช่องว่างในระหว่างโน้ต 4 ตัว, ปรับปรุงคีย์บอร์ดสำหรับมือถือ</li>
           <li><time>26-10-18</time>เพิ่มฟังก์ชันการเล่นโน้ต triplet ในรูปแบบ <code>{ooo}</code></li>
@@ -1332,6 +1482,7 @@
   </div>
 
   <script src="./script/index.js"></script>
+  <script src="./script/keyboard.js"></script>
   <script src="./script/theme.js"></script>
   <script src="./script/rtttl.js"></script>
 
@@ -1751,6 +1902,56 @@
     panelObserver.observe(sizeTableEl, { attributes: true, attributeFilter: ["style"] });
     settingPanels.forEach(p => panelObserver.observe(p, { attributes: true, attributeFilter: ["style"] }));
     syncSettingArea();
+
+    // ===== จอเล็ก: แผงตั้งค่าเป็น popup =====
+    // เปิดเมื่อมีพาเนลถูกเปิดจาก ribbon, ปิดด้วย ✕ / แตะฉากหลัง / Esc (พาเนลยังคงสถานะเดิม)
+    const mobileMQ = window.matchMedia("(max-width: 900px)");
+    const settingBackdrop = document.getElementById("settingBackdrop");
+    const setPopup = open => settingAreaEl.classList.toggle("popup-open", open);
+    document.getElementById("settingClose").addEventListener("click", () => setPopup(false));
+    settingBackdrop.addEventListener("click", () => setPopup(false));
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && mobileMQ.matches && settingAreaEl.classList.contains("popup-open")) setPopup(false);
+    });
+    // popup แสดงทีละพาเนล: พาเนลที่กดเปิดล่าสุด (ใช้ class ไม่เปลี่ยน style.display ที่ถูกจำไว้)
+    const isVisible = p => p.style.display !== "none";
+    const allowedHere = id => !document.body.classList.contains("table-mode") || TABLE_PANELS.includes(id);
+    let activePanel = null;
+    function showOnly(panel) {
+      activePanel = panel;
+      settingPanels.forEach(p => p.classList.toggle("popup-active", p === panel));
+      setPopup(true);
+    }
+    // พาเนลเปลี่ยนจากซ่อน -> แสดง: เปิด popup เฉพาะพาเนลนั้น
+    // พาเนลที่แสดงอยู่ถูกปิด และไม่มีพาเนลใหม่เปิดแทน: ปิด popup
+    // (เริ่มสังเกตหลังโหลดเสร็จ เพื่อไม่ให้การเรียกคืนพาเนลที่จำไว้เปิด popup เอง)
+    setTimeout(() => {
+      const wasVisible = new Map(settingPanels.map(p => [p, isVisible(p)]));
+      new MutationObserver(() => {
+        let opened = null;
+        settingPanels.forEach(p => {
+          const now = isVisible(p);
+          if (now && !wasVisible.get(p) && allowedHere(p.id)) opened = p;
+          wasVisible.set(p, now);
+        });
+        const activeClosed = activePanel && !isVisible(activePanel);
+        // ปิดพาเนลธีม/แบบอักษร -> โค้ดเดิมเปิด "แก้ไข" กลับอัตโนมัติ: ถือเป็นการปิด popup
+        const sideEffect = opened && opened.id === "editor" && activeClosed;
+        if (opened && !sideEffect) showOnly(opened);
+        else if (activeClosed) setPopup(false);
+      }).observe(settingAreaEl, { attributes: true, attributeFilter: ["style"], subtree: true });
+    });
+    // ปุ่มใน ribbon ที่สลับพาเนล: ถ้าพาเนลนั้นแสดงอยู่แล้วแต่ไม่ได้อยู่ใน popup ให้เปิดดูแทนการซ่อนพาเนล
+    const PANEL_BUTTONS = { "editor()": "editor", "themePanel()": "theme", "fontPanel()": "font-panel", "showHistory()": "history-panel" };
+    ribbonEl.addEventListener("click", e => {
+      if (!mobileMQ.matches) return;
+      const btn = e.target.closest("button[onclick]");
+      const panel = btn && document.getElementById(PANEL_BUTTONS[btn.getAttribute("onclick").trim()]);
+      if (!panel || !isVisible(panel) || !allowedHere(panel.id)) return;
+      if (settingAreaEl.classList.contains("popup-open") && activePanel === panel) return; // กดซ้ำ = ปิดพาเนลตามปกติ
+      e.stopPropagation();   // capture: ไม่ให้ onclick ของปุ่มทำงาน
+      showOnly(panel);
+    }, true);
 
     // ===== บันทึก/เรียกคืนค่าที่เหลือ: คีย์, ช่วงทบเสียง, พาเนลที่เปิด, คีย์บอร์ดโน้ต =====
     const store = {
