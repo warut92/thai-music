@@ -7,7 +7,15 @@
   <meta name="description" content="โปรแกรมพิมพ์และเล่นโน้ตดนตรีไทย ออนไลน์" />
   <meta name="keywords" content="โปรแกรมโน้ตดนตรีไทย, โปรแกรมเล่นโน้ตดนตรีไทย, โปรแกรมพิมพ์โน้ตดนตรีไทย">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="icon.png">
+  <!-- ไอคอนแท็บ + ไอคอนแอปเมื่อ "เพิ่มไปยังหน้าจอโฮม" (สร้างจาก icon.png ให้เป็นสี่เหลี่ยมจัตุรัส พื้นขาว) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="app-icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="app-icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="app-icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#f9fafb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ดรมฟ Online">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- แบบอักษรที่เลือกได้ในแผง "แบบอักษร" -->
@@ -127,7 +135,6 @@
       color: var(--muted);
     }
 
-    #melody { min-width: 220px; max-width: 100%; }
 
     .transport {
       display: flex;
@@ -256,7 +263,7 @@
     .desk {
       grid-column: -2 / -1; /* อยู่คอลัมน์ขวาเสมอ แม้แผงซ้ายถูกซ่อน (โหมดตารางโน้ต) */
       min-width: 0;
-      padding: 24px 16px 32px;
+      padding: 24px calc(16px * var(--sheet-pad)) 32px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -271,7 +278,7 @@
       border: 1px solid var(--line);
       border-radius: 4px;
       box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08);
-      padding: 28px 32px 36px;
+      padding: calc(28px * var(--sheet-pad)) calc(32px * var(--sheet-pad)) calc(36px * var(--sheet-pad));
     }
 
     .sheet-head {
@@ -464,6 +471,7 @@
       --tbl-line: 1.2;        /* ระยะบรรทัด */
       --tbl-text-gap: 0em;    /* ระยะตัวอักษรของหัวข้อ */
       --tbl-note-gap: 0em;    /* ระยะตัวโน้ต */
+      --sheet-pad: 1;         /* ตัวคูณระยะขอบแผ่นโน้ต (ค่าพื้นฐานต่างกันตามขนาดจอ) */
     }
     #output table td {
       font-size: var(--music-size);
@@ -845,7 +853,9 @@
       box-shadow: 0 20px 50px rgba(0,0,0,.3);
     }
     .load-file-content h3 { margin: 0 0 6px; }
-    .load-file-content p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .load-file-content p { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+    .load-file-content h4 { margin: 16px 0 4px; font-size: 15px; }
+    .load-file-content #melody { width: 100%; }
     .load-file-content input[type="file"] {
       width: 100%;
       padding: 18px;
@@ -922,9 +932,9 @@
       .ribbon.collapsed { border-top: none; }
     }
     @media (max-width: 560px) {
-      .sheet { padding: 18px 16px 24px; }
+      .desk { padding: 12px calc(4px * var(--sheet-pad)) 20px; gap: 12px; }
+      .sheet { padding: calc(14px * var(--sheet-pad)) calc(8px * var(--sheet-pad)) calc(20px * var(--sheet-pad)); }
       .brand small { display: none; }
-      #melody { min-width: 0; flex: 1; }
       /* มือถือ: คีย์บอร์ดเต็มความกว้าง ทับแถบสถานะ */
       #keyboard { bottom: 0; z-index: 22; border-radius: 0; padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }
       body.kb-open:not(.table-mode) { padding-bottom: var(--kb-h, 260px); }
@@ -948,36 +958,6 @@
         <small>โปรแกรมพิมพ์โน้ตดนตรีไทย</small>
       </div>
 
-      <select id="melody" onchange="changeMelody(); getTempo()" aria-label="เลือกเพลงตัวอย่าง">
-        <option value="">♪ เลือกเพลงตัวอย่าง…</option>
-        <optgroup label="ตัวอย่างเปล่า">
-          <option value="template">ตัวอย่างเปล่า</option>
-        </optgroup>
-        <optgroup label="เพลงไทยเดิม">
-          <option value="lao-kruan">ลาวครวญ 2 ชั้น</option>
-          <option value="lao-phung-khao">ลาวพุงขาว 2 ชั้น</option>
-          <option value="lao-joy-song">ลาวจ้อย สองชั้น</option>
-          <option value="lao-joy-single">ลาวจ้อย ชั้นเดียว</option>
-          <option value="lao-long-nan">ลาวล่องน่าน ชั้นเดียว</option>
-          <option value="khaek-borathete">แขกบรเทศ ชั้นเดียว</option>
-          <option value="lao-siang-thian">ลาวเสี่ยงเทียน 2 ชั้น</option>
-        </optgroup>
-        <optgroup label="ตัวอย่างโน้ตฆ้องวง">
-          <option value="khaek-borathete-khong">แขกบรเทศ ชั้นเดียว [ฆ้องวงใหญ่]</option>
-          <option value="laa">ลา [ฆ้องวงใหญ่]</option>
-        </optgroup>
-        <optgroup label="เพลงป๊อป">
-          <option value="luk-om">ลูกอม</option>
-          <option value="sai-ta-lok-kan">สายตาหลอกกันไม่ได้</option>
-          <option value="tai-thang-pen">ตายทั้งเป็น</option>
-          <option value="kaem-nong-nang">แก้มน้องนางนั้นแดงกว่าใคร</option>
-          <option value="thak-khrab">ทักครับ - Lipta</option>
-        </optgroup>
-        <optgroup label="เพลงลูกทุ่ง">
-          <option value="sao-suan-taeng">สาวสวนแตง</option>
-          <option value="nirat-wiang-phing">นิราศเวียงพิงค์</option>
-        </optgroup>
-      </select>
 
       <div class="transport">
         <button class="playBtn"
@@ -1075,6 +1055,10 @@
           <span class="sp-group" data-var="--tbl-note-gap" data-unit="em" data-min="-0.1" data-max="0.8" data-step="0.05" data-default="0">
             <span class="st-label" title="ระยะห่างระหว่างตัวโน้ตในตาราง">↔ โน้ต</span>
             <button class="sp-dec" title="ชิดขึ้น">−</button><output class="sp-val"></output><button class="sp-inc" title="ห่างขึ้น">+</button>
+          </span>
+          <span class="sp-group" data-var="--sheet-pad" data-unit="" data-min="0" data-max="2" data-step="0.25" data-default="1">
+            <span class="st-label" title="ระยะขอบของแผ่นโน้ต (ตัวคูณจากค่าเริ่มต้น; 0 = ชิดขอบจอ)">▭ ขอบ</span>
+            <button class="sp-dec" title="ชิดขอบขึ้น">−</button><output class="sp-val"></output><button class="sp-inc" title="ห่างขอบขึ้น">+</button>
           </span>
           <button id="spReset" title="คืนค่าระยะห่างเริ่มต้น">↺</button>
         </div>
@@ -1385,7 +1369,7 @@
         <p>พิมพ์ตัวโน้ตดนตรีไทยในระบบ ดรมฟ หรือระบบ 1–9 จากนั้นโปรแกรมจะแปลงโน้ตเป็นระบบ RTTTL
           และสังเคราะห์เสียงพื้นฐานด้วย Web Audio API</p>
         <p class="about-note">📱 การเล่นในโทรศัพท์มือถือ ต้องปิดโหมดห้ามรบกวน/โหมดเงียบ</p>
-        <p>หากไม่คุ้นเคยกับระบบโน้ตดนตรีไทย ดรมฟ เลือกโน้ตตัวอย่างได้ที่ปุ่ม <b>♪ เลือกเพลงตัวอย่าง</b></p>
+        <p>หากไม่คุ้นเคยกับระบบโน้ตดนตรีไทย ดรมฟ เปิดโน้ตเพลงตัวอย่างได้จากปุ่ม <b>เปิดไฟล์</b> แล้วเลือกในหัวข้อ <b>เพลงตัวอย่าง</b></p>
         <p>โปรแกรมนี้ไม่มีการเก็บโน้ตของผู้ใช้งาน (โน้ตและการตั้งค่าบันทึกไว้ในเบราว์เซอร์ของผู้ใช้เท่านั้น)
           โค้ดใช้สัญญาอนุญาต <a href="./LICENSE" target="_blank">MIT</a> และเป็น <a href="./readme.md" target="_blank">Open Source</a></p>
       </section>
@@ -1476,6 +1460,39 @@
     <div class="load-file-content">
       <span class="close" title="ปิด">✕</span>
       <h3><img class="ic" src="icons/lc_open.svg" alt="">เปิดไฟล์โน้ต</h3>
+      <h4>เพลงตัวอย่าง</h4>
+      <p>เลือกโน้ตตัวอย่างมาเปิดในแผ่นโน้ต (แทนที่โน้ตเดิม)</p>
+      <select id="melody" onchange="pickMelody()" aria-label="เลือกเพลงตัวอย่าง">
+        <option value="">♪ เลือกเพลงตัวอย่าง…</option>
+        <optgroup label="ตัวอย่างเปล่า">
+          <option value="template">ตัวอย่างเปล่า</option>
+        </optgroup>
+        <optgroup label="เพลงไทยเดิม">
+          <option value="lao-kruan">ลาวครวญ 2 ชั้น</option>
+          <option value="lao-phung-khao">ลาวพุงขาว 2 ชั้น</option>
+          <option value="lao-joy-song">ลาวจ้อย สองชั้น</option>
+          <option value="lao-joy-single">ลาวจ้อย ชั้นเดียว</option>
+          <option value="lao-long-nan">ลาวล่องน่าน ชั้นเดียว</option>
+          <option value="khaek-borathete">แขกบรเทศ ชั้นเดียว</option>
+          <option value="lao-siang-thian">ลาวเสี่ยงเทียน 2 ชั้น</option>
+        </optgroup>
+        <optgroup label="ตัวอย่างโน้ตฆ้องวง">
+          <option value="khaek-borathete-khong">แขกบรเทศ ชั้นเดียว [ฆ้องวงใหญ่]</option>
+          <option value="laa">ลา [ฆ้องวงใหญ่]</option>
+        </optgroup>
+        <optgroup label="เพลงป๊อป">
+          <option value="luk-om">ลูกอม</option>
+          <option value="sai-ta-lok-kan">สายตาหลอกกันไม่ได้</option>
+          <option value="tai-thang-pen">ตายทั้งเป็น</option>
+          <option value="kaem-nong-nang">แก้มน้องนางนั้นแดงกว่าใคร</option>
+          <option value="thak-khrab">ทักครับ - Lipta</option>
+        </optgroup>
+        <optgroup label="เพลงลูกทุ่ง">
+          <option value="sao-suan-taeng">สาวสวนแตง</option>
+          <option value="nirat-wiang-phing">นิราศเวียงพิงค์</option>
+        </optgroup>
+      </select>
+      <h4>ไฟล์ในเครื่อง</h4>
       <p>อัปโหลดไฟล์โน้ตในรูปแบบ ดรมฟ Online นามสกุล .txt</p>
       <input type="file" accept=".txt,text/plain" onchange="readFile(this)">
     </div>

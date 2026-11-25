@@ -222,6 +222,23 @@ var rtttlPlay = (function () {
   var currentActiveNote = null;
   var animFrameId = null;
   var audioCtx = null;
+  var schedTimer = null;
+
+  // ===== ปรับความเร็วขณะเล่น (realtime tempo) =====
+  // ความยาวโน้ตจาก parse() คิดตาม BPM ในหัวเพลง (baseBpm)
+  // เวลาเล่นจริง = ความยาวเดิม × tempoScale โดย tempoScale = baseBpm / BPM ปัจจุบัน
+  // โน้ตถูกจัดคิวล่วงหน้าเพียงช่วงสั้น ๆ (LOOKAHEAD) จึงเปลี่ยนความเร็วได้ตั้งแต่โน้ตถัดไป
+  var LOOKAHEAD = 0.2;        // วินาทีที่จัดคิวเสียงล่วงหน้า
+  var SCHED_INTERVAL = 25;    // ms ระหว่างรอบจัดคิว
+  var baseBpm = 0;
+  var tempoScale = 1;
+  var player = null;          // สถานะการเล่นของเพลงปัจจุบัน
+
+  function setTempo(bpm) {
+    bpm = parseFloat(bpm);
+    if (!(bpm > 0) || !(baseBpm > 0)) return;
+    tempoScale = baseBpm / bpm;
+  }
 
   function play(rtttl) {
     try {
@@ -231,8 +248,23 @@ var rtttlPlay = (function () {
       var parsedRtttl = parse(rtttl);
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-      var scheduleData = _scheduleMelody(parsedRtttl.melody, audioCtx);
-      _syncHighlight(audioCtx, scheduleData.timeline);
+      baseBpm = parseInt(parsedRtttl.defaults.bpm, 10) || 0;
+      tempoScale = 1;   // เริ่มที่ BPM ตามหัวเพลง (ช่อง ♩ = ซิงก์กับหัวเพลงอยู่แล้ว)
+
+      var typeElem = document.getElementById('type');
+      player = {
+        ctx: audioCtx,
+        melody: parsedRtttl.melody,
+        waveType: typeElem ? typeElem.value : 'sine',
+        nextIndex: 0,                       // โน้ตถัดไปที่จะจัดคิว
+        nextTime: audioCtx.currentTime + 0.05,
+        nextNoteId: 1,                      // ลำดับจังหวะย่อย (id ของ note-N)
+        timeline: []
+      };
+
+      _scheduleAhead(player);
+      schedTimer = setInterval(function () { _scheduleAhead(player); }, SCHED_INTERVAL);
+      _syncHighlight(player);
     } catch (err) {
       alert(err);
     }
@@ -240,6 +272,11 @@ var rtttlPlay = (function () {
 
   function stop() {
     shouldStop = true;
+
+    if (schedTimer) {
+      clearInterval(schedTimer);
+      schedTimer = null;
+    }
 
     if (animFrameId) {
       cancelAnimationFrame(animFrameId);
@@ -252,6 +289,7 @@ var rtttlPlay = (function () {
       } catch (e) {}
       audioCtx = null;
     }
+    player = null;
 
     clearHighlight();
     var statusElem = document.getElementById('status');
@@ -291,55 +329,57 @@ var rtttlPlay = (function () {
     }
   }
 
-  function _scheduleMelody(melody, ctx) {
-    var startTime = ctx.currentTime + 0.05;
-    var currentTime = startTime;
-    var currentNoteIndex = 1;
-    var timeline = [];
+  // จัดคิวโน้ตที่จะเริ่มภายในช่วง LOOKAHEAD ด้วยความเร็วปัจจุบัน
+  function _scheduleAhead(p) {
+    if (shouldStop || p !== player) return;
+    var ctx = p.ctx;
+    var horizon = ctx.currentTime + LOOKAHEAD;
 
-    var typeElem = document.getElementById('type');
-    var waveType = typeElem ? typeElem.value : 'sine';
-    var speedFactor = 1.0; 
-
-    melody.forEach(function (item) {
-      var noteDuration = item.duration * speedFactor; 
+    while (p.nextIndex < p.melody.length && p.nextTime < horizon) {
+      var item = p.melody[p.nextIndex];
+      var noteDuration = item.duration * tempoScale;
       var subBeats = item.subBeatCount;
       var stepDuration = noteDuration / subBeats;
 
       for (var i = 0; i < subBeats; i++) {
-        timeline.push({
-          startTime: currentTime + (i * stepDuration),
-          endTime: currentTime + ((i + 1) * stepDuration),
-          noteIndex: currentNoteIndex + i
+        p.timeline.push({
+          startTime: p.nextTime + (i * stepDuration),
+          endTime: p.nextTime + ((i + 1) * stepDuration),
+          noteIndex: p.nextNoteId + i
         });
       }
 
       if (item.frequency > 0) {
         var osc = ctx.createOscillator();
-        osc.type = waveType;
+        osc.type = p.waveType;
         osc.frequency.value = item.frequency;
 
         osc.connect(ctx.destination);
-        osc.start(currentTime);
-        osc.stop(currentTime + noteDuration);
+        osc.start(p.nextTime);
+        osc.stop(p.nextTime + noteDuration);
       }
 
-      currentTime += noteDuration;
-      currentNoteIndex += subBeats;
-    });
+      p.nextTime += noteDuration;
+      p.nextNoteId += subBeats;
+      p.nextIndex++;
+    }
 
-    return {
-      timeline: timeline,
-      totalDuration: currentTime - startTime
-    };
+    if (p.nextIndex >= p.melody.length && schedTimer) {
+      clearInterval(schedTimer);
+      schedTimer = null;
+    }
   }
 
-  function _syncHighlight(ctx, timeline) {
-    if (shouldStop) return;
+  function _syncHighlight(p) {
+    if (shouldStop || p !== player) return;
 
-    var now = ctx.currentTime;
+    var now = p.ctx.currentTime;
+    var timeline = p.timeline;
+
+    // ตัดช่วงที่เล่นผ่านไปแล้วทิ้ง (เก็บตัวสุดท้ายไว้ใช้ตรวจว่าจบเพลง)
+    while (timeline.length > 1 && timeline[0].endTime <= now) timeline.shift();
+
     var activeItem = null;
-
     for (var i = 0; i < timeline.length; i++) {
       var item = timeline[i];
       if (now >= item.startTime && now < item.endTime) {
@@ -350,7 +390,8 @@ var rtttlPlay = (function () {
 
     if (activeItem) {
       highlightStep(activeItem.noteIndex);
-    } else if (timeline.length > 0 && now >= timeline[timeline.length - 1].endTime) {
+    } else if (p.nextIndex >= p.melody.length &&
+               (timeline.length === 0 || now >= timeline[timeline.length - 1].endTime)) {
       clearHighlight();
       var statusElem = document.getElementById('status');
       if (statusElem) statusElem.innerHTML = ": จบเพลง";
@@ -358,14 +399,15 @@ var rtttlPlay = (function () {
     }
 
     animFrameId = requestAnimationFrame(function () {
-      _syncHighlight(ctx, timeline);
+      _syncHighlight(p);
     });
   }
 
   return {
     parse: parse,
     play: play,
-    stop: stop
+    stop: stop,
+    setTempo: setTempo
   };
 })();
 

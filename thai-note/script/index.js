@@ -307,6 +307,18 @@ span.onclick = function () {
     modal.style.display = "none";
 }
 
+// เลือกเพลงตัวอย่างจากหน้าต่างเปิดไฟล์: โหลดโน้ต แล้วปิดหน้าต่าง
+function pickMelody() {
+    const select = document.getElementById("melody");
+    if (!select.value) return;
+    changeMelody();
+    getTempo();
+    const tempoBox = document.getElementById("tempoInput");
+    if (tempoBox && typeof getTempoFromText === "function") tempoBox.value = getTempoFromText();
+    select.value = "";          // คืนเป็นหัวข้อ เพื่อเลือกเพลงเดิมซ้ำได้
+    modal.style.display = "none";
+}
+
 window.onclick = function (event) {
     if (event.target == modal) {
         modal.style.display = "none";
@@ -467,6 +479,12 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateTempoInText(newTempo) {
       textarea.value = textarea.value.replace(/\(\d+\)/, `(${newTempo})`);
       tempoInput.value = newTempo;
+      // เปลี่ยนความเร็วเพลงที่กำลังเล่นทันที (ข้ามค่าที่ยังพิมพ์ไม่เสร็จ เช่น "1" ระหว่างพิมพ์ "120")
+      const min = parseInt(tempoInput.min) || 1;
+      const max = parseInt(tempoInput.max) || Infinity;
+      if (newTempo >= min && newTempo <= max && window.rtttlPlay && rtttlPlay.setTempo) {
+        rtttlPlay.setTempo(newTempo);
+      }
     }
     
     // โหลดค่าเริ่มต้น
@@ -500,7 +518,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const settingArea = document.getElementById("settingArea");
       const thmArea = document.getElementById("thm");
-      const selectionMelodyArea = document.getElementById("melody");
       const settingTableArea = document.getElementById("sizeTable");
       const outputArea = document.getElementById("output");
   
@@ -512,7 +529,6 @@ document.addEventListener("DOMContentLoaded", function () {
   
           settingArea.style.display = "flex";
           thmArea.style.display = "block";
-          selectionMelodyArea.style.display = "flex";
           outputArea.style.display = "none";
           settingTableArea.style.display = "none";
   
@@ -520,7 +536,6 @@ document.addEventListener("DOMContentLoaded", function () {
   
           settingArea.style.display = "none";
           thmArea.style.display = "none";
-          selectionMelodyArea.style.display = "none";
           settingTableArea.style.display = "flex";
           outputArea.style.display = "block";
       }
