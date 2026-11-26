@@ -484,7 +484,7 @@
     }
     /* ความสูงตามขนาดตัวอักษร (ไม่ fix px) เพื่อไม่ให้ h2 กับ h ทับกันเมื่อขยายโน้ต */
     #output h2 {
-      font-size: calc(var(--music-size) * 1.6);
+      font-size: var(--title-size, calc(var(--music-size) * 1.6));
       line-height: var(--tbl-line);
       letter-spacing: var(--tbl-text-gap);
       margin: 0 0 calc((var(--tbl-line) - 1) * 0.5em + 0.1em);
@@ -677,7 +677,9 @@
     }
 
     /* หัว popup แผงตั้งค่า + ฉากหลัง (ใช้เฉพาะจอเล็ก) */
-    .setting-head { display: none; }
+    .setting-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: -4px; }
+    .setting-head h3 { margin: 0; font-size: 14px; }
+    .setting-head button { border-color: transparent; background: transparent; font-size: 16px; line-height: 1; padding: 4px 8px; }
     #settingBackdrop { display: none; }
 
     .panel {
@@ -1041,6 +1043,11 @@
       <!-- แถบปรับขนาดในมุมมองตารางโน้ต (ติดด้านล่างจอ) -->
       <div id="sizeTable" style="display:none;">
         <div class="st-controls" id="stControls">
+          <span class="st-label">ขนาดชื่อเพลง</span>
+          <button id="decreaseTitleSize">−</button>
+          <input type="number" id="titleSizeInput" value="19" min="10" max="100">
+          <button id="increaseTitleSize">+</button>
+
           <span class="st-label">ขนาดโน้ต</span>
           <button id="decreaseSize">−</button>
           <input type="number" id="sizeInput" value="12" min="10" max="60">
@@ -1052,7 +1059,7 @@
             <button class="sp-dec" title="ชิดขึ้น">−</button><output class="sp-val"></output><button class="sp-inc" title="ห่างขึ้น">+</button>
           </span>
           <span class="sp-group" data-var="--tbl-text-gap" data-unit="em" data-min="-0.1" data-max="0.5" data-step="0.05" data-default="0">
-            <span class="st-label" title="ระยะห่างระหว่างตัวอักษรของชื่อเพลงและท่อนเพลง">↔ ตัวหนังสือ</span>
+            <span class="st-label" title="ระยะห่างระหว่างตัวอักษรของชื่อเพลงและท่อนเพลง">↔ ชื่อเพลง</span>
             <button class="sp-dec" title="ชิดขึ้น">−</button><output class="sp-val"></output><button class="sp-inc" title="ห่างขึ้น">+</button>
           </span>
           <span class="sp-group" data-var="--tbl-note-gap" data-unit="em" data-min="-0.1" data-max="0.8" data-step="0.05" data-default="0">
@@ -1137,7 +1144,7 @@
     <aside class="flex-container" id="settingArea" style="display:flex">
       <div class="setting-head">
         <h3>การตั้งค่า</h3>
-        <button id="settingClose" type="button" title="ปิด (Esc)" aria-label="ปิด">✕</button>
+        <button id="settingClose" type="button" title="ซ่อนแผงตั้งค่าทั้งหมด" aria-label="ซ่อนแผงตั้งค่าทั้งหมด">✕</button>
       </div>
 
       <!-- เครื่องมือแก้ไข -->
@@ -1268,12 +1275,6 @@
           <button onclick="setTheme('theme12')"><span class="swatch" style="background:#2a2238;border-color:#a68bd6"></span>ม่วงราตรี</button>
         </div>
 
-        <h4 class="pat-title">แถบเครื่องมือ</h4>
-        <label class="field">
-          <span>ซ่อนคำอธิบายใต้ไอคอน</span>
-          <input type="checkbox" id="ribbonNoLabels">
-        </label>
-
         <h4 class="pat-title">ลวดลายพื้นหลัง</h4>
         <div class="themes" id="patterns"></div>
 
@@ -1299,6 +1300,12 @@
         <div class="row-btns">
           <button id="fontReset">↺ ค่าเริ่มต้น</button>
         </div>
+
+        <h4 class="pat-title">แถบเครื่องมือ</h4>
+        <label class="field">
+          <span>ซ่อนคำอธิบายใต้ไอคอน</span>
+          <input type="checkbox" id="ribbonNoLabels">
+        </label>
       </div>
 
       <!-- ประวัติ -->
@@ -1415,17 +1422,26 @@
             <tbody>
               <tr><td class="mono">-</td><td>แสดงความยาว 1 จังหวะย่อย</td></tr>
               <tr><td class="mono">x</td><td>แสดงความเงียบ 1 จังหวะย่อย</td></tr>
-              <tr><td class="mono">/</td><td>ห้องเพลง</td></tr>
+              <tr><td class="mono">/ หรือ ␣</td><td>แบ่งห้องเพลง ใช้ <code>/</code> หรือช่องว่าง (เว้นวรรค) ก็ได้</td></tr>
               <tr><td class="mono">&gt;</td><td>เริ่มเล่นที่</td></tr>
-              <tr><td class="mono">'</td><td>สัญลักษณ์กำกับโน้ตครึ่งหนึ่งของ -</td></tr>
+              <tr><td class="mono">'</td><td>สะบัด: โน้ตตัวถัดไปยาวครึ่งหนึ่ง เช่น <code>'ซ</code></td></tr>
+              <tr><td class="mono">''</td><td>สะบัดสองชั้น: โน้ตตัวถัดไปยาวหนึ่งในสี่</td></tr>
+              <tr><td class="mono">[ ]</td><td>สะบัดแบบกลุ่ม: ทุกตัวในวงเล็บยาวครึ่งหนึ่ง กี่ตัวก็ได้ เช่น <code>[ดรมฟ]</code> = <code>'ด'ร'ม'ฟ</code></td></tr>
+              <tr><td class="mono">[[ ]]</td><td>สะบัดสองชั้นแบบกลุ่ม: ทุกตัวในวงเล็บยาวหนึ่งในสี่ เช่น <code>[[ดรมฟ]]</code></td></tr>
+              <tr><td class="mono">#</td><td>ชาร์ป ครึ่งเสียงสูง (พิมพ์หลังโน้ต เช่น <code>ฟ#</code>)</td></tr>
+              <tr><td class="mono">b</td><td>แฟลต ครึ่งเสียงต่ำ (พิมพ์หลังโน้ต เช่น <code>ทb</code>)</td></tr>
+              <tr><td class="mono">{ }</td><td>Triplet: โน้ต 3 ตัวใน 1 จังหวะ เช่น <code>{ดรม}</code></td></tr>
+              <tr><td class="mono">( )</td><td>ข้อความกำกับ ไม่ถูกเล่น เช่น <code>(ท่อน 1)</code> ถ้าอยู่บรรทัดเดี่ยวจะเป็นหัวข้อท่อนในตารางโน้ต</td></tr>
             </tbody>
           </table>
         </div>
+        <p>ตัวอย่างหัวเพลง: <code>ลาวครวญ 2 ชั้น(120)(C):</code></p>
       </section>
 
       <section id="about-log">
         <h3>บันทึกการเปลี่ยนแปลง (Log)</h3>
         <ol class="about-log" reversed>
+          <li><time>26-11-26</time><span>สะบัดแบบกลุ่มด้วย <code>[ ]</code> (ยาวครึ่งหนึ่ง) และ <code>[[ ]]</code> (ยาวหนึ่งในสี่), เพิ่มคำอธิบายสัญลักษณ์ในหน้าเกี่ยวกับ</span></li>
           <li><time>26-11-25</time><span>ปรับความเร็ว (♩ =) ได้ขณะเล่นโน้ต, ย้ายรายการเพลงตัวอย่างไปไว้ในหน้าต่างเปิดไฟล์, ปรับระยะขอบแผ่นโน้ตได้ในหน้าตารางโน้ต และให้ชิดขอบจอมากขึ้นบนมือถือ, ไอคอนแอปเมื่อเพิ่มไปยังหน้าจอโฮม, ปิดการซูมหน้าจอด้วยมือบนมือถือ</span></li>
           <li><time>26-11-22</time><span>คีย์บอร์ดบนจอแบบใหม่ (ดรมฟ / ไทย / EN) ไม่ให้คีย์บอร์ดระบบเด้งบนมือถือ, ไอคอนคีย์บอร์ด, แผงตั้งค่าแบบ popup บนมือถือ</span></li>
           <li><time>26-11-21</time><span>เพิ่มการตั้งค่าแบบอักษร, ธีมใหม่ 6 ธีม, ลวดลายพื้นหลัง, ชุดไอคอน LibreOffice, ปรับระยะห่างในตารางโน้ต, ซ่อน/ย่อ ribbon, แยกคีย์ # กับ b, บันทึกการตั้งค่าทั้งหมดอัตโนมัติ, หน้าเกี่ยวกับแบบ popup <a href="./old_index.html">ดูหน้าเพจเก่า</a></span></li>
@@ -1937,7 +1953,13 @@
     const mobileMQ = window.matchMedia("(max-width: 900px)");
     const settingBackdrop = document.getElementById("settingBackdrop");
     const setPopup = open => settingAreaEl.classList.toggle("popup-open", open);
-    document.getElementById("settingClose").addEventListener("click", () => setPopup(false));
+    // ✕: จอเล็กปิด popup (พาเนลคงสถานะเดิม) · จอใหญ่ซ่อนทุกพาเนล → #settingArea ซ่อนตัวเอง (is-empty)
+    // เปิดกลับได้จากปุ่มใน ribbon
+    document.getElementById("settingClose").addEventListener("click", () => {
+      if (mobileMQ.matches) setPopup(false);
+      // หน้าตารางโน้ต: ซ่อนเฉพาะพาเนลที่แสดงในหน้านี้ (ธีม/แบบอักษร) ไม่แตะพาเนลของหน้าพิมพ์โน้ต
+      else settingPanels.filter(p => allowedHere(p.id)).forEach(p => { p.style.display = "none"; });
+    });
     settingBackdrop.addEventListener("click", () => setPopup(false));
     document.addEventListener("keydown", e => {
       if (e.key === "Escape" && mobileMQ.matches && settingAreaEl.classList.contains("popup-open")) setPopup(false);

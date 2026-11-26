@@ -560,6 +560,9 @@ document.addEventListener("DOMContentLoaded", function () {
   
       // เช็คว่าในข้อความมีเครื่องหมาย > หรือไม่
       let isFoundStartPoint = !text.includes(">");
+
+      // ระดับสะบัดแบบกลุ่ม: 0 = ปกติ, 1 = ภายใน [ ], 2 = ภายใน [[ ]] (ต่อเนื่องข้ามช่องได้)
+      let bracketLevel = 0;
   
       // ตัวแปรนับ ID โน้ต
       let noteIdCounter = 1;
@@ -668,6 +671,18 @@ document.addEventListener("DOMContentLoaded", function () {
                   let char = chars[i];
   
                   // 1. ลบ/ข้ามเครื่องหมาย {
+                  // [ / [[ เปิดกลุ่มสะบัด, ] / ]] ปิดกลุ่ม (ไม่แสดงเครื่องหมาย)
+                  if (char === "[") {
+                      bracketLevel = chars[i + 1] === "[" ? 2 : 1;
+                      if (bracketLevel === 2) i++;
+                      continue;
+                  }
+                  if (char === "]") {
+                      if (chars[i + 1] === "]") i++;
+                      bracketLevel = 0;
+                      continue;
+                  }
+
                   if (char === "{") {
                       continue;
                   }
@@ -713,11 +728,23 @@ document.addEventListener("DOMContentLoaded", function () {
                       const span = document.createElement("span");
                       span.id = `note-${noteIdCounter++}`;
                       
+                      if (!sabatClass && bracketLevel) {
+                          sabatClass = bracketLevel === 2 ? "sabat2" : "sabat1";
+                      }
                       if (sabatClass) {
                           span.className = sabatClass;
                       }
   
-                      span.textContent = char;
+                      // โน้ตสะบัด: รวมจุดเสียงสูง/ต่ำ (ํ ฺ) ที่ตามหลังไว้ใน span เดียวกัน
+                      // ให้จุดย่อขนาดและยกตำแหน่งไปพร้อมกับตัวโน้ต
+                      let text = char;
+                      if (sabatClass) {
+                          while (i + 1 < chars.length && /[ํฺ]/.test(chars[i + 1])) {
+                              text += chars[++i];
+                          }
+                      }
+
+                      span.textContent = text;
                       td.appendChild(span);
                   } else {
                       td.appendChild(document.createTextNode(char));
@@ -743,57 +770,62 @@ document.addEventListener("DOMContentLoaded", function () {
   
   }
   
-    //การปรับขนาดของฟอนต์
-    const decreaseTableBtn = document.getElementById("decreaseSize");
-    const increaseTableBtn = document.getElementById("increaseSize");
+    //การปรับขนาดของฟอนต์ (แยกตัวโน้ตกับชื่อเพลง)
+    // input: ช่องตัวเลข · cssVar: ตัวแปร CSS · key: คีย์ localStorage · fallback(): ค่าเมื่อยังไม่เคยตั้ง
+    function setupSizeControl({ input, dec, inc, cssVar, key, fallback }) {
+      let saved = null;
+      try { saved = parseInt(localStorage.getItem(key)); } catch (e) {}
+
+      function apply(size) {
+        const min = parseInt(input.min), max = parseInt(input.max);
+        size = Math.min(max, Math.max(min, size));
+        document.documentElement.style.setProperty(cssVar, size + "px");
+        input.value = size;
+        try { localStorage.setItem(key, size); } catch (e) {}
+      }
+
+      inc.addEventListener("click", () => apply((parseInt(input.value) || fallback()) + 2));
+      dec.addEventListener("click", () => apply((parseInt(input.value) || fallback()) - 2));
+      input.addEventListener("change", () => {
+        const size = parseInt(input.value);
+        if (!isNaN(size)) apply(size);
+      });
+
+      if (saved) apply(saved);
+      else input.value = fallback();
+      return { isSaved: () => !!localStorage.getItem(key) };
+    }
+
     const sizeInput = document.getElementById("sizeInput");
-    
-    const STORAGE_KEY = "musicFontSize";
-    
-    // ===== โหลดค่าจาก localStorage =====
-    function loadSavedSize() {
-      const savedSize = localStorage.getItem(STORAGE_KEY);
-    
-      if (savedSize) {
-        applySize(parseInt(savedSize));
-      } else {
-        applySize(parseInt(sizeInput.value)); // ใช้ค่า default
-      }
-    }
-    
-    // ===== ใช้ CSS variable ควบคุมทั้งหมด =====
-    function applySize(size) {
-      document.documentElement.style.setProperty("--music-size", size + "px");
-      sizeInput.value = size;
-    
-      // บันทึกลง localStorage
-      localStorage.setItem(STORAGE_KEY, size);
-    }
-    
-    // ===== ปุ่มเพิ่ม =====
-    increaseTableBtn.addEventListener("click", () => {
-      let size = parseInt(sizeInput.value);
-      if (size < parseInt(sizeInput.max)) {
-        applySize(size + 2);
-      }
+    const titleSizeInput = document.getElementById("titleSizeInput");
+
+    // ขนาดตัวโน้ต
+    setupSizeControl({
+      input: sizeInput,
+      dec: document.getElementById("decreaseSize"),
+      inc: document.getElementById("increaseSize"),
+      cssVar: "--music-size",
+      key: "musicFontSize",
+      fallback: () => 12,
     });
-    
-    // ===== ปุ่มลด =====
-    decreaseTableBtn.addEventListener("click", () => {
-      let size = parseInt(sizeInput.value);
-      if (size > parseInt(sizeInput.min)) {
-        applySize(size - 2);
-      }
+
+    // ขนาดชื่อเพลง (ยังไม่เคยตั้ง = 1.6 เท่าของขนาดโน้ต เหมือนเดิม)
+    const titleSize = setupSizeControl({
+      input: titleSizeInput,
+      dec: document.getElementById("decreaseTitleSize"),
+      inc: document.getElementById("increaseTitleSize"),
+      cssVar: "--title-size",
+      key: "titleFontSize",
+      fallback: () => Math.round((parseInt(sizeInput.value) || 12) * 1.6),
     });
-    
-    // ===== พิมพ์เอง =====
-    sizeInput.addEventListener("input", () => {
-      let size = parseInt(sizeInput.value);
-      if (!isNaN(size)) applySize(size);
-    });
-    
-    // โหลดค่าทันทีเมื่อหน้าเปิด
-    loadSavedSize();
+    // ถ้ายังไม่เคยตั้งขนาดชื่อเพลง ให้ตัวเลขตามขนาดโน้ตไปด้วย
+    const syncTitleDefault = () => {
+      if (!titleSize.isSaved()) titleSizeInput.value = Math.round((parseInt(sizeInput.value) || 12) * 1.6);
+    };
+    sizeInput.addEventListener("change", syncTitleDefault);
+    document.getElementById("decreaseSize").addEventListener("click", syncTitleDefault);
+    document.getElementById("increaseSize").addEventListener("click", syncTitleDefault);
+
 
     function loadSongKey() {
       let allText = textarea.value
@@ -1003,11 +1035,11 @@ document.addEventListener("DOMContentLoaded", updateSpaceButton);
 const SPACE_EVERY = 4;
 
 // อักขระที่ไม่นับ (นิคหิต, พินทุ และเครื่องหมายที่ไม่ใช่ตัวโน้ต ' >)
-const IGNORE_CHARS = new Set(["ํ", "ฺ", "'", ">"]);
+const IGNORE_CHARS = new Set(["ํ", "ฺ", "'", ">", "[", "]"]);
 
 // เครื่องหมายที่ "นำหน้า" โน้ต (สะบัด ', เริ่มเล่นที่ >) ต้องอยู่กลุ่มเดียวกับโน้ตตัวถัดไป
 // ส่วน ํ ฺ เป็นเครื่องหมายต่อท้ายโน้ตตัวก่อนหน้า
-const PREFIX_CHARS = new Set(["'", ">"]);
+const PREFIX_CHARS = new Set(["'", ">", "["]);
 
 // ใช้แบ่งข้อความตามกลุ่มอักขระ เช่น ก่ เป็นหนึ่งกลุ่ม
 const segmenter = new Intl.Segmenter("th", {
@@ -1038,8 +1070,13 @@ function insertSpaceEvery4(text) {
         // น้ำหนักของโน้ตตัวถัดไป: ปกติ 1, หลัง ' = 0.5, หลัง '' = 0.25
         // เช่น '6'53-5 → 0.5 + 0.5 + 1 + 1 + 1 = 4 (ครบ 1 กลุ่ม)
         let nextWeight = 1;
+        // สะบัดแบบกลุ่ม: ภายใน [ ] โน้ตหนักตัวละ 0.5, ภายใน [[ ]] ตัวละ 0.25
+        let bracketScale = 1;
 
         for (const char of chars) {
+            if (char === "[") bracketScale /= 2;
+            else if (char === "]") bracketScale = Math.min(1, bracketScale * 2);
+
             const ignored = [...char].every(c => IGNORE_CHARS.has(c));
             const prefix = [...char].every(c => PREFIX_CHARS.has(c));
 
@@ -1055,7 +1092,7 @@ function insertSpaceEvery4(text) {
             if (char === "'") {
                 nextWeight /= 2;            // ' ลดเหลือครึ่ง, '' เหลือหนึ่งในสี่
             } else if (!ignored) {
-                count += nextWeight;        // อักขระที่ไม่นับ: ไม่เพิ่มตัวนับ
+                count += nextWeight * bracketScale; // อักขระที่ไม่นับ: ไม่เพิ่มตัวนับ
                 nextWeight = 1;
             }
         }
